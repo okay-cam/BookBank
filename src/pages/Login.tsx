@@ -1,11 +1,14 @@
 import React from "react";
 // importing bootstrap must be done before importing CSS files
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "../styles/general.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
     <>
-      <h1>Login</h1>
+      <h1>Kia ora!</h1>
+      <h2>Welcome to BookBank</h2>
       <label>Username</label>
       <br />
       <input type="text" />
@@ -16,7 +19,9 @@ const Login = () => {
       <input type="password" />
       <br />
       <br />
-      <input type="submit" />
+      <Link to="/home">
+        <input type="submit" />
+      </Link>
     </>
   );
 };
