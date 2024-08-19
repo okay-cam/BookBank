@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
+// importing bootstrap must be done before importing CSS files
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-const login = () => {
-  return (
-    <div>login</div>
-  )
-}
+const Login = () => {
+  return <div>Login</div>;
+};
 
-export default login
+export default Login;
