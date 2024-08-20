@@ -64,6 +64,9 @@ const Login = () => {
 
   return (
     <>
+
+      {/* {userLoggedIn && (<Navigate to={'/home'} replace={true} />)} */}
+
       <h1>Kia ora!</h1>
       <h2>Welcome to BookBank</h2>
       <form onSubmit={onSubmit}>
