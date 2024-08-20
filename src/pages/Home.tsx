@@ -1,12 +1,19 @@
 import React from "react";
 import "../styles/general.css";
+import "../styles/home.css";
+import Banner from "../components/Banner";
 
 const Home = () => {
   return (
     <>
-      <div>
-        <h1>Welcome to BookBank</h1>
-      </div>
+      <main>
+        <div className="bannerSection">
+          <Banner />
+        </div>
+        <div className="listingsSection">
+          <h1>Current listings</h1>
+        </div>
+      </main>
     </>
   );
 };
