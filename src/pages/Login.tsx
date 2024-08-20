@@ -5,7 +5,7 @@ import "../styles/general.css";
 import { Navigate, Link } from "react-router-dom";
 
 // get auth functions for checking login state
-// TODO: add firebase auth functions for signing in
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../config/firebase'
 import { useAuth } from '../contexts/auth_context'
 
 const Login = () => {
@@ -14,10 +14,53 @@ const Login = () => {
   // const { userLoggedIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  // isSigningIn may be used to prevent extra login attempts when processing authentication
-  // const [isSigningIn, setIsSigningIn] = useState(false)
-  // TODO: Add a label for error messages to be displayed. Cam can set the text through code later
-  // const [errorMessage, setErrorMessage] = useState('')
+  // Used to prevent extra login attempts while processing auth. toggled when pressing submit
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  // TODO: Add a label for error messages to be displayed.
+  // it may look something like:
+  // {errorMessage && (
+  //  {errorMessage}
+  // )}
+  // so it checks if the error message exists, and if so, shows it.
+  // Cam can set the text through code later
+  const [errorMessage, setErrorMessage] = useState('')
+
+
+  // Attempt sign in after pressing submit button
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if(!isSigningIn) {
+        // Attempt sign-in here
+        setIsSigningIn(true);
+        try {
+            await doSignInWithEmailAndPassword(email, password);
+        } catch (error) {
+            setIsSigningIn(false);
+            // show correct error message depending on the issue
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                    setErrorMessage('Invalid credentials. Please check your input.');
+                    break;
+                case 'auth/user-not-found':
+                    setErrorMessage('No user found with this email.');
+                    break;
+                case 'auth/wrong-password':
+                    setErrorMessage('Incorrect password. Please try again.');
+                    break;
+                case 'auth/too-many-requests':
+                    setErrorMessage('Too many failed login attempts. Please try again later.');
+                    break;
+                case 'auth/network-request-failed':
+                    setErrorMessage('Network error. Please check your connection and try again.');
+                    break;
+                default:
+                    setErrorMessage('An unexpected error occurred. Please try again.');
+                    break;
+            }
+        }
+    }
+  }
+
 
   return (
     <>
@@ -40,7 +83,10 @@ const Login = () => {
       <br />
       <br />
       <Link to="/home">
-        <input type="submit" />
+        <input
+          type="submit"
+          onSubmit={onSubmit}
+        />
       </Link>
     </>
   );
