@@ -25,7 +25,7 @@ const Listing: React.FC<ListingInformation> = ({
       </div>
       <div className={styles.details}>
         <h1>{title}</h1>
-        <h2>{authors}</h2>
+        <label>{authors}</label>
         <h3>{courseCode}</h3>
         <p>{desc}</p>
       </div>

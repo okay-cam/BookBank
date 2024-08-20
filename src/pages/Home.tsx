@@ -13,6 +13,8 @@ const Home = () => {
         </div>
         <div className={styles.listingsSection}>
           <h1>Current listings</h1>
+          <p>Insert dynamic card display</p>
+
           <Link to="/listing">
             <button>Temp button to go to listing page</button>
           </Link>
