@@ -1,0 +1,27 @@
+.gridContainer {
+    width: 100vw;
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+    "bannerSection" 
+    "listingsSection";
+    justify-items: center;
+}
+
+.bannerSection, .listingsSection {
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+
+.bannerSection {
+    grid-area: bannerSection;
+    background-color: white;
+}
+
+.listingsSection {
+    grid-area: listingsSection;
+    background-color: #efefefff;
+}

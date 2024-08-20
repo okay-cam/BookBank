@@ -1,0 +1,28 @@
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-areas: "aside details";
+}
+
+.aside, .details {
+    height: 100vh;
+    padding: 20px;
+}
+
+.aside {
+    grid-area: aside;
+    background-color: white;
+    text-align: center;
+}
+
+.details {
+    grid-area: details;
+    background-color: #efefefff;
+    padding: 20px 40px;
+}
+
+@media (max-width: 768px) {
+    .main {
+        grid-template-columns: 1fr; /* Stack the sections vertically on smaller screens */
+    }
+}
