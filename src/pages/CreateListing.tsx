@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import "../styles/general.css";
 import styles from "../styles/listing.module.css";
+import FileDropzone from "../components/FileDropzone";
 
 interface ListingData {
   title: string;
@@ -11,6 +12,8 @@ interface ListingData {
 }
 
 const CreateListing: React.FC = () => {
+  const [file, setFile] = useState<File | undefined>();
+
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
@@ -30,22 +33,24 @@ const CreateListing: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(
-      listingData
-    );
+    console.log(listingData);
+    console.log(file);
   };
+
+  function handleImageChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const target = e.target as HTMLInputElement & {
+      files: FileList;
+    };
+    setFile(target.files[0]);
+  }
 
   return (
     <>
       <main className={styles.gridContainer}>
         <div className={styles.aside}>
-          <p>Image would be inserted here</p>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/png, image/jpg"
-          />
+          <FileDropzone className="dropzone" />
         </div>
         <div className={styles.content}>
           <h1>Create listing</h1>
