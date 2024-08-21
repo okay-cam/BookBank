@@ -6,20 +6,24 @@ import Home from "./pages/Home";
 import Layout from "./Layout";
 import Listing from "./pages/Listing";
 
+import { AuthProvider } from "./contexts/auth_context";
+
 const App = () => {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route element={<Layout />}>
-            {/* Assigning routes to different pages, login is default */}
-            <Route path="/" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/listing" element={<Listing />} />
-          </Route>
-        </Routes>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route element={<Layout />}>
+              {/* Assigning routes to different pages, login is default */}
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/listing" element={<Listing />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AuthProvider>
     </>
   );
 };
