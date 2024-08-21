@@ -23,7 +23,7 @@ const Listing: React.FC<ListingInformation> = ({
         <p>Image would be inserted here</p>
         <button>Enquire/Request</button>
       </div>
-      <div className={styles.details}>
+      <div className={styles.content}>
         <h1>{title}</h1>
         <label>{authors}</label>
         <h3>{courseCode}</h3>
