@@ -9,11 +9,10 @@ interface ListingData {
   authors: string;
   courseCode: string;
   description: string;
+  // TODO backend: need to add image here
 }
 
 const CreateListing: React.FC = () => {
-  const [file, setFile] = useState<File | undefined>();
-
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
@@ -32,26 +31,20 @@ const CreateListing: React.FC = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    // TODO: input validation function
     e.preventDefault();
     console.log(listingData);
-    console.log(file);
   };
-
-  function handleImageChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const target = e.target as HTMLInputElement & {
-      files: FileList;
-    };
-    setFile(target.files[0]);
-  }
 
   return (
     <>
       <main className={styles.gridContainer}>
+        {/* content on left panel */}
         <div className={styles.aside}>
+          {/* the dropzone for uploading image */}
           <FileDropzone className="dropzone" />
         </div>
+        {/* content on right panel */}
         <div className={styles.content}>
           <h1>Create listing</h1>
           <form onSubmit={handleSubmit}>
@@ -104,6 +97,7 @@ const CreateListing: React.FC = () => {
             <br />
 
             <input type="submit" value="Submit" />
+            <p>Insert error message - no input validation yet</p>
           </form>
         </div>
       </main>
