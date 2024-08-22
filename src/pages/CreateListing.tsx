@@ -3,7 +3,7 @@ import { useState } from "react";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
 import { collection, addDoc, setDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { db, auth } from "../config/firebase";
 import BackButton from "../components/BackButton";
 
 interface ListingData {
@@ -11,16 +11,21 @@ interface ListingData {
   authors: string;
   courseCode: string;
   description: string;
+  userID: string;
   // TODO backend: need to add image here
 }
 
 const CreateListing: React.FC = () => {
+
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
+    userID: auth.currentUser.uid.toString() // IGNORE ERROR
+
   });
+  
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,6 +46,7 @@ const CreateListing: React.FC = () => {
       authors: listingData.authors,
       courseCode: listingData.courseCode,
       description: listingData.description,
+      userId: listingData.userID
     });
     // Upload document entry 
     await setDoc(docRef, listingData); 
