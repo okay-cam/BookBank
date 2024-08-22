@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "../components/EnquiryPopup";
+import BackButton from "../components/BackButton";
 
 interface ListingInformation {
   imagePath?: string;
@@ -20,6 +21,7 @@ const Listing: React.FC<ListingInformation> = ({
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
+        <BackButton />
         <p>Image would be inserted here</p>
 
         <button

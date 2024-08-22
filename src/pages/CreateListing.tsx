@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
+import BackButton from "../components/BackButton";
 
 interface ListingData {
   title: string;
@@ -40,6 +41,7 @@ const CreateListing: React.FC = () => {
       <main className={styles.gridContainer}>
         {/* content on left panel */}
         <div className={styles.aside}>
+          <BackButton />
           {/* the dropzone for uploading image */}
           <FileDropzone className="dropzone" />
         </div>

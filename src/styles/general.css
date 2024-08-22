@@ -11,6 +11,7 @@ html, body {
 h1 {
     color: #134f5cff;
     font-size: 30px;
+    font-weight: bold;
 }
 
 h2 {
@@ -65,4 +66,16 @@ button:hover, .button:hover {
 /* used for text fields that are expected to be longer */
 .half-width {
     width: 50%;
+}
+
+img {
+    border: solid 2px black;
+    border-radius: 5px;
+}
+
+.back-button {
+    font-size: 70%;
+    display: block;
+    text-align: left;
+    margin: 10px 0;
 }
