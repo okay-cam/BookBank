@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 // get auth functions for checking login state
 import { doCreateUserWithEmailAndPassword } from "../config/auth";
 import { useAuth } from "../contexts/auth_context";
+import { FirebaseError } from "firebase/app";
 
 const Signup = () => {
   
@@ -36,7 +37,11 @@ const Signup = () => {
       } catch (error) {
         // show correct error message depending on the issue
         setIsRegistering(false);
-        switch (error) {
+
+        // Type assertion to FirebaseError
+        const firebaseError = error as FirebaseError;
+        
+        switch (firebaseError.code) {
           case 'auth/email-already-in-use':
             setErrorMessage('The email address is already in use. Please use a different email or log in.');
             break;
