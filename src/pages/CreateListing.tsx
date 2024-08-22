@@ -3,6 +3,8 @@ import { useState } from "react";
 import "../styles/general.css";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
+import { collection, addDoc, setDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 interface ListingData {
   title: string;
@@ -30,10 +32,19 @@ const CreateListing: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     // TODO: input validation function
     e.preventDefault();
-    console.log(listingData);
+    // Create document entry
+    const docRef = await addDoc(collection(db, "listings"), {
+      title: listingData.title,
+      authors: listingData.authors,
+      courseCode: listingData.courseCode,
+      description: listingData.description,
+    });
+    // Upload document entry 
+    await setDoc(docRef, listingData); 
+    // console.log("Document written with ID: ", docRef.id); 
   };
 
   return (
