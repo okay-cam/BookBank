@@ -1,6 +1,13 @@
 import React from "react";
 
-const EnquiryPopup = () => {
+interface Title {
+  title: string;
+}
+
+const EnquiryPopup: React.FC<Title> = ({ title }) => {
+  const defaultMessage =
+    "Hi, I am interested in this textbook. Is it still available?";
+
   return (
     <>
       <div
@@ -24,18 +31,26 @@ const EnquiryPopup = () => {
               ></button>
             </div>
             <div className="modal-body">
+              <p>Enquiring for: {title}</p>
+
               <label>Message:</label>
               <br />
-              <input
+              {/* <input
                 type="text"
                 value="Hi, is this textbook still available?"
                 width="100"
-              />
+              /> */}
+              <textarea
+                className="form-control"
+                id="exampleFormControlTextarea1"
+                value={defaultMessage}
+                rows={3}
+              ></textarea>
             </div>
             <div className="modal-footer">
-              <button type="button" data-bs-dismiss="modal">
+              {/* <button type="button" data-bs-dismiss="modal">
                 Close
-              </button>
+              </button> */}
               <button type="button" className="call-to-action">
                 Send
               </button>

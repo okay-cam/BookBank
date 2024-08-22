@@ -24,12 +24,13 @@ const Listing: React.FC<ListingInformation> = ({
 
         <button
           type="button"
+          className="call-to-action"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
         >
-          Launch demo modal
+          Request/Enquire
         </button>
-        <EnquiryPopup />
+        <EnquiryPopup title={title} />
       </div>
       <div className={styles.content}>
         <h1>{title}</h1>
