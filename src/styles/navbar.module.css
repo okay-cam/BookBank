@@ -43,3 +43,9 @@
     margin-left: 20px;
     text-decoration: none;
 }
+
+.navButton:hover {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
