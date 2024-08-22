@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // import { Navigate, Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doSignInWithEmailAndPassword } from "../config/auth";
@@ -75,6 +75,7 @@ const Login = () => {
 
   return (
     <>
+      <br />
       <h1>Kia ora!</h1>
       <h2>Welcome to BookBank</h2>
       <form onSubmit={onSubmit}>
@@ -116,6 +117,12 @@ const Login = () => {
           <p className="error-msg">{errorMessage}</p>
         )}
       </form>
+
+      <div>
+        Don't have an account? {'   '}
+        <Link to={'/signup'}>Sign Up</Link>
+      </div>
+
     </>
   );
 };

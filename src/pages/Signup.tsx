@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 // importing bootstrap must be done before importing CSS files
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../styles/general.css";
-// import { Navigate, Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doCreateUserWithEmailAndPassword } from "../config/auth";
@@ -37,35 +36,35 @@ const Signup = () => {
       } catch (error) {
         // show correct error message depending on the issue
         setIsRegistering(false);
-        // switch (error) {
-        //   case 'auth/email-already-in-use':
-        //     setErrorMessage('The email address is already in use. Please use a different email or log in.');
-        //     break;
-        //   case 'auth/invalid-email':
-        //     setErrorMessage('The email address is invalid. Please enter a valid email address.');
-        //     break;
-        //   case 'auth/operation-not-allowed':
-        //     setErrorMessage('Email/Password accounts are not enabled. Please enable this sign-in method in the Firebase Console.');
-        //     break;
-        //   case 'auth/weak-password':
-        //     setErrorMessage('The password is too weak. Please choose a stronger password.');
-        //     break;
-        //   case 'auth/invalid-credential':
-        //     setErrorMessage('Invalid credential. Please check your input and try again.');
-        //     break;
-        //   case 'auth/too-many-requests':
-        //     setErrorMessage('Too many registration attempts. Please try again later.');
-        //     break;
-        //   case 'auth/network-request-failed':
-        //     setErrorMessage('Network error. Please check your connection and try again.');
-        //     break;
-        //   case 'auth/invalid-action-code':
-        //     setErrorMessage('The action code is invalid or expired. Please request a new action code.');
-        //     break;
-        //   default:
-        //     setErrorMessage('An unexpected error occurred. Please try again.');
-        //     break;
-        // }
+        switch (error) {
+          case 'auth/email-already-in-use':
+            setErrorMessage('The email address is already in use. Please use a different email or log in.');
+            break;
+          case 'auth/invalid-email':
+            setErrorMessage('The email address is invalid. Please enter a valid email address.');
+            break;
+          case 'auth/operation-not-allowed':
+            setErrorMessage('Email/Password accounts are not enabled. Please enable this sign-in method in the Firebase Console.');
+            break;
+          case 'auth/weak-password':
+            setErrorMessage('The password is too weak. Please choose a stronger password.');
+            break;
+          case 'auth/invalid-credential':
+            setErrorMessage('Invalid credential. Please check your input and try again.');
+            break;
+          case 'auth/too-many-requests':
+            setErrorMessage('Too many registration attempts. Please try again later.');
+            break;
+          case 'auth/network-request-failed':
+            setErrorMessage('Network error. Please check your connection and try again.');
+            break;
+          case 'auth/invalid-action-code':
+            setErrorMessage('The action code is invalid or expired. Please request a new action code.');
+            break;
+          default:
+            setErrorMessage('An unexpected error occurred. Please try again.');
+            break;
+        }
       }
     }
   }
@@ -80,6 +79,7 @@ const Signup = () => {
 
   return (
     <>
+      <br />
       <h2>Register</h2>
       <form onSubmit={onSubmit}>
         <label htmlFor="email">Email</label>
@@ -87,8 +87,9 @@ const Signup = () => {
         <input
           type="email"
           value={email}
-          name="email"
-          id="email"
+          // name="email"
+          // id="email"
+          required
           onChange={(e) => setEmail(e.target.value)}
         />
         <br />
@@ -100,6 +101,8 @@ const Signup = () => {
           value={password}
           name="password"
           id="password"
+          autoComplete="off"
+          required
           onChange={(e) => setPassword(e.target.value)}
         />
         <br />
@@ -108,19 +111,35 @@ const Signup = () => {
         <br />
         <input
           type="password"
-          value={password}
-          name="password"
-          id="password"
-          onChange={(e) => setPassword(e.target.value)}
+          value={confirmPassword}
+          name="confirmPassword"
+          id="confirmPassword"
+          autoComplete="off"
+          required
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <br />
         <br />
+        {errorMessage && (
+          <p className="error-msg">{errorMessage}</p>
+        )}
         <input
           type="submit"
-          value="Sign In"
+          name="submit"
+          id="submit"
+          value="Create Account"
+          className="button call-to-action"
           disabled={isRegistering}
         />
+        <br />
+        <br />
       </form>
+
+      <div>
+        Already have an account? {'   '}
+        <Link to={'/'}>Log in</Link>
+      </div>
+
     </>
   );
 };
