@@ -40,15 +40,9 @@ function FileDropzone({ className }: { className: string }) {
 
   return (
     <div {...getRootProps({ className: className })}>
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the file here ...</p>
-      ) : (
-        <p>Drag 'n drop a file here, or click to select a file</p>
-      )}
       {file && (
         <div>
-          <p>Uploaded file: {file.name}</p>
+          {/* <p>Uploaded file: {file.name}</p> */}
           {file.type.startsWith("image/") ? (
             <img
               src={file.preview}
@@ -63,6 +57,16 @@ function FileDropzone({ className }: { className: string }) {
             <p>File preview is not available for this type.</p>
           )}
         </div>
+      )}
+      <br />
+      <input {...getInputProps()} />
+      {isDragActive ? (
+        <p>Drop the file here...</p>
+      ) : (
+        <>
+          <button type="button">Upload or drag image</button>
+          <p className="error-msg">Files must be JPG or PNG and under 5MB.</p>
+        </>
       )}
     </div>
   );

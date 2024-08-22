@@ -1,29 +1,20 @@
-import React, { useState, useEffect } from 'react'
-// importing bootstrap must be done before importing CSS files
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../styles/general.css";
+import React, { useState, useEffect } from "react";
 // import { Navigate, Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doSignInWithEmailAndPassword } from "../config/auth";
 import { useAuth } from "../contexts/auth_context";
+import { FirebaseError } from "firebase/app";
 
 const Login = () => {
   // Stores web page states which are used during account authentication
   const { userLoggedIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   // Used to prevent extra login attempts while processing auth. toggled when pressing submit
   const [isSigningIn, setIsSigningIn] = useState(false);
-  // TODO: Add a label for error messages to be displayed.
-  // it may look something like:
-  // {errorMessage && (
-  //  {errorMessage}
-  // )}
-  // so it checks if the error message exists, and if so, shows it.
-  // const [errorMessage, setErrorMessage] = useState('')
-
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Attempt sign in after pressing submit button
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,44 +26,50 @@ const Login = () => {
         await doSignInWithEmailAndPassword(email, password);
       } catch (error) {
         setIsSigningIn(false);
-        console.log(error);
+        // Type assertion to FirebaseError
+        const firebaseError = error as FirebaseError;
+
+        console.log(firebaseError);
         // show correct error message depending on the issue
-        // switch (error.code) {
-        //     case 'auth/invalid-credential':
-        //         setErrorMessage('Invalid credentials. Please check your input.');
-        //         break;
-        //     case 'auth/user-not-found':
-        //         setErrorMessage('No user found with this email.');
-        //         break;
-        //     case 'auth/wrong-password':
-        //         setErrorMessage('Incorrect password. Please try again.');
-        //         break;
-        //     case 'auth/too-many-requests':
-        //         setErrorMessage('Too many failed login attempts. Please try again later.');
-        //         break;
-        //     case 'auth/network-request-failed':
-        //         setErrorMessage('Network error. Please check your connection and try again.');
-        //         break;
-        //     default:
-        //         setErrorMessage('An unexpected error occurred. Please try again.');
-        //         break;
-        // }
+        switch (firebaseError.code) {
+          case "auth/invalid-credential":
+            setErrorMessage("Invalid credentials. Please check your input.");
+            break;
+          case "auth/user-not-found":
+            setErrorMessage("No user found with this email.");
+            break;
+          case "auth/wrong-password":
+            setErrorMessage("Incorrect password. Please try again.");
+            break;
+          case "auth/too-many-requests":
+            setErrorMessage(
+              "Too many failed login attempts. Please try again later."
+            );
+            break;
+          case "auth/network-request-failed":
+            setErrorMessage(
+              "Network error. Please check your connection and try again."
+            );
+            break;
+          default:
+            setErrorMessage("An unexpected error occurred. Please try again.");
+            break;
+        }
       }
     }
-  }
+  };
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-        if (userLoggedIn) {
-            navigate('/home', { replace: true });
-        }
-    }, [userLoggedIn, navigate]);
+  useEffect(() => {
+    if (userLoggedIn) {
+      navigate("/home", { replace: true });
+    }
+  }, [userLoggedIn, navigate]);
 
   return (
     <>
-      {/* {userLoggedIn && (<Navigate to={'/home'} replace={true} />)} */}
-
+      <br />
       <h1>Kia ora!</h1>
       <h2>Welcome to BookBank</h2>
       <form onSubmit={onSubmit}>
@@ -84,6 +81,8 @@ const Login = () => {
           name="email"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete='email'
+          required
         />
         <br />
         <br />
@@ -94,12 +93,30 @@ const Login = () => {
           value={password}
           name="password"
           id="password"
+          autoComplete='current-password'
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <br />
         <br />
-        <input type="submit" value="Sign In" />
+        <input
+          type="submit"
+          value="Sign In"
+          className="button call-to-action"
+          disabled={isSigningIn}
+        />
+        <br />
+        <br />
+        {errorMessage && (
+          <p className="error-msg">{errorMessage}</p>
+        )}
       </form>
+
+      <div>
+        Don't have an account? {'   '}
+        <Link to={'/signup'}>Sign Up</Link>
+      </div>
+
     </>
   );
 };

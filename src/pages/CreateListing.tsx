@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
-import "../styles/general.css";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
 import { collection, addDoc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import BackButton from "../components/BackButton";
 
 interface ListingData {
   title: string;
@@ -52,6 +52,7 @@ const CreateListing: React.FC = () => {
       <main className={styles.gridContainer}>
         {/* content on left panel */}
         <div className={styles.aside}>
+          <BackButton />
           {/* the dropzone for uploading image */}
           <FileDropzone className="dropzone" />
         </div>
@@ -67,6 +68,8 @@ const CreateListing: React.FC = () => {
               name="title"
               value={listingData.title}
               onChange={handleChange}
+              className="half-width"
+              required
             />
             <br />
             <br />
@@ -79,6 +82,7 @@ const CreateListing: React.FC = () => {
               name="authors"
               value={listingData.authors}
               onChange={handleChange}
+              required
             />
             <br />
             <br />
@@ -97,18 +101,26 @@ const CreateListing: React.FC = () => {
 
             <label htmlFor="description">Description:</label>
             <br />
-            <input
-              type="text"
+            <textarea
               id="description"
               name="description"
-              value={listingData.description}
-              onChange={handleChange}
+              value={listingData.description} // Bind state value to textarea
+              rows={3}
+              className="half-width"
+              onChange={handleChange} // Update state on change
+              required
             />
             <br />
             <br />
 
-            <input type="submit" value="Submit" />
-            <p>Insert error message - no input validation yet</p>
+            <input
+              type="submit"
+              value="Submit"
+              className="button call-to-action"
+            />
+            <p className="error-msg">
+              Insert error message - no input validation yet
+            </p>
           </form>
         </div>
       </main>
