@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "../styles/general.css";
 import React from "react";
 import styles from "../styles/navbar.module.css";
@@ -33,11 +32,10 @@ const Navbar = () => {
             // (which doesn't link to anything)
         <div className={styles.logo}>BookBank</div>
       )}
-    </div>)
-  
-  //userLoggedIn && <> <button onClick={() => { doSignOut().then(() => { navigate('/') }) }}>Logout</button> </>
-  </>
+    </div>
   )
 };
+  
+  //userLoggedIn && <> <button onClick={() => { doSignOut().then(() => { navigate('/') }) }}>Logout</button> </>
 
 export default Navbar;
