@@ -22,3 +22,22 @@ label {
     color: #737373;
     font-weight: bold;
 }
+
+button, .button {
+    border-radius: 5px;
+    background-color:#efefefff;
+    color: black;
+    border: solid 2px black;
+}
+
+.call-to-action {
+    background-color: #e69138ff;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.error-msg {
+    font-size: 14px;
+    color: red;
+    font-style: italic;
+}

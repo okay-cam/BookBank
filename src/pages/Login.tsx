@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react'
-// importing bootstrap must be done before importing CSS files
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../styles/general.css";
+import React, { useState, useEffect } from "react";
 // import { Navigate, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +9,8 @@ import { useAuth } from "../contexts/auth_context";
 const Login = () => {
   // Stores web page states which are used during account authentication
   const { userLoggedIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   // Used to prevent extra login attempts while processing auth. toggled when pressing submit
   const [isSigningIn, setIsSigningIn] = useState(false);
   // TODO: Add a label for error messages to be displayed.
@@ -23,7 +20,6 @@ const Login = () => {
   // )}
   // so it checks if the error message exists, and if so, shows it.
   // const [errorMessage, setErrorMessage] = useState('')
-
 
   // Attempt sign in after pressing submit button
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,15 +55,15 @@ const Login = () => {
         // }
       }
     }
-  }
+  };
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-        if (userLoggedIn) {
-            navigate('/home', { replace: true });
-        }
-    }, [userLoggedIn, navigate]);
+  useEffect(() => {
+    if (userLoggedIn) {
+      navigate("/home", { replace: true });
+    }
+  }, [userLoggedIn, navigate]);
 
   return (
     <>
@@ -98,7 +94,11 @@ const Login = () => {
         />
         <br />
         <br />
-        <input type="submit" value="Sign In" />
+        <input
+          type="submit"
+          value="Sign In"
+          className="button call-to-action"
+        />
       </form>
     </>
   );
