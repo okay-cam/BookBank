@@ -30,14 +30,39 @@ button, .button {
     border: solid 2px black;
 }
 
+button:hover, .button:hover {
+    border-radius: 5px;
+    background-color:rgb(218, 218, 218);
+    color: black;
+    border: solid 2px black;
+}
+
 .call-to-action {
     background-color: #e69138ff;
     font-weight: bold;
     padding: 5px 10px;
 }
 
+.call-to-action:hover {
+    background-color: rgb(206, 133, 54);
+    ;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.call-to-action:disabled {
+    background-color: rgb(231, 177, 119);
+    color: gray;
+    border: solid 2px gray;
+}
+
 .error-msg {
     font-size: 14px;
     color: red;
     font-style: italic;
+}
+
+/* used for text fields that are expected to be longer */
+.half-width {
+    width: 50%;
 }

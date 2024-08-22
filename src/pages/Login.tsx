@@ -14,12 +14,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   // Used to prevent extra login attempts while processing auth. toggled when pressing submit
   const [isSigningIn, setIsSigningIn] = useState(false);
-  // TODO: Add a label for error messages to be displayed.
-  // it may look something like:
-  // {errorMessage && (
-  //  {errorMessage}
-  // )}
-  // so it checks if the error message exists, and if so, shows it.
   const [errorMessage, setErrorMessage] = useState("");
 
   // Attempt sign in after pressing submit button

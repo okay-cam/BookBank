@@ -8,7 +8,7 @@ const Banner = () => {
       <h1>From dusty to desired</h1>
       <p>Help a student get the textbooks they need.</p>
       <Link to="/create">
-        <button className="call-to-action">Donate now!</button>
+        <button className="call-to-action">Donate a book now!</button>
       </Link>
     </>
   );

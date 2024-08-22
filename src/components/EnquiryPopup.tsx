@@ -51,11 +51,11 @@ const EnquiryPopup: React.FC<Title> = ({ title }) => {
             <br />
             <textarea
               className="form-control"
-              id="exampleFormControlTextarea1"
+              id="message"
               value={message} // Bind state value to textarea
               rows={3}
               onChange={(e) => setMessage(e.target.value)} // Update state on change
-            ></textarea>
+            />
             {errorMessage && <p className="error-msg">{errorMessage}</p>}
           </div>
           <div className="modal-footer">

@@ -55,6 +55,8 @@ const CreateListing: React.FC = () => {
               name="title"
               value={listingData.title}
               onChange={handleChange}
+              className="half-width"
+              required
             />
             <br />
             <br />
@@ -67,6 +69,7 @@ const CreateListing: React.FC = () => {
               name="authors"
               value={listingData.authors}
               onChange={handleChange}
+              required
             />
             <br />
             <br />
@@ -85,12 +88,14 @@ const CreateListing: React.FC = () => {
 
             <label htmlFor="description">Description:</label>
             <br />
-            <input
-              type="text"
+            <textarea
               id="description"
               name="description"
-              value={listingData.description}
-              onChange={handleChange}
+              value={listingData.description} // Bind state value to textarea
+              rows={3}
+              className="half-width"
+              onChange={handleChange} // Update state on change
+              required
             />
             <br />
             <br />
