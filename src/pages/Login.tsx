@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // get auth functions for checking login state
 import { doSignInWithEmailAndPassword } from "../config/auth";
 import { useAuth } from "../contexts/auth_context";
+import { FirebaseError } from "firebase/app";
 
 const Login = () => {
   // Stores web page states which are used during account authentication
@@ -19,7 +20,7 @@ const Login = () => {
   //  {errorMessage}
   // )}
   // so it checks if the error message exists, and if so, shows it.
-  // const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Attempt sign in after pressing submit button
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,28 +32,35 @@ const Login = () => {
         await doSignInWithEmailAndPassword(email, password);
       } catch (error) {
         setIsSigningIn(false);
-        console.log(error);
+        // Type assertion to FirebaseError
+        const firebaseError = error as FirebaseError;
+
+        console.log(firebaseError);
         // show correct error message depending on the issue
-        // switch (error.code) {
-        //     case 'auth/invalid-credential':
-        //         setErrorMessage('Invalid credentials. Please check your input.');
-        //         break;
-        //     case 'auth/user-not-found':
-        //         setErrorMessage('No user found with this email.');
-        //         break;
-        //     case 'auth/wrong-password':
-        //         setErrorMessage('Incorrect password. Please try again.');
-        //         break;
-        //     case 'auth/too-many-requests':
-        //         setErrorMessage('Too many failed login attempts. Please try again later.');
-        //         break;
-        //     case 'auth/network-request-failed':
-        //         setErrorMessage('Network error. Please check your connection and try again.');
-        //         break;
-        //     default:
-        //         setErrorMessage('An unexpected error occurred. Please try again.');
-        //         break;
-        // }
+        switch (firebaseError.code) {
+          case "auth/invalid-credential":
+            setErrorMessage("Invalid credentials. Please check your input.");
+            break;
+          case "auth/user-not-found":
+            setErrorMessage("No user found with this email.");
+            break;
+          case "auth/wrong-password":
+            setErrorMessage("Incorrect password. Please try again.");
+            break;
+          case "auth/too-many-requests":
+            setErrorMessage(
+              "Too many failed login attempts. Please try again later."
+            );
+            break;
+          case "auth/network-request-failed":
+            setErrorMessage(
+              "Network error. Please check your connection and try again."
+            );
+            break;
+          default:
+            setErrorMessage("An unexpected error occurred. Please try again.");
+            break;
+        }
       }
     }
   };
@@ -99,6 +107,9 @@ const Login = () => {
           value="Sign In"
           className="button call-to-action"
         />
+        <br />
+        <br />
+        <p className="error-msg">{errorMessage}</p>
       </form>
     </>
   );
