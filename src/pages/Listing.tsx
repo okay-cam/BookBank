@@ -1,6 +1,7 @@
 import React from "react";
-import "../styles/general.css";
 import styles from "../styles/listing.module.css";
+import EnquiryPopup from "../components/EnquiryPopup";
+import BackButton from "../components/BackButton";
 
 interface ListingInformation {
   imagePath?: string;
@@ -20,10 +21,20 @@ const Listing: React.FC<ListingInformation> = ({
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
+        <BackButton />
         <p>Image would be inserted here</p>
-        <button>Enquire/Request</button>
+
+        <button
+          type="button"
+          className="call-to-action"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          Request/Enquire
+        </button>
+        <EnquiryPopup title={title} />
       </div>
-      <div className={styles.details}>
+      <div className={styles.content}>
         <h1>{title}</h1>
         <label>{authors}</label>
         <h3>{courseCode}</h3>

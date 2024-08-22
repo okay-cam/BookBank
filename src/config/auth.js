@@ -19,9 +19,9 @@ export const doSignInWithEmailAndPassword = (email, password) => {
 //     return result;
 // };
 
-// export const doSignOut = () => {
-//     return auth.signOut();
-// };
+export const doSignOut = () => {
+    return auth.signOut();
+};
 
 
 // export const doPasswordReset = (email) => {

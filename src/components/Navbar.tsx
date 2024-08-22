@@ -1,10 +1,17 @@
 import { useState } from "react";
 import "../styles/general.css";
+import React from "react";
 import styles from "../styles/navbar.module.css";
 import { Link } from "react-router-dom";
 
+// used for signing out - may be moved later
+import { useNavigate } from 'react-router-dom'
+import { doSignOut } from '../config/auth'
+import { useAuth } from '../contexts/auth_context'
+
 const Navbar = () => {
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
+  const navigate = useNavigate()
+  const { userLoggedIn } = useAuth();
 
   return (
     <div className={styles.navbar}>
@@ -27,6 +34,10 @@ const Navbar = () => {
         <div className={styles.logo}>BookBank</div>
       )}
     </div>)
+  
+  //userLoggedIn && <> <button onClick={() => { doSignOut().then(() => { navigate('/') }) }}>Logout</button> </>
+  </>
+  )
 };
 
 export default Navbar;
