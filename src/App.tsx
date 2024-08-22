@@ -1,5 +1,9 @@
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
+// importing bootstrap must be done before importing CSS files
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/general.css";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -12,7 +16,6 @@ import { AuthProvider } from "./contexts/auth_context";
 const App = () => {
   return (
     <>
-
       <AuthProvider>
         <Router>
           <Routes>
@@ -22,7 +25,7 @@ const App = () => {
               <Route path="/signup" element={<Signup />} />
               <Route path="/home" element={<Home />} />
               <Route path="/listing" element={<Listing />} />
-			  <Route path="/create" element={<CreateListing />} />
+              <Route path="/create" element={<CreateListing />} />
             </Route>
           </Routes>
         </Router>

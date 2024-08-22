@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/general.css";
 import styles from "../styles/navbar.module.css";
 
 // used for signing out - may be moved later

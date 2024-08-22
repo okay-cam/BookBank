@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import "../styles/general.css";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
 
@@ -96,8 +95,14 @@ const CreateListing: React.FC = () => {
             <br />
             <br />
 
-            <input type="submit" value="Submit" />
-            <p>Insert error message - no input validation yet</p>
+            <input
+              type="submit"
+              value="Submit"
+              className="button call-to-action"
+            />
+            <p className="error-msg">
+              Insert error message - no input validation yet
+            </p>
           </form>
         </div>
       </main>
