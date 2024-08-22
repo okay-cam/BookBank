@@ -38,7 +38,9 @@ export function AuthProvider({ children }) {
     const auth_values = {
         // contains firebase auth data (uid, email, etc), or null
         currentUser,
+        // boolean for if the user is logged in
         userLoggedIn,
+        // 
         loading
     }
 
