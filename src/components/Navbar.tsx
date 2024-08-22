@@ -1,5 +1,8 @@
+import { useState } from "react";
+import "../styles/general.css";
 import React from "react";
 import styles from "../styles/navbar.module.css";
+import { Link } from "react-router-dom";
 
 // used for signing out - may be moved later
 import { useNavigate } from 'react-router-dom'
@@ -7,24 +10,34 @@ import { doSignOut } from '../config/auth'
 import { useAuth } from '../contexts/auth_context'
 
 const Navbar = () => {
-
   const navigate = useNavigate()
   const { userLoggedIn } = useAuth();
 
   return (
-  <>
-    <div className={styles.navbar}> Navbar
-      {/* Added temp code for testing signout functionality -Cam */}
-      <br></br>
-      {
-        userLoggedIn &&
+    <div className={styles.navbar}>
+      {userLoggedIn ? ( // If the user is logged in, we should show the full navbar
         <>
-          <button onClick={() => { doSignOut().then(() => { navigate('/') }) }}>Logout</button>
+          <Link to="/home" className={styles.logo}>BookBank</Link>
+
+          <div className={styles.searchContainer}>
+            <input type="text" className={styles.searchInput} placeholder="Search for books"/>
+          </div>
+
+          <div className={styles.navLinks}>
+            <Link to="/pins" className={styles.navButton}>Pins</Link>
+            <Link to="/listing" className={styles.navButton}>Create a listing</Link>
+            <Link to="/signup" className={styles.navButton}>Profile</Link>
+          </div>
         </>
-      }
-    </div>
+      ) : ( // If the user isn't logged in, we only show the BookBank logo
+            // (which doesn't link to anything)
+        <div className={styles.logo}>BookBank</div>
+      )}
+    </div>)
+  
+  //userLoggedIn && <> <button onClick={() => { doSignOut().then(() => { navigate('/') }) }}>Logout</button> </>
   </>
-  ) 
+  )
 };
 
 export default Navbar;
