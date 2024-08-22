@@ -5,6 +5,10 @@
     align-items: center;
     padding: 10px 20px;
     justify-content: center;
+    /* to make the navbar sticky */
+    position: fixed;
+    top: 0;
+    width: 100%;
 }
 
 .logo {

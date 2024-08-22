@@ -6,6 +6,8 @@ html, body {
     margin: 0;
     padding: 0;
     text-align: center;
+    /* sticky navbar adjustment */
+    margin-top: 30px;
 }
 
 h1 {
@@ -40,13 +42,13 @@ button:hover, .button:hover {
 
 .call-to-action {
     background-color: #e69138ff;
+    border-radius: 5px;
     font-weight: bold;
     padding: 5px 10px;
 }
 
 .call-to-action:hover {
     background-color: rgb(206, 133, 54);
-    ;
     font-weight: bold;
     padding: 5px 10px;
 }

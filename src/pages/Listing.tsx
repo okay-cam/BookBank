@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "../components/EnquiryPopup";
 import BackButton from "../components/BackButton";
+import defaultImagePath from "../assets/default-image-path.jpg"
 
 interface ListingInformation {
   imagePath?: string;
@@ -12,7 +13,7 @@ interface ListingInformation {
 }
 
 const Listing: React.FC<ListingInformation> = ({
-  imagePath = "default-image-path.jpg",
+  imagePath = defaultImagePath,
   title = "Default Title",
   authors = "Unknown Author",
   desc = "No description available.",
@@ -22,8 +23,16 @@ const Listing: React.FC<ListingInformation> = ({
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
         <BackButton />
-        <p>Image would be inserted here</p>
-
+        <img
+              src={imagePath}
+              alt="Listing image"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "300px",
+                marginTop: "10px",
+              }}
+            />
+        <br /><br />
         <button
           type="button"
           className="call-to-action"
