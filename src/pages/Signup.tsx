@@ -115,7 +115,11 @@ const Signup = () => {
         />
         <br />
         <br />
-        <input type="submit" value="Sign In" />
+        <input
+          type="submit"
+          value="Sign In"
+          disabled={isRegistering}
+        />
       </form>
     </>
   );

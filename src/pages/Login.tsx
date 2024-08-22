@@ -86,6 +86,8 @@ const Login = () => {
           name="email"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete='email'
+          required
         />
         <br />
         <br />
@@ -96,7 +98,9 @@ const Login = () => {
           value={password}
           name="password"
           id="password"
+          autoComplete='current-password'
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <br />
         <br />
@@ -104,10 +108,13 @@ const Login = () => {
           type="submit"
           value="Sign In"
           className="button call-to-action"
+          disabled={isSigningIn}
         />
         <br />
         <br />
-        <p className="error-msg">{errorMessage}</p>
+        {errorMessage && (
+          <p className="error-msg">{errorMessage}</p>
+        )}
       </form>
     </>
   );
