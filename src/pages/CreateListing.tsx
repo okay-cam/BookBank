@@ -1,10 +1,10 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
 import { collection, addDoc, setDoc } from "firebase/firestore";
-import { db, auth } from "../config/firebase";
+import { db, auth, storage } from "../config/firebase";
 import BackButton from "../components/BackButton";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface ListingData {
   title: string;
@@ -12,20 +12,18 @@ interface ListingData {
   courseCode: string;
   description: string;
   userID: string;
-  // TODO backend: need to add image here
 }
 
 const CreateListing: React.FC = () => {
-
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
     userID: auth.currentUser.uid.toString() // IGNORE ERROR
-
   });
-  
+
+  const [file, setFile] = useState<File | null>(null); // Manage file state
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -37,20 +35,38 @@ const CreateListing: React.FC = () => {
     }));
   };
 
+  const handleDrop = (file: File) => {
+    setFile(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     // TODO: input validation function
     e.preventDefault();
+
     // Create document entry
     const docRef = await addDoc(collection(db, "listings"), {
       title: listingData.title,
       authors: listingData.authors,
       courseCode: listingData.courseCode,
       description: listingData.description,
-      userId: listingData.userID
+      userID: listingData.userID,
     });
-    // Upload document entry 
-    await setDoc(docRef, listingData); 
-    // console.log("Document written with ID: ", docRef.id); 
+
+    // Upload image to Cloud Storage if file exists
+    if (file) {
+      const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
+      await uploadBytes(imageRef, file);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      // Create Firestore document with imageUrl
+      await setDoc(docRef, {
+        ...listingData,
+        imageUrl,
+      }, { merge: true });
+    } else {
+      // Create Firestore document without image
+      await setDoc(docRef, listingData, { merge: true });
+    }
   };
 
   return (
@@ -60,7 +76,7 @@ const CreateListing: React.FC = () => {
         <div className={styles.aside}>
           <BackButton />
           {/* the dropzone for uploading image */}
-          <FileDropzone className="dropzone" />
+          <FileDropzone className="dropzone" onDrop={handleDrop} />
         </div>
         {/* content on right panel */}
         <div className={styles.content}>
@@ -110,10 +126,10 @@ const CreateListing: React.FC = () => {
             <textarea
               id="description"
               name="description"
-              value={listingData.description} // Bind state value to textarea
+              value={listingData.description}
               rows={3}
               className="half-width"
-              onChange={handleChange} // Update state on change
+              onChange={handleChange}
               required
             />
             <br />
