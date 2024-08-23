@@ -25,7 +25,7 @@ const Navbar = () => {
           <div className={styles.navLinks}>
             <Link to="/pins" className={styles.navButton}>Pins</Link>
             <Link to="/create" className={styles.navButton}>Create a listing</Link>
-            <Link to="/signup" className={styles.navButton}>Profile</Link>
+            <Link to="/profile" className={styles.navButton}>Profile</Link>
             <button className={styles.navButton} onClick={() => {
               doSignOut().then(() => { navigate('/') }) }}>Logout</button>
           </div>
