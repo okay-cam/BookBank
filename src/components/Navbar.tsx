@@ -12,14 +12,6 @@ const Navbar = () => {
   const navigate = useNavigate()
   const { userLoggedIn } = useAuth();
 
-  const doSignOut = async () => {
-    try {
-      navigate('/');
-    } catch {
-      console.error("Error signing out");
-    }
-  }
-
   return (
     <div className={styles.navbar}>
       {userLoggedIn ? ( // If the user is logged in, we should show the full navbar
@@ -33,8 +25,9 @@ const Navbar = () => {
           <div className={styles.navLinks}>
             <Link to="/pins" className={styles.navButton}>Pins</Link>
             <Link to="/create" className={styles.navButton}>Create a listing</Link>
-            <Link to="/signup" className={styles.navButton}>Profile</Link>
-            <button className={styles.navButton} onClick={doSignOut}>Logout</button>
+            <Link to="/profile" className={styles.navButton}>Profile</Link>
+            <button className={styles.navButton} onClick={() => {
+              doSignOut().then(() => { navigate('/') }) }}>Logout</button>
           </div>
         </>
       ) : ( // If the user isn't logged in, we only show the BookBank logo

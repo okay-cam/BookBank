@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 // importing bootstrap must be done before importing CSS files
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,12 +12,44 @@ import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import { AuthProvider } from "./contexts/auth_context";
+import { useAuth } from "../contexts/auth_context";
+import { ForcePages } from "./components/AccessPreventer"
 
 const App = () => {
+
+  // location logger used for debugging
+  const LocationLogger = () => {
+
+    const location = useLocation();
+
+    React.useEffect(() => {
+      console.log("Current page:", location.pathname);
+    }, [location]);
+
+    return null;
+
+  }
+
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  
+
+
+  // TODO: add code to redirect users to login page when signed out
+
+  // TODO: add code to redirect users to home page when signed in & attempting to reach login/register page
+
   return (
     <>
       <AuthProvider>
       <BrowserRouter>
+        <LocationLogger />
+        <ForcePages setLoading={setLoading}/>
+        {
+          loading ? (
+          <div>Loading...</div>
+          ) : (
         <Routes>
           <Route element={<Layout />}>
             {/* Assigning routes to different pages, login is default */}
@@ -30,6 +62,7 @@ const App = () => {
             <Route path="/create" element={<CreateListing />} />
           </Route>
         </Routes>
+        )}
       </BrowserRouter>
       </AuthProvider>
     </>
