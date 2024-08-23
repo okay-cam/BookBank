@@ -103,7 +103,7 @@ const Login = () => {
         <br />
         <input
           type="submit"
-          value="Sign In"
+          value="Sign in"
           className="button call-to-action"
           disabled={isSigningIn}
         />

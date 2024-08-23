@@ -48,7 +48,9 @@ const App = () => {
         <ForcePages setLoading={setLoading}/>
         {
           loading ? (
-          <div>Loading...</div>
+          <div className="spinner-border text-dark" role="status">
+            <span className="sr-only"></span>
+          </div>
           ) : (
         <Routes>
           <Route element={<Layout />}>
