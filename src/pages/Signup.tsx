@@ -85,7 +85,7 @@ const Signup = () => {
   return (
     <>
       <br />
-      <h2>Register</h2>
+      <h1>Register</h1>
       <form onSubmit={onSubmit}>
         <label htmlFor="email">Email</label>
         <br />
