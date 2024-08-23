@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 // this dropzone allows people to drag and drop or choose files
 // the file is already restricted to 5MB or less, and can only be a jpg or png
 
-function FileDropzone({ className }: { className: string }) {
+function FileDropzone({ className, onDrop }: { className: string; onDrop: (file: File) => void }) {
   // extend the existing File type by adding preview property (allows you to store them in one object)
   type FileWithPreview = File & {
     preview: string;
@@ -13,7 +13,7 @@ function FileDropzone({ className }: { className: string }) {
   const [file, setFile] = useState<FileWithPreview | null>(null);
 
   // callback prevents unnecessary rerendering or functions for optimisation
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDropCallback = useCallback((acceptedFiles: File[]) => {
     const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
 
     if (acceptedFiles?.length) {
@@ -26,11 +26,12 @@ function FileDropzone({ className }: { className: string }) {
 
       uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
       setFile(uploadedFile);
+      onDrop(uploadedFile); // Call the onDrop callback
     }
-  }, []);
+  }, [onDrop]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: onDropCallback,
     multiple: false, // Restrict to a single file
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
