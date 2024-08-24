@@ -16,18 +16,21 @@ function FileDropzone({ className, onDrop }: { className: string; onDrop: (file:
   const onDropCallback = useCallback((acceptedFiles: File[]) => {
     const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
 
-    if (acceptedFiles?.length) {
-      const uploadedFile = acceptedFiles[0] as FileWithPreview;
-
-      if (uploadedFile.size > maxSize) {
-        alert("File is too large. Maximum size allowed is 5 MB."); // not tested yet
-        return;
-      }
-
-      uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
-      setFile(uploadedFile);
-      onDrop(uploadedFile); // Call the onDrop callback
+    if (!acceptedFiles?.length) {
+      alert("Invalid file. Must be JPG or PNG.");
+      return;
     }
+    
+    const uploadedFile = acceptedFiles[0] as FileWithPreview;
+
+    if (uploadedFile.size > maxSize) {
+      alert("File is too large. Maximum size allowed is 5 MB.");
+      return;
+    }
+
+    uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
+    setFile(uploadedFile);
+    onDrop(uploadedFile); // Call the onDrop callback
   }, [onDrop]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
