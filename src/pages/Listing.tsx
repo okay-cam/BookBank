@@ -33,6 +33,7 @@ const Listing: React.FC<ListingInformation> = ({
               }}
             />
         <br /><br />
+        {/* Request button and popup */}
         <button
           type="button"
           className="call-to-action"

@@ -12,8 +12,9 @@ import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import { AuthProvider } from "./contexts/auth_context";
-import { useAuth } from "../contexts/auth_context";
+// import { useAuth } from "../contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
 
@@ -45,6 +46,7 @@ const App = () => {
       <AuthProvider>
       <BrowserRouter>
         <LocationLogger />
+        <ScrollToTop />
         <ForcePages setLoading={setLoading}/>
         {
           loading ? (
