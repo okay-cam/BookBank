@@ -20,10 +20,10 @@ const CreateListing: React.FC = () => {
     authors: "",
     courseCode: "",
     description: "",
-    userID: auth.currentUser.uid.toString() // IGNORE ERROR
+    userID: auth.currentUser!.uid.toString()  // User can't be null when entering this page
   });
 
-  const [file, setFile] = useState<File | null>(null); // Manage file state
+  const [file, setFile] = useState<File | null>(null);  // Manage file state
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
