@@ -3,7 +3,11 @@ import "../styles/general.css";
 
 const Signup = () => {
   return (
-    <div>Error 404: Page not found</div>
+    <div>
+      <br />
+      <h1>Error 404: Page not found</h1>
+      <p>You may have entered the webpage url incorrectly.</p>
+    </div>
   )
 }
 
