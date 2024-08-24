@@ -1,10 +1,13 @@
-import React from 'react'
+import React from "react";
 import "../styles/general.css";
 
-const Signup = () => {
+const Error404 = () => {
   return (
-    <div>Error 404: Page not found</div>
-  )
-}
+    <div>
+      <br />
+      Error 404: Page not found
+    </div>
+  );
+};
 
-export default Signup
+export default Error404;
