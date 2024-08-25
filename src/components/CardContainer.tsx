@@ -14,7 +14,7 @@ const CardContainer = ({ listings }: ListingArray) => {
     <div className={styles.cardContainer}>
       {listings.map((card, index) => (
         <Card
-          key={index} // Using the index as a key
+          key={card.id} // Using the id as a key
           listing={card}
         />
       ))}

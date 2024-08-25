@@ -31,11 +31,7 @@ const App = () => {
 
   }
 
-
   const [loading, setLoading] = useState<boolean>(true);
-
-  
-
 
   // TODO: add code to redirect users to login page when signed out
 
@@ -56,14 +52,13 @@ const App = () => {
           ) : (
         <Routes>
           <Route element={<Layout />}>
-            {/* Assigning routes to different pages, login is default */}
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/listing" element={<Listing />} />
-            <Route path="*" element={<Error404 />} />
+            <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
+            <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
         )}

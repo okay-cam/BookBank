@@ -7,6 +7,7 @@ export interface Profile {
   }
   
   export interface Listing {
+    id: number;
     title: string;
     author: string;
     courseCode: string;
