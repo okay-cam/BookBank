@@ -15,15 +15,18 @@ interface ListingData {
 }
 
 const CreateListing: React.FC = () => {
+
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
-    userID: auth.currentUser.uid.toString() // IGNORE ERROR
+    userID: auth.currentUser!.uid.toString()  // User can't be null when entering this page
   });
 
-  const [file, setFile] = useState<File | null>(null); // Manage file state
+  const [file, setFile] = useState<File | null>(null);  // Manage file state
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,6 +46,12 @@ const CreateListing: React.FC = () => {
     // TODO: input validation function
     e.preventDefault();
 
+    // Prevent listings that don't have an image
+    if (!file) {
+      setErrorMessage("Please upload a photo of your textbook.")
+      return;
+    }
+
     // Create document entry
     const docRef = await addDoc(collection(db, "listings"), {
       title: listingData.title,
@@ -51,6 +60,8 @@ const CreateListing: React.FC = () => {
       description: listingData.description,
       userID: listingData.userID,
     });
+
+    // This code still has functionality for no images if we make it optional in future
 
     // Upload image to Cloud Storage if file exists
     if (file) {
@@ -141,7 +152,7 @@ const CreateListing: React.FC = () => {
               className="button call-to-action"
             />
             <p className="error-msg">
-              Insert error message - no input validation yet
+              {errorMessage}
             </p>
           </form>
         </div>

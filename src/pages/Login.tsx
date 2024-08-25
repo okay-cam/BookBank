@@ -59,16 +59,6 @@ const Login = () => {
     }
   };
 
-  // TODO: !! REMOVE OLD ACCESS CODE, move to app 
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (userLoggedIn) {
-      navigate("/home", { replace: true });
-    }
-  }, [userLoggedIn, navigate]);
-
   return (
     <>
       <br />

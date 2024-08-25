@@ -5,9 +5,10 @@ const Error404 = () => {
   return (
     <div>
       <br />
-      Error 404: Page not found
+      <h1>Error 404: Page not found</h1>
+      <p>You may have entered the webpage url incorrectly.</p>
     </div>
-  );
-};
+  )
+}
 
 export default Error404;
