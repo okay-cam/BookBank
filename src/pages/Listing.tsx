@@ -2,37 +2,31 @@ import React from "react";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "../components/EnquiryPopup";
 import BackButton from "../components/BackButton";
-import defaultImagePath from "../assets/default-image-path.jpg"
+import { Listing as ListingType } from "../backend/types";
+import defaultImagePath from "../assets/default-image-path.jpg";
 
 interface ListingInformation {
-  imagePath?: string;
-  title?: string;
-  authors?: string;
-  desc?: string;
-  courseCode?: string;
+  listing: ListingType; // Correctly define the prop type as `ListingType`
 }
 
-const Listing: React.FC<ListingInformation> = ({
-  imagePath = defaultImagePath,
-  title = "Default Title",
-  authors = "Unknown Author",
-  desc = "No description available.",
-  courseCode = "No course code",
-}) => {
+const Listing: React.FC<ListingInformation> = ({ listing }) => {
+  const { title, author, courseCode, description, imageSrc } = listing; // Destructure the properties
+
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
         <BackButton />
         <img
-              src={imagePath}
-              alt="Listing image"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "300px",
-                marginTop: "10px",
-              }}
-            />
-        <br /><br />
+          src={imageSrc || defaultImagePath} // Use the imageSrc or fallback to defaultImagePath
+          alt="Listing image"
+          style={{
+            maxWidth: "100%",
+            maxHeight: "300px",
+            marginTop: "10px",
+          }}
+        />
+        <br />
+        <br />
         {/* Request button and popup */}
         <button
           type="button"
@@ -46,9 +40,9 @@ const Listing: React.FC<ListingInformation> = ({
       </div>
       <div className={styles.content}>
         <h1>{title}</h1>
-        <label>{authors}</label>
+        <label>{author}</label>
         <h3>{courseCode}</h3>
-        <p>{desc}</p>
+        <p>{description}</p>
       </div>
     </main>
   );

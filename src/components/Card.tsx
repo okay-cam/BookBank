@@ -1,29 +1,27 @@
 import React from "react";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "./EnquiryPopup";
-import Listing from "../pages/Listing";
+import ListingPage from "../pages/Listing";
 import { Link } from "react-router-dom";
+import { Listing } from "../backend/types";
 
 interface CardData {
-  imageSrc: string;
-  title: string;
-  author: string;
-  courseCode: string;
+  listing: Listing;
 }
 
-const Card = ({ imageSrc, title, author, courseCode }: CardData) => {
+const Card = ({ listing }: CardData) => {
   return (
     <>
-      <Link to="/listing">
+      {/* <Link to="/listing"> */}
       <div className={`card ${styles.card}`}>
         <img
-          src={imageSrc}
+          src={listing.image}
           className={`card-img-top ${styles.cardImage}`}
           alt="Listing image"
         />
         <div className="card-body">
-          <h5 className="card-title">{title}</h5>
-          <p className="card-text">By {author}</p>
+          <h5 className="card-title">{listing.title}</h5>
+          <p className="card-text">By {listing.author}</p>
           {/* Request button and popup */}
           <button
             type="button"
@@ -33,10 +31,10 @@ const Card = ({ imageSrc, title, author, courseCode }: CardData) => {
           >
             Request
           </button>
-          <EnquiryPopup title={title} />
+          <EnquiryPopup title={listing.title} />
         </div>
       </div>
-      </Link>
+      {/* </Link> */}
     </>
   );
 };
