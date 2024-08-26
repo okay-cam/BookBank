@@ -51,7 +51,7 @@ const CreateListing: React.FC = () => {
       setErrorMessage("Please upload a photo of your textbook.")
       return;
     }
-
+    
     // Create document entry
     const docRef = await addDoc(collection(db, "listings"), {
       title: listingData.title,
