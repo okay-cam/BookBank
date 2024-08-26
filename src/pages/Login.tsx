@@ -87,7 +87,14 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
         <br />
+        <br />
+        <p>
+          {/* add reset password functionality */}
+          <Link to={'/resetpassword'}>Forgot Password?</Link>
+        </p>
+
         <br />
         <input
           type="submit"

@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/general.css";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Layout from "./Layout";
 import Listing from "./pages/Listing";
@@ -51,6 +52,7 @@ const App = () => {
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/resetpassword" element={<ResetPassword />} />
             <Route path="/home" element={<Home />} />
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />

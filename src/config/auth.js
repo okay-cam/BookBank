@@ -1,7 +1,11 @@
 // import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "./firebase";
 
+
+export const doSendPasswordResetEmail = (auth, email) => {
+    return sendPasswordResetEmail(auth, email);
+}
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -24,10 +28,6 @@ export const doSignOut = () => {
 };
 
 
-// export const doPasswordReset = (email) => {
-//     return sendPasswordResetEmail(auth, email);
-//   };
-  
 // export const doPasswordChange = (password) => {
 // return updatePassword(auth.currentUser, password);
 // };

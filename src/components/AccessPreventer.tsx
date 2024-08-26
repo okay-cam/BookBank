@@ -14,14 +14,16 @@ const ForcePages: React.FC<ForcePagesProps> = ({ setLoading }) => {
 	
 	const navigate = useNavigate();
 	const location = useLocation();
-  
+	
+	const authPages = ["/", "/signup", "/resetpassword"];
+
 	useEffect(() => {
 		// go to login page when attempting to reach a non-auth page while signed out
-		if ( !userLoggedIn && location.pathname !== "/" && location.pathname !== "/signup" ) {
+		if ( !userLoggedIn && !authPages.includes(location.pathname) ) {
 			navigate("/", { replace: true });
 			return;
 		}
-		if ( userLoggedIn && (location.pathname === "/" || location.pathname === "/signup") ) {
+		if ( userLoggedIn && authPages.includes(location.pathname) ) {
 			navigate("/home", { replace: true });
 			return;
 		}
