@@ -13,6 +13,7 @@ import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import { AuthProvider } from "./contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
 
@@ -29,7 +30,6 @@ const App = () => {
 
   }
 
-
   const [loading, setLoading] = useState<boolean>(true);
 
 
@@ -38,6 +38,7 @@ const App = () => {
       <AuthProvider>
       <BrowserRouter>
         <LocationLogger />
+        <ScrollToTop />
         <ForcePages setLoading={setLoading}/>
         {
           loading ? (
@@ -47,14 +48,13 @@ const App = () => {
           ) : (
         <Routes>
           <Route element={<Layout />}>
-            {/* Assigning routes to different pages, login is default */}
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/listing" element={<Listing />} />
-            <Route path="*" element={<Error404 />} />
+            <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
+            <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
         )}

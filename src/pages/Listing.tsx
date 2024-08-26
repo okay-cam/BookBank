@@ -1,38 +1,38 @@
 import React from "react";
 import styles from "../styles/listing.module.css";
+import { Navigate, useParams } from "react-router-dom";
 import EnquiryPopup from "../components/EnquiryPopup";
 import BackButton from "../components/BackButton";
-import defaultImagePath from "../assets/default-image-path.jpg"
+import { Listing as ListingType } from "../backend/types";
+import defaultImagePath from "../assets/default-image-path.jpg";
+import testListings from "../backend/testListings";
 
-interface ListingInformation {
-  imagePath?: string;
-  title?: string;
-  authors?: string;
-  desc?: string;
-  courseCode?: string;
-}
+const Listing: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); // Extracts id from the route parameters.
+  const listingId = parseInt(id || "0", 10); // Converts id to an integer, defaulting to 0 if id is not provided.
+  const listing = testListings.find((l) => l.id === listingId); // Finds the listing object in testListings whose id matches the converted listingId.
 
-const Listing: React.FC<ListingInformation> = ({
-  imagePath = defaultImagePath,
-  title = "Default Title",
-  authors = "Unknown Author",
-  desc = "No description available.",
-  courseCode = "No course code",
-}) => {
+  // Redirect to 404 page if listing is not found
+  if (!listing) {
+    return <Navigate to="/404" />;
+  }
+
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
         <BackButton />
         <img
-              src={imagePath}
-              alt="Listing image"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "300px",
-                marginTop: "10px",
-              }}
-            />
-        <br /><br />
+          src={listing.image || defaultImagePath} // Use the imageSrc or fallback to defaultImagePath
+          alt="Listing image"
+          style={{
+            maxWidth: "100%",
+            maxHeight: "300px",
+            marginTop: "10px",
+          }}
+        />
+        <br />
+        <br />
+        {/* Request button and popup */}
         <button
           type="button"
           className="call-to-action"
@@ -41,13 +41,13 @@ const Listing: React.FC<ListingInformation> = ({
         >
           Request/Enquire
         </button>
-        <EnquiryPopup title={title} />
+        <EnquiryPopup title={listing.title} />
       </div>
       <div className={styles.content}>
-        <h1>{title}</h1>
-        <label>{authors}</label>
-        <h3>{courseCode}</h3>
-        <p>{desc}</p>
+        <h1>{listing.title}</h1>
+        <label>{listing.author}</label>
+        <h3>{listing.courseCode}</h3>
+        <p>{listing.description}</p>
       </div>
     </main>
   );

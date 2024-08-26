@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react";
 import "../styles/general.css";
 
-const Signup = () => {
+const Error404 = () => {
   return (
     <div>
       <br />
@@ -11,4 +11,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Error404;
