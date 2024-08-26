@@ -12,7 +12,6 @@ import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import { AuthProvider } from "./contexts/auth_context";
-import { useAuth } from "../contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
 
 const App = () => {
@@ -33,12 +32,6 @@ const App = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  
-
-
-  // TODO: add code to redirect users to login page when signed out
-
-  // TODO: add code to redirect users to home page when signed in & attempting to reach login/register page
 
   return (
     <>
