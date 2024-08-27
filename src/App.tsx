@@ -11,6 +11,8 @@ import Layout from "./Layout";
 import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
+import Pins from "./pages/Pins";
+
 import { AuthProvider } from "./contexts/auth_context";
 // import { useAuth } from "../contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
@@ -58,6 +60,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
+            <Route path="/pins" element={<Pins />} />
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
