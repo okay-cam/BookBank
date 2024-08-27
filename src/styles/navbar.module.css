@@ -5,7 +5,6 @@
     align-items: center;
     padding: 10px 20px;
     justify-content: center;
-    /* to make the navbar sticky */
     position: fixed;
     top: 0;
     width: 100%;
@@ -40,8 +39,6 @@
 }
 
 .navButton {
-    background-color: transparent;
-    border: none;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -49,8 +46,50 @@
     text-decoration: none;
 }
 
-.navButton:hover {
-    background-color: transparent;
+.profileDropdown {
+    margin-left: 20px;
+}
+
+.profilePic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.dropdownMenu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 4px;
+    background-color: #134f5c;
+    border-radius: 10px;
+    padding: 5px 10px;;
+}
+
+.dropdownButton {
+    padding: 10px 25px;
+    color: white;
+    text-decoration: none;
+    text-align: left;
+    font-weight: bold;
+    font-size: 14.5px;
+    background-color: #2690a0;
+    border: none;
+    border-radius: 15px;
+    margin: 5.5px 0;
+}
+
+.dropdownButton:hover {
+    background-color: #81b6c2;
     border: none;
     color: white;
+    border-radius: 15px;
+    /* I needed to repeat some of this code because of the logout button which is a button instead of a link */
+}
+
+.dropdownMenu hr {
+    margin: 5px 0;
 }

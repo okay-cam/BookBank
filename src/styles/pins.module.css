@@ -1,0 +1,21 @@
+.pinsHeader {
+    text-align: left;
+}
+
+.listingsSection {
+    padding: 20px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.scrollContainer {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.scrollContainer > * {
+    min-width: 200px;
+    height: 300px;
+}

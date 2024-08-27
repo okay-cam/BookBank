@@ -6,7 +6,7 @@ const Error404 = () => {
     <div>
       <br />
       <h1>Error 404: Page not found</h1>
-      <p>You may have entered the webpage url incorrectly.</p>
+      <p>You may have entered the webpage URL incorrectly.</p>
     </div>
   )
 }
