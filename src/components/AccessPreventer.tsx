@@ -14,57 +14,22 @@ const ForcePages: React.FC<ForcePagesProps> = ({ setLoading }) => {
 	
 	const navigate = useNavigate();
 	const location = useLocation();
-  
+	
+	const authPages = ["/", "/signup", "/resetpassword", "/passwordemailsent"];
+	
 	useEffect(() => {
 		// go to login page when attempting to reach a non-auth page while signed out
-		if ( !userLoggedIn && location.pathname !== "/" && location.pathname !== "/signup" ) {
+		if ( !userLoggedIn && !authPages.includes(location.pathname) ) {
 			navigate("/", { replace: true });
 			return;
 		}
-		if ( userLoggedIn && (location.pathname === "/" || location.pathname === "/signup") ) {
+		if ( userLoggedIn && authPages.includes(location.pathname) ) {
 			navigate("/home", { replace: true });
 			return;
 		}
 		setLoading(false);
 	}, [userLoggedIn, navigate, location.pathname, setLoading]);
 	
-	return null;
-}
-
-// Go to login page when not signed in
-const ForceLoginWhenSignedOut = () => {
-
-	const { userLoggedIn } = useAuth();
-	
-	const navigate = useNavigate();
-	const location = useLocation();
-  
-	useEffect(() => {
-		// go to login page when attempting to reach a non-auth page while signed out
-		if ( !userLoggedIn && location.pathname !== "/" && location.pathname !== "/signup" ) {
-			navigate("/", { replace: true });
-		}
-	}, [userLoggedIn, navigate, location.pathname]);
-
-	return null;
-}
-
-
-// Go to home page when signed in (from login/register page to )
-const ForceHomeWhenSignedIn = () => {
-
-	const { userLoggedIn } = useAuth();
-	
-	const navigate = useNavigate();
-	const location = useLocation();
-
-	useEffect(() => {
-		// go to home after logging in or registering
-		if ( userLoggedIn && (location.pathname === "/" || location.pathname === "/signup") ) {
-			navigate("/home", { replace: true });
-		}
-	}, [userLoggedIn, navigate, location.pathname]);
-
 	return null;
 }
 

@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 // importing bootstrap must be done before importing CSS files
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../styles/general.css";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doCreateUserWithEmailAndPassword } from "../config/auth";
-import { useAuth } from "../contexts/auth_context";
 import { FirebaseError } from "firebase/app";
 
 const Signup = () => {
   
-  const { userLoggedIn } = useAuth();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -117,9 +115,6 @@ const Signup = () => {
         />
         <br />
         <br />
-        {errorMessage && (
-          <p className="error-msg">{errorMessage}</p>
-        )}
         <input
           type="submit"
           name="submit"
@@ -130,8 +125,13 @@ const Signup = () => {
         />
         <br />
         <br />
+        {errorMessage && (
+          <p className="error-msg">{errorMessage}</p>
+        )}
       </form>
-
+      
+      <br />
+      <br />
       <div>
         Already have an account? {'   '}
         <Link to={'/'}>Log in</Link>

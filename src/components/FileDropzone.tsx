@@ -28,9 +28,23 @@ function FileDropzone({ className, onDrop }: { className: string; onDrop: (file:
       return;
     }
 
-    uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
-    setFile(uploadedFile);
-    onDrop(uploadedFile); // Call the onDrop callback
+    const image = new Image();
+    image.src = URL.createObjectURL(uploadedFile);
+
+    image.onload = () => {
+      if (image.width < 128 || image.height < 128) {
+        alert("Image resolution is too low. Minimum required is 128x128 pixels.");
+        return;
+      }
+
+      uploadedFile.preview = image.src; // Store the preview URL
+      setFile(uploadedFile);
+      onDrop(uploadedFile); // Call the onDrop callback with the valid file
+    };
+
+    // uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
+    // setFile(uploadedFile);
+    // onDrop(uploadedFile); // Call the onDrop callback
   }, [onDrop]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

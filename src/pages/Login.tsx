@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 // import { Navigate, Link } from "react-router-dom";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doSignInWithEmailAndPassword } from "../config/auth";
-import { useAuth } from "../contexts/auth_context";
 import { FirebaseError } from "firebase/app";
 
 const Login = () => {
   // Stores web page states which are used during account authentication
-  const { userLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // Used to prevent extra login attempts while processing auth. toggled when pressing submit
@@ -89,8 +87,14 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
         <br />
         <br />
+        <p>
+          {/* add reset password functionality */}
+          <Link to={'/resetpassword'}>Forgot Password?</Link>
+        </p>
+
         <input
           type="submit"
           value="Sign in"
@@ -104,6 +108,8 @@ const Login = () => {
         )}
       </form>
 
+      <br />
+      <br />
       <div>
         Don't have an account? {'   '}
         <Link to={'/signup'}>Sign Up</Link>

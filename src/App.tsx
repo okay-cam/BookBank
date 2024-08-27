@@ -6,13 +6,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/general.css";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
+import PasswordEmailSent from "./pages/PasswordEmailSent";
 import Home from "./pages/Home";
 import Layout from "./Layout";
 import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import { AuthProvider } from "./contexts/auth_context";
-// import { useAuth } from "../contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -33,9 +34,6 @@ const App = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  // TODO: add code to redirect users to login page when signed out
-
-  // TODO: add code to redirect users to home page when signed in & attempting to reach login/register page
 
   return (
     <>
@@ -55,6 +53,8 @@ const App = () => {
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/resetpassword" element={<ResetPassword />} />
+            <Route path="/passwordemailsent" element={<PasswordEmailSent />} />
             <Route path="/home" element={<Home />} />
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
