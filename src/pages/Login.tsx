@@ -95,7 +95,6 @@ const Login = () => {
           <Link to={'/resetpassword'}>Forgot Password?</Link>
         </p>
 
-        <br />
         <input
           type="submit"
           value="Sign in"
@@ -109,6 +108,8 @@ const Login = () => {
         )}
       </form>
 
+      <br />
+      <br />
       <div>
         Don't have an account? {'   '}
         <Link to={'/signup'}>Sign Up</Link>

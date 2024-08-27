@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-// import { Navigate, Link } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 // get auth functions for checking login state
 import { doSendPasswordResetEmail } from "../config/auth";
@@ -12,6 +11,8 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const navigate = useNavigate();
+
   // Attempt to send password reset email after pressing submit button
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +20,12 @@ const ResetPassword = () => {
       // Attempt sign-in here
       setIsLoading(true);
       try {
-        await doSendPasswordResetEmail(email);
+        await doSendPasswordResetEmail(email)
+					.then(() => {
+						// Password reset email sent!
+            console.log("password email sent!");
+            navigate("/passwordemailsent");
+					})
       } catch (error) {
         setIsLoading(false);
         // Type assertion to FirebaseError
@@ -27,18 +33,17 @@ const ResetPassword = () => {
 
         console.log(firebaseError);
         // show correct error message depending on the issue
-        // TODO
-        // switch (firebaseError.code) {
-        //   case "auth/invalid-credential":
-        //     setErrorMessage("Invalid credentials. Please check your input.");
-        //     break;
-        //   case "auth/user-not-found":
-        //     setErrorMessage("No user found with this email.");
-        //     break;
-        //   default:
-        //     setErrorMessage("An unexpected error occurred. Please try again.");
-        //     break;
-        // }
+        switch (firebaseError.code) {
+          case "auth/invalid-email":
+            setErrorMessage("Invalid email. Please fix the email's formatting.");
+            break;
+          case "auth/too-many-requests":
+            setErrorMessage("Too many requests. Please try again later.");
+            break;
+          default:
+            setErrorMessage("An unexpected error occurred. Please try again.");
+            break;
+        }
       }
     }
   };
@@ -65,7 +70,7 @@ const ResetPassword = () => {
 
         <input
           type="submit"
-          value="Sign in"
+          value="Send Reset Email"
           className="button call-to-action"
           disabled={isLoading}
         />
@@ -76,9 +81,11 @@ const ResetPassword = () => {
           <p className="error-msg">{errorMessage}</p>
         )}
       </form>
-
+      
+      <br />
+      <br />
       <div>
-        <Link to={'/'}>Back</Link>
+        <Link to={'/'}>Back to Login</Link>
       </div>
 
     </>

@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswor
 import { auth } from "./firebase";
 
 
-export const doSendPasswordResetEmail = (auth, email) => {
+export const doSendPasswordResetEmail = (email) => {
     return sendPasswordResetEmail(auth, email);
 }
 

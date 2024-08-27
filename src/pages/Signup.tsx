@@ -115,9 +115,6 @@ const Signup = () => {
         />
         <br />
         <br />
-        {errorMessage && (
-          <p className="error-msg">{errorMessage}</p>
-        )}
         <input
           type="submit"
           name="submit"
@@ -128,8 +125,13 @@ const Signup = () => {
         />
         <br />
         <br />
+        {errorMessage && (
+          <p className="error-msg">{errorMessage}</p>
+        )}
       </form>
-
+      
+      <br />
+      <br />
       <div>
         Already have an account? {'   '}
         <Link to={'/'}>Log in</Link>
