@@ -22,7 +22,7 @@ const Listing: React.FC = () => {
       <div className={styles.aside}>
         <BackButton />
         <img
-          src={listing.image || defaultImagePath} // Use the imageSrc or fallback to defaultImagePath
+          src={listing.imageUrl || defaultImagePath} // Use the imageSrc or fallback to defaultImagePath
           alt="Listing image"
           style={{
             maxWidth: "100%",
@@ -45,7 +45,7 @@ const Listing: React.FC = () => {
       </div>
       <div className={styles.content}>
         <h1>{listing.title}</h1>
-        <label>{listing.author}</label>
+        <label>{listing.authors}</label>
         <h3>{listing.courseCode}</h3>
         <p>{listing.description}</p>
       </div>

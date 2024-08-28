@@ -2,7 +2,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { Listing } from "../backend/types";
 import { db } from "../config/firebase";
 
-export async function getListings(field?: string, value?: string): Promise<Listing[]> { // field? allows for the values to be empty
+export async function getListings(field?: string, value?: string): Promise<Listing[]>{ // field? allows for the values to be empty
   
   const listingsRef = collection(db, "listings");
   
