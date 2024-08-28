@@ -1,0 +1,24 @@
+/* CSS STYLES FOR PROFILE PAGE */
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: "aside content";
+}
+
+.aside, .content {
+    height: 100vh;
+    padding: 20px;
+}
+
+.aside {
+    grid-area: aside;
+    background-color: white;
+    text-align: center;
+}
+
+.content {
+    grid-area: content;
+    background-color: #efefefff;
+    padding: 20px 40px;
+    text-align: start;
+}
