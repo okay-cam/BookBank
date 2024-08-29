@@ -3,15 +3,16 @@ import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
 import { Listing } from "../backend/types";
-import { getListings } from "../backend/readData";
+import { getListings } from "../backend/listingService";
 
 const Home = () => {
   const [listings, setListings] = useState<Listing[]>([]); // Initialize state with an empty array
 
   useEffect(() => {
     const fetchListings = async () => {
-      const data = await getListings(); // Fetch listings
-      setListings(data); // Set the fetched data to state
+      const updatedListings = await getListings(); // Fetch and update listings
+      setListings(updatedListings); // Set the updated data to state
+      console.log(updatedListings); // Log the updated listings with unique ids
     };
 
     fetchListings(); // Call the async function inside useEffect

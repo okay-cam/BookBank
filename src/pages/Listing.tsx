@@ -1,20 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
 import { Navigate, useParams } from "react-router-dom";
 import EnquiryPopup from "../components/EnquiryPopup";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import testListings from "../backend/testListings";
+import { getListings } from "../backend/listingService"; // Import the fetch function
 
 const Listing: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Extracts id from the route parameters.
-  const listingId = parseInt(id || "0", 10); // Converts id to an integer, defaulting to 0 if id is not provided.
-  const listing = testListings.find((l) => l.id === listingId); // Finds the listing object in testListings whose id matches the converted listingId.
+  const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
+  const listingId = parseInt(id || "0", 10); // Convert id to an integer, defaulting to 0 if id is not provided.
+
+  const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
+  const [loading, setLoading] = useState(true); // State to manage loading status
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listings = await getListings(); // Fetch all listings
+      const foundListing = listings.find((l) => l.id === listingId); // Find the listing by id
+
+      setListing(foundListing || null); // Set the found listing or null if not found
+      setLoading(false); // Set loading to false after fetching
+    };
+
+    fetchListing(); // Call the fetch function when the component mounts
+  }, [listingId]);
 
   // Redirect to 404 page if listing is not found
-  if (!listing) {
+  if (!loading && !listing) {
     return <Navigate to="/404" />;
+  }
+
+  // Show a loading message while fetching the listing
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -22,7 +41,7 @@ const Listing: React.FC = () => {
       <div className={styles.aside}>
         <BackButton />
         <img
-          src={listing.imageUrl || defaultImagePath} // Use the imageSrc or fallback to defaultImagePath
+          src={listing?.imageUrl || defaultImagePath} // Use the imageUrl or fallback to defaultImagePath
           alt="Listing image"
           style={{
             maxWidth: "100%",
@@ -41,13 +60,13 @@ const Listing: React.FC = () => {
         >
           Request/Enquire
         </button>
-        <EnquiryPopup title={listing.title} />
+        <EnquiryPopup title={listing?.title || ""} />
       </div>
       <div className={styles.content}>
-        <h1>{listing.title}</h1>
-        <label>{listing.authors}</label>
-        <h3>{listing.courseCode}</h3>
-        <p>{listing.description}</p>
+        <h1>{listing?.title}</h1>
+        <label>{listing?.authors}</label>
+        <h3>{listing?.courseCode}</h3>
+        <p>{listing?.description}</p>
       </div>
     </main>
   );
