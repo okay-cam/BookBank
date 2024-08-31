@@ -15,7 +15,6 @@ const PasswordEmailSent = () => {
       <div>
         <Link to={'/'}>Back to Login</Link>
       </div>
-
     </>
   );
 };

@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 import { doCreateUserWithEmailAndPassword } from "../config/auth";
 import { FirebaseError } from "firebase/app";
 
+// get functions for adding new user data
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../config/firebase";
+
 const Signup = () => {
   
   const [email, setEmail] = useState('')
@@ -31,7 +35,24 @@ const Signup = () => {
       }
 
       try {
-        await doCreateUserWithEmailAndPassword(email, password)
+
+        // create account
+        const userCredential = await doCreateUserWithEmailAndPassword(email, password);
+        const userID = userCredential.user.uid;
+
+        // Add placeholder user data to "users" document
+        await setDoc(doc(db, "users", userID), {
+          name: "Placeholder Name",
+          // Change to a more suitable placeholder image instead of Teletubbies
+          imageURL: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
+          location: "Ponsonholder",
+          university: "Placeholder Uni",
+          degree: "Bachelor of Placeholders",
+          totalDonations: 2,
+          totalRatingsReceived: 5,
+          rating: 80,
+        });
+
       } catch (error) {
         // show correct error message depending on the issue
         setIsRegistering(false);
@@ -66,6 +87,7 @@ const Signup = () => {
             break;
           default:
             setErrorMessage('An unexpected error occurred. Please try again.');
+            console.log(error);
             break;
         }
       }
