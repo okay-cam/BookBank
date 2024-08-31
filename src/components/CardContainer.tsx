@@ -9,7 +9,6 @@ interface ListingArray {
 }
 
 const CardContainer = ({ listings }: ListingArray) => {
-
   return (
     <div className={styles.cardContainer}>
       {listings.map((card, index) => (

@@ -9,9 +9,9 @@ export interface Profile {
   export interface Listing {
     id: number;
     title: string;
-    author: string;
+    authors: string;
     courseCode: string;
     description: string;
-    image: string;
-    donor: Profile;
+    imageUrl: string;
+    userID: string;
   }
