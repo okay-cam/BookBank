@@ -8,6 +8,7 @@ import defaultImagePath from "../assets/default-image-path.jpg";
 import { getListings } from "../backend/listingService"; // Import the fetch function
 
 const Listing: React.FC = () => {
+  // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const listingId = parseInt(id || "0", 10); // Convert id to an integer, defaulting to 0 if id is not provided.
 

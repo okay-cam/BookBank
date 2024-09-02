@@ -9,6 +9,8 @@ interface CardData {
   listing: Listing;
 }
 
+// For displaying each listing as a 'Card'
+
 const Card = ({ listing }: CardData) => {
   return (
     <>
@@ -24,14 +26,14 @@ const Card = ({ listing }: CardData) => {
           <p className="card-text">By {listing.authors}</p>
           {/* REQUEST BUTTON */}
           {/* Commented out because it is not currently working (passes the wrong title to the popup) */}
-          {/* <button
+          <button
             type="button"
             className="call-to-action"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
           >
             Request
-          </button> */}
+          </button>
         </div>
       </Link>
     </>
