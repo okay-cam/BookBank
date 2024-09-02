@@ -12,7 +12,7 @@ const Home = () => {
     const fetchListings = async () => {
       const updatedListings = await getListings(); // Fetch and update listings
       setListings(updatedListings); // Set the updated data to state
-      console.log(updatedListings); // Log the updated listings with unique ids
+      // console.log(updatedListings); // Log the updated listings with unique ids
     };
 
     fetchListings(); // Call the async function inside useEffect

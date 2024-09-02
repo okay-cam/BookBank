@@ -2,6 +2,9 @@ import styles from "../styles/pins.module.css";
 import PinsCardContainer from "../components/PinsCardContainer";
 import testListings from "../backend/testListings";
 
+// This page needs to be updated so that the actual listings are passed in instead of test listings
+// The test listings don't have request functionality attached
+
 const Pins = () => {
   return (
     <>
