@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { Profile as ProfileType } from "../backend/types";
+import { ProfileData as ProfileType } from "../backend/types";
 import profile from "../backend/testProfile";
 
 // interface ProfileDetails {
@@ -59,8 +59,8 @@ const Profile = () => {
             <p>Location: {profileData.location}</p>
             <p>University: {profileData.university}</p>
             <p>Degree: {profileData.degree}</p>
-            <p>Rating: {profileData.rating}</p>
-            <p>Total Ratings Received: {profileData.totalRatingsReceived}</p>
+            <p>Rating: {profileData.overallRating}</p>
+            <p>Total Ratings Received: {profileData.numRatings}</p>
             <p>Total Donations: {profileData.totalDonations}</p>
           </div>
           ) : (

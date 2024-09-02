@@ -9,5 +9,7 @@ export const getListings = async (): Promise<Listing[]> => {
   return data.map((listing, index) => ({
     ...listing,
     id: listing.id || index, // Assign an id based on index
-  }));
+    modalId: listing.modalId || `modal-${index}`
+  }
+));
 };

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 interface Title {
+  modalId: string;
   title: string;
 }
 
-const EnquiryPopup: React.FC<Title> = ({ title }) => {
+const EnquiryPopup: React.FC<Title> = ({ title, modalId }) => {
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );
@@ -27,9 +28,9 @@ const EnquiryPopup: React.FC<Title> = ({ title }) => {
   return (
     <div
       className="modal fade"
-      id="exampleModal"
+      id={modalId} // Use the unique modal ID
       tabIndex={-1}
-      aria-labelledby="exampleModalLabel"
+      aria-labelledby={`${modalId}Label`}
       aria-hidden="true"
     >
       <div className="modal-dialog modal-dialog-centered">

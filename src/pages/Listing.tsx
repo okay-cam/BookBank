@@ -57,11 +57,11 @@ const Listing: React.FC = () => {
           type="button"
           className="call-to-action"
           data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
+          data-bs-target={`#${listing!.modalId}`}
         >
           Request/Enquire
         </button>
-        <EnquiryPopup title={listing?.title || ""} />
+        <EnquiryPopup title={listing?.title || ""} modalId={listing!.modalId} />
       </div>
       <div className={styles.content}>
         <h1>{listing?.title}</h1>

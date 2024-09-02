@@ -12,9 +12,11 @@ interface CardData {
 // For displaying each listing as a 'Card'
 
 const Card = ({ listing }: CardData) => {
+  // const uniqueModalId = `modal-${listing.id}`;
+
   return (
     <>
-      <EnquiryPopup title={listing.title} />
+      <EnquiryPopup title={listing.title} modalId={listing.modalId} />
       <Link to={`/listing/${listing.id}`} className={`card ${styles.card}`}>
         <img
           src={listing.imageUrl || defaultImagePath} // Use the image or fallback to defaultImagePath
@@ -25,13 +27,11 @@ const Card = ({ listing }: CardData) => {
           <h5 className="card-title">{listing.title}</h5>
           <p className="card-text">By {listing.authors}</p>
           {/* REQUEST BUTTON */}
-          {/* Commented out because it is not currently working (passes the wrong title to the popup) */}
           <button
             type="button"
             className="call-to-action"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
+            data-bs-target={`#${listing.modalId}`}>
             Request
           </button>
         </div>

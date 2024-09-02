@@ -1,7 +1,7 @@
-import { Profile } from "./types"; // Assuming Profile type is defined in types.ts
+import { ProfileData } from "./types"; // Assuming Profile type is defined in types.ts
 import image from "../assets/default-image-path.jpg";
 
-const testProfile: Profile = {
+const testProfile: ProfileData = {
   name: "Chelsea Smith",
   email: "chelsmith1999@gmail.com",
   profilePic: image,
