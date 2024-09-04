@@ -27,7 +27,7 @@ export interface ProfileData {
 // }
   
 export interface Listing {
-    id: number;
+    id: string;
     title: string;
     authors: string;
     courseCode: string;
