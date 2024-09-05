@@ -15,6 +15,7 @@ import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
 import Pins from "./pages/Pins";
 import Profile from "./pages/Profile";
+import EditAccount from "./pages/EditAccount";
 
 import { AuthProvider } from "./contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
@@ -63,6 +64,7 @@ const App = () => {
             <Route path="/create" element={<CreateListing />} />
             <Route path="/pins" element={<Pins />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-account" element={<EditAccount />}/>
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
