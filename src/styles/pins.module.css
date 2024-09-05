@@ -5,7 +5,6 @@
 .listingsSection {
     padding: 20px;
     text-align: left;
-    white-space: nowrap;
 }
 
 .scrollContainer {
@@ -17,5 +16,4 @@
 
 .scrollContainer > * {
     min-width: 200px;
-    height: 300px;
 }
