@@ -30,7 +30,8 @@ export async function getListings(field?: string, value?: string): Promise<Listi
         courseCode: data.courseCode,
         description: data.description,
         imageUrl: data.imageUrl,
-        userID: data.userID
+        userID: data.userID,
+        modalId: "modal-"+doc.id
       };
       listings.push(listing);
     });

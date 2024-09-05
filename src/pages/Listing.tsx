@@ -5,12 +5,12 @@ import EnquiryPopup from "../components/EnquiryPopup";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import { getListings } from "../backend/listingService"; // Import the fetch function
+import { getListings } from "../backend/readData";
 
 const Listing: React.FC = () => {
   // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
-  const listingId = parseInt(id || "0", 10); // Convert id to an integer, defaulting to 0 if id is not provided.
+  // const listingId = parseInt(id || "0", 10); // Convert id to an integer, defaulting to 0 if id is not provided.
 
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
   const [loading, setLoading] = useState(true); // State to manage loading status
@@ -18,14 +18,14 @@ const Listing: React.FC = () => {
   useEffect(() => {
     const fetchListing = async () => {
       const listings = await getListings(); // Fetch all listings
-      const foundListing = listings.find((l) => l.id === listingId); // Find the listing by id
+      const foundListing = listings.find((l) => l.id === id); // Find the listing by id
 
       setListing(foundListing || null); // Set the found listing or null if not found
       setLoading(false); // Set loading to false after fetching
     };
 
     fetchListing(); // Call the fetch function when the component mounts
-  }, [listingId]);
+  }, [id]);
 
   // Redirect to 404 page if listing is not found
   if (!loading && !listing) {

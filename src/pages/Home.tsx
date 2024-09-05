@@ -3,20 +3,25 @@ import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
 import { Listing } from "../backend/types";
-import { getListings } from "../backend/listingService";
+import { getListings } from "../backend/readData";
 
 const Home = () => {
-  const [listings, setListings] = useState<Listing[]>([]); // Initialize state with an empty array
+  // State to hold the listings fetched from the database
+  const [listings, setListings] = useState<Listing[]>([]);
 
+  // Fetch listings when the component mounts
   useEffect(() => {
     const fetchListings = async () => {
-      const updatedListings = await getListings(); // Fetch and update listings
-      setListings(updatedListings); // Set the updated data to state
-      // console.log(updatedListings); // Log the updated listings with unique ids
+      try {
+        const updatedListings = await getListings(); // Fetch listings from backend
+        setListings(updatedListings); // Update state with fetched listings
+      } catch (error) {
+        console.error("Error fetching listings:", error); // Handle any errors
+      }
     };
 
-    fetchListings(); // Call the async function inside useEffect
-  }, []); // Empty dependency array means this effect runs once when the component mounts
+    fetchListings(); // Trigger the fetch when the component mounts
+  }, []); // Empty dependency array ensures this runs once when the component is mounted
 
   return (
     <main className={styles.gridContainer}>
@@ -26,7 +31,8 @@ const Home = () => {
       <div className={styles.listingsSection}>
         <h1>Current listings</h1>
         <br />
-        <CardContainer listings={listings} /> {/* Pass the listings from state */}
+        <CardContainer listings={listings} />{" "}
+        {/* Pass the listings from state */}
       </div>
     </main>
   );
