@@ -6,6 +6,7 @@ import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 import { getListings } from "../backend/readData";
+import DonorInfo from "../components/DonorInfo";
 
 const Listing: React.FC = () => {
   // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -68,6 +69,8 @@ const Listing: React.FC = () => {
         <label>{listing?.authors}</label>
         <h3>{listing?.courseCode}</h3>
         <p>{listing?.description}</p>
+        <h1>Donor information</h1>
+        <DonorInfo donorId={listing?.userID}/>
       </div>
     </main>
   );
