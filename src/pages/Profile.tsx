@@ -4,9 +4,9 @@ import defaultImage from "../assets/default-image-path.jpg";
 import { ProfileData as ProfileType } from "../backend/types";
 import { getProfileData } from "../backend/readData";
 import { auth } from "../config/firebase";
-import PinsCardContainer from "../components/PinsCardContainer";
 import { getListings } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
+import PinsCardContainer from "../components/PinsCardContainer";
 
 const Profile = () => {
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
@@ -86,6 +86,7 @@ const Profile = () => {
       <div className={styles.content}>
         {profileData && <h1>{profileData.name}'s Active Listings</h1>}
         {activeListings.length > 0 ? (
+          // Change to pin card container when display is fixed
           <PinsCardContainer listings={activeListings} />
         ) : (
           <p>No active listings to show.</p>

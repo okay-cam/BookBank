@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-interface Title {
+interface ModalDetails {
   modalId: string;
   title: string;
 }
 
-const EnquiryPopup: React.FC<Title> = ({ title, modalId }) => {
+const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );

@@ -1,6 +1,6 @@
 
 import { Listing, ProfileData } from "../backend/types";
-
+import { auth } from "../config/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore"; 
 import { doc, getDoc } from "firebase/firestore";
 
@@ -59,4 +59,12 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
     console.error("Error fetching profile data: ", error);
     return null;
   }
+}
+
+export function checkListingOwner(listing: Listing): boolean {
+  // Ensure auth.currentUser and the listing's userID exist
+  if (auth.currentUser && listing.userID) {
+    return auth.currentUser.uid === listing.userID;
+  }
+  return false;
 }

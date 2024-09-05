@@ -58,6 +58,19 @@ button:hover, .button:hover {
     border: solid 2px gray;
 }
 
+.danger {
+    background-color: #cc0000ff;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.danger:hover {
+    background-color: #b70000ff;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
 .no-underline {
     text-decoration: none;
   }
