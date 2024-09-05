@@ -6,7 +6,7 @@ import testListings from "../backend/testListings";
 // This page needs to be updated so that the actual listings are passed in instead of test listings
 // The test listings don't have request functionality attached
 import { Listing } from "../backend/types";
-import { getListings } from "../backend/listingService";
+import { getListings } from "../backend/readData";
 
 const Pins = () => {
   const [listings, setListings] = useState<Listing[]>([]); // Copied code for getting listings from Home.tsx
