@@ -58,6 +58,10 @@ button:hover, .button:hover {
     border: solid 2px gray;
 }
 
+.no-underline {
+    text-decoration: none;
+  }
+  
 .error-msg {
     font-size: 14px;
     color: red;

@@ -24,13 +24,14 @@ export async function getListings(field?: string, value?: string): Promise<Listi
   querySnapshot.forEach((doc) => {
     const data = doc.data() as Listing;
     const listing: Listing = {
-        id: data.id,
+        id: doc.id,
         title: data.title,
         authors: data.authors,
         courseCode: data.courseCode,
         description: data.description,
         imageUrl: data.imageUrl,
-        userID: data.userID
+        userID: data.userID,
+        modalId: "modal-"+doc.id
       };
       listings.push(listing);
     });

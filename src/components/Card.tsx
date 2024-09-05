@@ -17,7 +17,7 @@ const Card = ({ listing }: CardData) => {
   return (
     <>
       <EnquiryPopup title={listing.title} modalId={listing.modalId} />
-      <Link to={`/listing/${listing.id}`} className={`card ${styles.card}`}>
+      <Link to={`/listing/${listing.id}`} className={`card no-underline ${styles.card}`}>
         <img
           src={listing.imageUrl || defaultImagePath} // Use the image or fallback to defaultImagePath
           className={`card-img-top ${styles.cardImage}`}
