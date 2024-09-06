@@ -3,10 +3,10 @@ export interface ProfileData {
     name: string;
     // from auth, set on sign-in
     email: string;
-    profilePic: string;
-    university: string;
-    degree: string;
-    location: string;
+    profilePic: string | null;
+    university: string | null;
+    degree: string | null;
+    location: string | null;
     // from auth, set on sign-in
     joinDate: string;
     // from auth, updated on login

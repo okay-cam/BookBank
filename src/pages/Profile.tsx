@@ -58,12 +58,14 @@ const Profile = () => {
                 <br />
                 Join Date:{" "}
                 {profileData.joinDate
-                  ? profileData.joinDate.toDateString()
+                  // ? profileData.joinDate.toDateString()
+                  ? profileData.joinDate
                   : "N/A"}
                 <br />
                 Last Logged In:{" "}
                 {profileData.lastLoggedIn
-                  ? profileData.lastLoggedIn.toDateString()
+                  // ? profileData.lastLoggedIn.toDateString()
+                  ? profileData.lastLoggedIn
                   : "N/A"}
                 <br />
                 Total Ratings Received: {profileData.totalRatingsReceived}

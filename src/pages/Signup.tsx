@@ -18,6 +18,7 @@ import { ProfileData } from "../backend/types";
 const Signup = () => {
   
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
@@ -29,6 +30,13 @@ const Signup = () => {
     if (!isRegistering) {
       // Attempt sign-in here
       setIsRegistering(true);
+
+      // ensure a non-blank username
+      if (name.trim().length === 0) {
+        setErrorMessage('Please enter a non-blank name.');
+        setIsRegistering(false);
+        return;
+      }
 
       // if passwords don't match, show error
       if (password !== confirmPassword) {
@@ -61,16 +69,15 @@ const Signup = () => {
         const currentUser: User = userCredential.user
         
         const newProfile: ProfileData = {
-          // !! update this with display name field
-          name: "Placeholder Name",
-          // Change to a more suitable placeholder image instead of Teletubbies
-          profilePic: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
-          location: "Ponsonholder",
-          university: "Placeholder Uni",
-          degree: "Bachelor of Placeholders",
-          totalDonations: 2,
-          totalRatingsReceived: 5,
-          overallRating: 80,
+          name: name.trim(),
+          // No profile picture initially
+          profilePic: null,
+          location: null,
+          university: null,
+          degree: null,
+          totalDonations: 0,
+          totalRatingsReceived: 0,
+          overallRating: 0,
           // add data from auth
           email: currentUser.email!,
           joinDate: currentUser.metadata.creationTime!,
@@ -135,6 +142,16 @@ const Signup = () => {
           // id="email"
           required
           onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <br />
+        <label htmlFor="username">Enter Display Name</label>
+        <br />
+        <input
+          type="text"
+          value={name}
+          required
+          onChange={(e) => setName(e.target.value)}
         />
         <br />
         <br />
