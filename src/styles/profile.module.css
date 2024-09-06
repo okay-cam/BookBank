@@ -25,11 +25,12 @@
 
 /* pfp stuff */
 .profilePic {
-    width: 300px;
-    height: 300px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    cursor: pointer;
+    border: 4px solid #134f5cff;
     object-fit: cover;
+    margin-bottom: 20px;
 }
 
 .profileData {

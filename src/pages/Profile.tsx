@@ -4,9 +4,13 @@ import defaultImage from "../assets/default-image-path.jpg";
 import { ProfileData as ProfileType } from "../backend/types";
 import { getProfileData } from "../backend/readData";
 import { auth } from "../config/firebase";
+import { getListings } from "../backend/readData";
+import { Listing as ListingType } from "../backend/types";
+import PinsCardContainer from "../components/PinsCardContainer";
 
 const Profile = () => {
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
+  const [activeListings, setActiveListings] = useState<ListingType[]>([]);
 
   useEffect(() => {
     const fetchAndSetProfileData = async () => {
@@ -17,6 +21,19 @@ const Profile = () => {
     };
 
     fetchAndSetProfileData();
+  }, []);
+
+  useEffect(() => {
+    const fetchAndSetActiveListings = async () => {
+      if (auth.currentUser) {
+        const data = await getListings("userID", auth.currentUser.uid);
+        console.log("Fetched Listings:", data);
+        console.log("User ID is ", auth.currentUser.uid);
+        setActiveListings(data);
+      }
+    };
+
+    fetchAndSetActiveListings();
   }, []);
 
   return (
@@ -68,7 +85,14 @@ const Profile = () => {
       </div>
       <div className={styles.content}>
         {profileData && <h1>{profileData.name}'s Active Listings</h1>}
+        {activeListings.length > 0 ? (
+          // Change to pin card container when display is fixed
+          <PinsCardContainer listings={activeListings} />
+        ) : (
+          <p>No active listings to show.</p>
+        )}
         <br />
+        <h1>Reviews</h1>
       </div>
     </main>
   );
