@@ -8,12 +8,14 @@ import { getListings } from "../backend/readData";
 const Home = () => {
   // State to hold the listings fetched from the database
   const [listings, setListings] = useState<Listing[]>([]);
+  const [loadingListings, setLoadingListings] = useState(true);
 
   // Fetch listings when the component mounts
   useEffect(() => {
     const fetchListings = async () => {
       try {
         const updatedListings = await getListings(); // Fetch listings from backend
+        setLoadingListings(false);
         setListings(updatedListings); // Update state with fetched listings
       } catch (error) {
         console.error("Error fetching listings:", error); // Handle any errors
@@ -31,8 +33,15 @@ const Home = () => {
       <div className={styles.listingsSection}>
         <h1>Current listings</h1>
         <br />
-        <CardContainer listings={listings} />{" "}
-        {/* Pass the listings from state */}
+        {
+          loadingListings ? (
+              <div className="spinner-border text-dark" role="status">
+                <span className="sr-only"></span>
+              </div>
+            ) : (
+              // Pass the listings from state
+              <CardContainer listings={listings} />
+          )}
       </div>
     </main>
   );
