@@ -11,6 +11,7 @@ import { FirebaseError } from "firebase/app";
 // get functions for adding new user data
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { User } from 'firebase/auth';
 
 const Signup = () => {
   
@@ -54,8 +55,11 @@ const Signup = () => {
         //   overallRating: 100
         // };
 
+        const currentUser: User = userCredential.user
+
         // Add placeholder user data to "users" document
         await setDoc(doc(db, "users", userID), {
+          // !! update this with display name field
           name: "Placeholder Name",
           // Change to a more suitable placeholder image instead of Teletubbies
           profilePic: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
@@ -65,6 +69,11 @@ const Signup = () => {
           totalDonations: 2,
           totalRatingsReceived: 5,
           overallRating: 80,
+          // add data from auth
+          email: currentUser.email,
+          joinDate: currentUser.metadata.creationTime,
+          lastLoggedIn: currentUser.metadata.lastSignInTime
+
         });
 
       } catch (error) {

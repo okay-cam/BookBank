@@ -3,6 +3,7 @@ import { Listing, ProfileData } from "../backend/types";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { User } from "firebase/auth";
 
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]>{ // field? allows for the values to be empty
@@ -49,23 +50,30 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
     if (docSnapshot.exists()) {
       console.log("UID: ", userID);
       const data = docSnapshot.data();
-      
+
       // Assign values based on ProfileData interface and convert necessary types
       const profileData: ProfileData = {
+        
+        // data from users collection
         name: data.name,
-        // email: data.email,
         profilePic: data.profilePic,
         university: data.university,
         degree: data.degree,
         location: data.location,
-        // joinDate: , 
-        // lastLoggedIn: ,
         totalDonations: data.totalDonations,
-        numRatings: data.numRatings,
+        totalRatingsReceived: data.totalRatingsReceived,
         overallRating: data.overallRating,
+
+        // data from auth -> users collection
+        email: data.email,
+        joinDate: data.joinDate, 
+        lastLoggedIn: data.lastLoggedIn
+
         // Add other fields as needed
       };
       
+
+
       return profileData;
     } else {
       console.log("No such document!");
