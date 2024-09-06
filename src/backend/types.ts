@@ -1,15 +1,18 @@
 // stores donor and listing info
 export interface ProfileData {
     name: string;
+    // from auth, set on sign-in
     email: string;
-    profilePic: string;
-    university: string;
-    degree: string;
-    location: string;
-    joinDate: Date;
-    lastLoggedIn: Date;
+    profilePic: string | null;
+    university: string | null;
+    degree: string | null;
+    location: string | null;
+    // from auth, set on sign-in
+    joinDate: string;
+    // from auth, updated on login
+    lastLoggedIn: string;
     totalDonations: number;
-    numRatings: number;
+    totalRatingsReceived: number;
     overallRating: number;
     // Add other profile details as needed
   }

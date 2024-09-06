@@ -11,10 +11,14 @@ import { FirebaseError } from "firebase/app";
 // get functions for adding new user data
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { User } from 'firebase/auth';
+
+import { ProfileData } from "../backend/types";
 
 const Signup = () => {
   
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
@@ -26,6 +30,13 @@ const Signup = () => {
     if (!isRegistering) {
       // Attempt sign-in here
       setIsRegistering(true);
+
+      // ensure a non-blank username
+      if (name.trim().length === 0) {
+        setErrorMessage('Please enter a non-blank name.');
+        setIsRegistering(false);
+        return;
+      }
 
       // if passwords don't match, show error
       if (password !== confirmPassword) {
@@ -40,18 +51,41 @@ const Signup = () => {
         const userCredential = await doCreateUserWithEmailAndPassword(email, password);
         const userID = userCredential.user.uid;
 
+        // const testProfile: ProfileData = {
+        //   name: "Chelsea Smith",
+        //   email: "chelsmith1999@gmail.com",
+        //   profilePic: image,
+        //   university: "University of Auckland",
+        //   degree: "Bachelor of Arts",
+        //   location: "Ponsonby",
+        //   joinDate: new Date("2019-11-21"), // Date object for joinDate
+        //   lastLoggedIn: new Date("2022-03-03"), // Date object for lastLoggedIn
+        //   totalDonations: 2,
+        //   numRatings: 2,
+        //   overallRating: 100
+        // };
+
+        // get auth data
+        const currentUser: User = userCredential.user
+        
+        const newProfile: ProfileData = {
+          name: name.trim(),
+          // No profile picture initially
+          profilePic: null,
+          location: null,
+          university: null,
+          degree: null,
+          totalDonations: 0,
+          totalRatingsReceived: 0,
+          overallRating: 0,
+          // add data from auth
+          email: currentUser.email!,
+          joinDate: currentUser.metadata.creationTime!,
+          lastLoggedIn: currentUser.metadata.lastSignInTime!
+        }
+
         // Add placeholder user data to "users" document
-        await setDoc(doc(db, "users", userID), {
-          name: "Placeholder Name",
-          // Change to a more suitable placeholder image instead of Teletubbies
-          imageURL: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
-          location: "Ponsonholder",
-          university: "Placeholder Uni",
-          degree: "Bachelor of Placeholders",
-          totalDonations: 2,
-          totalRatingsReceived: 5,
-          rating: 80,
-        });
+        await setDoc(doc(db, "users", userID), newProfile);
 
       } catch (error) {
         // show correct error message depending on the issue
@@ -108,6 +142,16 @@ const Signup = () => {
           // id="email"
           required
           onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <br />
+        <label htmlFor="username">Enter Display Name</label>
+        <br />
+        <input
+          type="text"
+          value={name}
+          required
+          onChange={(e) => setName(e.target.value)}
         />
         <br />
         <br />

@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { auth } from "../../config/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../../config/firebase"
 import { onAuthStateChanged } from "firebase/auth";
 
 // stores currentUser (firebase auth data or null),
@@ -26,6 +28,7 @@ export function AuthProvider({ children }) {
     async function initializeUser(user) {
         if (user) {
             setCurrentUser({ ...user });
+            setDoc(doc(db, 'users', auth.currentUser.uid), { lastLoggedIn: auth.currentUser.metadata.lastSignInTime }, { merge: true });
             setUserLoggedIn(true);
         }
         else {
