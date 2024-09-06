@@ -129,7 +129,7 @@ const Signup = () => {
   }
 
   return (
-    <>
+    <div className="signUpContainer">
       <br />
       <h1>Register</h1>
       <form onSubmit={onSubmit}>
@@ -152,6 +152,7 @@ const Signup = () => {
           value={name}
           required
           onChange={(e) => setName(e.target.value)}
+          id="nameField"
         />
         <br />
         <br />
@@ -203,7 +204,7 @@ const Signup = () => {
         <Link to={'/'}>Log in</Link>
       </div>
 
-    </>
+    </div>
   );
 };
 
