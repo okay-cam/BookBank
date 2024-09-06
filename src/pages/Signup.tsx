@@ -40,17 +40,31 @@ const Signup = () => {
         const userCredential = await doCreateUserWithEmailAndPassword(email, password);
         const userID = userCredential.user.uid;
 
+        // const testProfile: ProfileData = {
+        //   name: "Chelsea Smith",
+        //   email: "chelsmith1999@gmail.com",
+        //   profilePic: image,
+        //   university: "University of Auckland",
+        //   degree: "Bachelor of Arts",
+        //   location: "Ponsonby",
+        //   joinDate: new Date("2019-11-21"), // Date object for joinDate
+        //   lastLoggedIn: new Date("2022-03-03"), // Date object for lastLoggedIn
+        //   totalDonations: 2,
+        //   numRatings: 2,
+        //   overallRating: 100
+        // };
+
         // Add placeholder user data to "users" document
         await setDoc(doc(db, "users", userID), {
           name: "Placeholder Name",
           // Change to a more suitable placeholder image instead of Teletubbies
-          imageURL: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
+          profilePic: "https://firebasestorage.googleapis.com/v0/b/bookbankaut.appspot.com/o/listings%2F1724547904675-tele.png?alt=media&token=bd1267b9-ddca-4635-b6e7-461ecb76978d",
           location: "Ponsonholder",
           university: "Placeholder Uni",
           degree: "Bachelor of Placeholders",
           totalDonations: 2,
           totalRatingsReceived: 5,
-          rating: 80,
+          overallRating: 80,
         });
 
       } catch (error) {

@@ -11,7 +11,7 @@ const testProfile: ProfileData = {
   joinDate: new Date("2019-11-21"), // Date object for joinDate
   lastLoggedIn: new Date("2022-03-03"), // Date object for lastLoggedIn
   totalDonations: 2,
-  numRatings: 2,
+  totalRatingsReceived: 2,
   overallRating: 100
 };
 

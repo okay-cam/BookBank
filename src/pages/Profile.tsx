@@ -66,7 +66,7 @@ const Profile = () => {
                   ? profileData.lastLoggedIn.toDateString()
                   : "N/A"}
                 <br />
-                Total Ratings Received: {profileData.numRatings}
+                Total Ratings Received: {profileData.totalRatingsReceived}
                 <br />
                 Total Donations: {profileData.totalDonations}
               </p>

@@ -9,7 +9,7 @@ export interface ProfileData {
     joinDate: Date;
     lastLoggedIn: Date;
     totalDonations: number;
-    numRatings: number;
+    totalRatingsReceived: number;
     overallRating: number;
     // Add other profile details as needed
   }

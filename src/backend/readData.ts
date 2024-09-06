@@ -53,7 +53,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
       // Assign values based on ProfileData interface and convert necessary types
       const profileData: ProfileData = {
         name: data.name,
-        email: data.email,
+        // email: data.email,
         profilePic: data.profilePic,
         university: data.university,
         degree: data.degree,
@@ -65,7 +65,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
         overallRating: data.overallRating,
         // Add other fields as needed
       };
-
+      
       return profileData;
     } else {
       console.log("No such document!");
