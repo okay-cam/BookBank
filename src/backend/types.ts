@@ -8,9 +8,9 @@ export interface ProfileData {
     degree: string;
     location: string;
     // from auth, set on sign-in
-    joinDate: Date;
+    joinDate: string;
     // from auth, updated on login
-    lastLoggedIn: Date;
+    lastLoggedIn: string;
     totalDonations: number;
     totalRatingsReceived: number;
     overallRating: number;

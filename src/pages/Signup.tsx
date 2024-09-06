@@ -13,6 +13,8 @@ import { setDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { User } from 'firebase/auth';
 
+import { ProfileData } from "../backend/types";
+
 const Signup = () => {
   
   const [email, setEmail] = useState('')
@@ -55,10 +57,10 @@ const Signup = () => {
         //   overallRating: 100
         // };
 
+        // get auth data
         const currentUser: User = userCredential.user
-
-        // Add placeholder user data to "users" document
-        await setDoc(doc(db, "users", userID), {
+        
+        const newProfile: ProfileData = {
           // !! update this with display name field
           name: "Placeholder Name",
           // Change to a more suitable placeholder image instead of Teletubbies
@@ -70,11 +72,13 @@ const Signup = () => {
           totalRatingsReceived: 5,
           overallRating: 80,
           // add data from auth
-          email: currentUser.email,
-          joinDate: currentUser.metadata.creationTime,
-          lastLoggedIn: currentUser.metadata.lastSignInTime
+          email: currentUser.email!,
+          joinDate: currentUser.metadata.creationTime!,
+          lastLoggedIn: currentUser.metadata.lastSignInTime!
+        }
 
-        });
+        // Add placeholder user data to "users" document
+        await setDoc(doc(db, "users", userID), newProfile);
 
       } catch (error) {
         // show correct error message depending on the issue

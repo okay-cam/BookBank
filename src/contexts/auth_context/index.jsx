@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
     async function initializeUser(user) {
         if (user) {
             setCurrentUser({ ...user });
+            setDoc(doc(db, 'users', auth.currentUser.uid), { lastLoggedIn: auth.currentUser.metadata.lastSignInTime }, { merge: true });
             setUserLoggedIn(true);
         }
         else {

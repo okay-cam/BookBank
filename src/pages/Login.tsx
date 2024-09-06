@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 import { doSignInWithEmailAndPassword } from "../config/auth";
 import { FirebaseError } from "firebase/app";
 
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../config/firebase";
+
 const Login = () => {
   // Stores web page states which are used during account authentication
   const [email, setEmail] = useState("");
