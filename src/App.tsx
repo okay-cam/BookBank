@@ -24,6 +24,7 @@ import ScrollToTop from "./components/ScrollToTop";
 const App = () => {
 
   // location logger used for debugging
+  // (commented out)
   const LocationLogger = () => {
 
     const location = useLocation();
@@ -43,7 +44,7 @@ const App = () => {
     <>
       <AuthProvider>
       <BrowserRouter>
-        <LocationLogger />
+        {/* <LocationLogger /> */}
         <ScrollToTop />
         <ForcePages setLoading={setLoading}/>
         {
