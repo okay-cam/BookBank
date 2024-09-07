@@ -16,6 +16,7 @@ import CreateListing from "./pages/CreateListing";
 import Pins from "./pages/Pins";
 import Profile from "./pages/Profile";
 import EditAccount from "./pages/EditAccount";
+import Search from "./pages/Search";
 
 import { AuthProvider } from "./contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
@@ -58,14 +59,15 @@ const App = () => {
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/resetpassword" element={<ResetPassword />} />
-            <Route path="/passwordemailsent" element={<PasswordEmailSent />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/password-email-sent" element={<PasswordEmailSent />} />
             <Route path="/home" element={<Home />} />
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
             <Route path="/pins" element={<Pins />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/edit-account" element={<EditAccount />}/>
+            <Route path="/search" element={<Search />}/>
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>

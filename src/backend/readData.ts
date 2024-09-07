@@ -38,7 +38,7 @@ export async function getListings(field?: string, value?: string): Promise<Listi
   return listings;
 }
 
-
+// in future, may add less strict searching which ignores case & whitespace
 
 
 // Function to fetch profile data

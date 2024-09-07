@@ -13,6 +13,14 @@ const Navbar = () => {
   const navigate = useNavigate()
   const { userLoggedIn } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) { // only navigate if searchQuery is not empty
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   return (
     <div className={styles.navbar}>
@@ -20,9 +28,16 @@ const Navbar = () => {
         <>
           <Link to="/home" className={styles.logo}>BookBank</Link>
 
-          <div className={styles.searchContainer}>
-            <input type="text" className={styles.searchInput} placeholder="Search for books" />
-          </div>
+          <form className={styles.searchContainer} onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for books"
+            />
+            <button type="submit" disabled={!searchQuery.trim()} className={styles.searchButton}>Search</button>
+          </form>
 
           <div className={styles.navLinks}>
             <Link to="/pins" className={styles.navButton}>Pins</Link>

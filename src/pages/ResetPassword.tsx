@@ -24,7 +24,7 @@ const ResetPassword = () => {
 					.then(() => {
 						// Password reset email sent!
             console.log("password email sent!");
-            navigate("/passwordemailsent");
+            navigate("/password-email-sent");
 					})
       } catch (error) {
         setIsLoading(false);
