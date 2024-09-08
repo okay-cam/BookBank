@@ -1,4 +1,5 @@
 import React from "react";
+import { deleteListing } from "../backend/deleteData";
 
 interface ModalDetails {
   modalId: string;
@@ -41,7 +42,7 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
             >
               Close
             </button>
-            <button type="button" className="danger">
+            <button type="button" className="danger" onClick={() => deleteListing(modalId)} >
               Delete
             </button>
           </div>
