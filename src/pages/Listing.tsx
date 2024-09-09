@@ -9,6 +9,7 @@ import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
+import { togglePinListing } from "../backend/pinning";
 
 const Listing: React.FC = () => {
   // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -85,6 +86,15 @@ const Listing: React.FC = () => {
         )}
       </div>
       <div className={styles.content}>
+        {/* pin button */}
+        <button
+          type="button"
+          className="corner-btn"
+          onClick={() => togglePinListing(listing!)}
+        >
+          Pin this listing
+        </button>
+        <br />
         <h1>{listing?.title}</h1>
         <label>{listing?.authors}</label>
         <h3>{listing?.courseCode}</h3>

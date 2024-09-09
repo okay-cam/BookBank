@@ -71,6 +71,17 @@ button:hover, .button:hover {
     padding: 5px 10px;
 }
 
+.corner-btn {
+    font-size: 70%;
+    border: 1.5px solid black;
+    position: absolute;
+    right: 10px;
+}
+
+.corner-btn:hover, .corner-btn:active {
+    border: 1.5px solid black;
+}
+
 .no-underline {
     text-decoration: none;
   }
