@@ -1,9 +1,37 @@
 
 import { Listing, ProfileData } from "../backend/types";
+import { useState, useEffect } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore"; 
+import { doc, getDoc } from "firebase/firestore";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { User } from "firebase/auth";
+
+export const useListings = (field?: string, value?: string) => {
+  const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
+  const [loading, setLoading] = useState<boolean>(true); // State to manage loading status
+  const [error, setError] = useState<string | null>(null); // State to manage errors
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true); // Start loading
+      try {
+        const fetchedListings = await getListings(field, value); // Fetch listings using the function
+        setListings(fetchedListings); // Set the fetched listings
+        setError(null); // Reset error state
+      } catch (err) {
+        setError("Failed to fetch the listings."); // Set error state
+        console.error(err);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchListings(); // Call fetch function
+  }, [field, value]); // Re-run effect if field or value changes
+
+  return { listings, loading, error }; // Return state and fetched data
+};
 
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]>{ // field? allows for the values to be empty
