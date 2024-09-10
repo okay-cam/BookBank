@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
+<<<<<<< HEAD
 import { Listing } from "../backend/types";
 import { getListings } from "../backend/readData";
 
@@ -24,6 +24,12 @@ const Home = () => {
 
     fetchListings(); // Trigger the fetch when the component mounts
   }, []); // Empty dependency array ensures this runs once when the component is mounted
+=======
+import { useListings } from "../backend/readData";
+
+const Home = () => {
+  const { listings, loading, error } = useListings();
+>>>>>>> adapting-database-reads
 
   return (
     <main className={styles.gridContainer}>
