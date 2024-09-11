@@ -27,6 +27,7 @@ const CreateListing: React.FC = () => {
   });
 
   const [file, setFile] = useState<File | null>(null);  // Manage file state
+  const [preview, setPreview] = useState<string | null>(null);  // Manage uploaded file's image preview
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -38,8 +39,10 @@ const CreateListing: React.FC = () => {
     }));
   };
 
-  const handleDrop = (file: File) => {
+  const handleDrop = (file: File, preview: string) => {
     setFile(file);
+    setPreview(preview);
+    console.log(file)
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,6 +89,21 @@ const CreateListing: React.FC = () => {
         {/* content on left panel */}
         <div className={styles.aside}>
           <BackButton />
+
+          {/* the preview of the listing */}
+          { file && preview && (
+            <div>
+              
+              <img src={preview}
+              alt="Uploaded image of your listing"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "300px",
+                marginTop: "10px",
+              }}/>
+            </div>
+          )}
+
           {/* the dropzone for uploading image */}
           <FileDropzone className="dropzone" onDrop={handleDrop} />
         </div>
