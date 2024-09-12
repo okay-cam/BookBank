@@ -1,8 +1,6 @@
 
 import { Listing, ProfileData } from "../backend/types";
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore"; 
-import { doc, getDoc } from "firebase/firestore";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
