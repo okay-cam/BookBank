@@ -118,3 +118,27 @@ export function checkListingOwner(listing: Listing): boolean {
   }
   return false;
 }
+
+export async function getPins(userId: string) {
+  const listingsRef = collection(db, "pins");
+
+  // Create a compound query to filter listings by listingId and userId
+  const q = query(listingsRef, where("userId", "==", userId));
+
+  try {
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // Check if there are any results
+    if (querySnapshot.empty) {
+      console.log("No matching documents found.");
+    } else {
+      // Log the results
+      querySnapshot.forEach((doc) => {
+        console.log(`Found listing: ${doc.id} =>`, doc.data());
+      });
+    }
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+  }
+}
