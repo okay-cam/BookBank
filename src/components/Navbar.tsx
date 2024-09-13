@@ -1,7 +1,11 @@
 import "../styles/general.css";
 import styles from "../styles/navbar.module.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// used to get profile picture
+import { getProfileData } from "../backend/readData";
+import { auth } from '../config/firebase';
 
 // used for signing out - may be moved later
 import { useNavigate } from 'react-router-dom'
@@ -14,6 +18,7 @@ const Navbar = () => {
   const { userLoggedIn } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [profilePictureSource, setProfilePictureSource] = useState<string | null>(null);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +26,19 @@ const Navbar = () => {
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  useEffect(() => {
+    const fetchAndSetProfileData = async () => {
+        if (auth.currentUser) {
+            const data = await getProfileData(auth.currentUser.uid);
+            if (data) {
+              setProfilePictureSource(data.profilePic)
+            }
+        }
+    };
+
+    fetchAndSetProfileData();
+  }, []);
 
   return (
     <div className={styles.navbar}>
@@ -43,7 +61,7 @@ const Navbar = () => {
             <Link to="/pins" className={styles.navButton}>Pins</Link>
             <Link to="/create" className={styles.navButton}>Create a listing</Link>
             <div className={styles.profileDropdown}>
-              <img src={defaultImage} alt="Profile" className={styles.profilePic} onClick={() => setDropdownOpen(!dropdownOpen)}></img>
+              <img src={profilePictureSource || defaultImage} alt="Profile" className={styles.profilePic} onClick={() => setDropdownOpen(!dropdownOpen)}></img>
             </div>
             {dropdownOpen && (
               <div className={styles.dropdownMenu}>
