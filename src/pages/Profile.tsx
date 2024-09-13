@@ -39,7 +39,7 @@ const Profile = () => {
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
-        <img src={defaultImage} className={styles.profilePic} alt="Profile" />
+        <img src={profileData?.profilePic || defaultImage} className={styles.profilePic} alt="Profile" />
         <br />
         {profileData ? (
           <div>
