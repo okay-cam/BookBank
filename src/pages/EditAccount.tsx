@@ -3,7 +3,9 @@ import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
 import { ProfileData as ProfileType } from '../backend/types';
 import { getProfileData } from '../backend/readData';
-import { auth } from '../config/firebase';
+import { doc, setDoc } from "firebase/firestore";
+import { db, auth, storage } from '../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import FileDropzone from "../components/FileDropzone";
 
@@ -21,12 +23,14 @@ const degrees = [
 const EditAccount = () => {
     // store old values so it can be reset back
     const [oldProfileData, setOldProfileData] = useState<ProfileType | null>(null);
+    // store all data including new changes (except for pfp image changes)
     const [newProfileData, setNewProfileData] = useState<ProfileType | null>(null);
+
 
     const [profilePhotoSource, setProfilePhotoSource] = useState<string | null>(null); // Store photo source for the pfp image
     const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);  // Manage file state, uploaded to cloud
     // const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);  // Manage uploaded file's image preview
-  
+
     useEffect(() => {
         const fetchAndSetProfileData = async () => {
             if (auth.currentUser) {
@@ -59,30 +63,47 @@ const EditAccount = () => {
 
         // TODO: !! handle submits
 
+        let profilePicUrl = profilePhotoSource;
 
-        // Upload image to Cloud Storage if file exists
-        // !! it should only do this if a new profile picture has been uploaded
-        // if (file) {
-        //     const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
-        //     await uploadBytes(imageRef, file);
-        //     const imageUrl = await getDownloadURL(imageRef);
-    
-        //     // Create Firestore document with imageUrl
-        //     await setDoc(docRef, {
-        //     ...listingData,
-        //     imageUrl,
-        //     }, { merge: true });
-        // } else {
-        //     // Create Firestore document without image
-        //     await setDoc(docRef, listingData, { merge: true });
-        // }
-        // };
+        // if a new profile picture file is uploaded, then upload it to Cloud Storage
+        if (profilePhotoFile) {
+            console.log("storing new profile picture")
+            const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
+            await uploadBytes(imageRef, profilePhotoFile);
+            profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
+        }
+
+        // this seems overkill but idk man im struggling -Cam
+        const updatedProfileData: ProfileType = {
+            ...newProfileData,
+            profilePic: profilePicUrl,  // Keep the updated profilePic
+            name: newProfileData?.name || "",  // Ensure name is always a string
+            email: newProfileData?.email || "",  // Ensure email is always a string
+            university: newProfileData?.university || "",  // Default to empty string
+            degree: newProfileData?.degree || "",  // Default to empty string
+            location: newProfileData?.location || "",  // Default to empty string
+            overallRating: newProfileData?.overallRating || 0,  // Default to 0
+            joinDate: newProfileData?.joinDate || "",  // Default to empty string
+            lastLoggedIn: newProfileData?.lastLoggedIn || "",  // Default to empty string
+            totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
+            totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
+        };
+        
+        console.log("submitting data:")
+        console.log(updatedProfileData)
+        // Update Firestore document with new profile data
+        const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
+        await setDoc(userDocRef, updatedProfileData, { merge: true });
+
+        // Set the old profile data to the new one after successful submission
+        setOldProfileData(updatedProfileData);
+
+        alert('Profile updated successfully!');
 
     }
 
-    // TODO
+    // !! TODO
     // handle resetting data to defaults by pulling the database data again?
-    // but if submitting, then overwrite the database data?
 
     if (!newProfileData) {
         return <div className="spinner-border text-dark" role="status" />
