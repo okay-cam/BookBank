@@ -119,31 +119,54 @@ export function checkListingOwner(listing: Listing): boolean {
   return false;
 }
 
-export async function getPins(userId: string): Promise<string[]> {
+export async function getPins(userId: string): Promise<Listing[]> {
   const pinsRef = collection(db, "pins");
+  const listingsRef = collection(db, "listings");
+  const pinsQuery = query(pinsRef, where("userId", "==", userId));
 
-  const q = query(pinsRef, where("userId", "==", userId));
-
+  // get pinned collection for userId
   try {
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(pinsQuery);
 
-    // If no results, return an empty array
     if (querySnapshot.empty) {
       console.log("No matching documents found.");
       return [];
     } else {
-      // Get listingIds from docs
-      const listingIds: string[] = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.listingId) {
-          listingIds.push(data.listingId); // Add listingId to the array
+      const pinnedListings: Listing[] = [];
+
+      // iterate through pinned listing collection and use id's to create listing[]
+      for (const docSnap of querySnapshot.docs) {
+        const data = docSnap.data();
+        const listingId = data.listingId;
+
+        if (listingId) {
+          try {
+            const listingDocRef = doc(listingsRef, listingId);
+            const listingDoc = await getDoc(listingDocRef);
+
+            if (listingDoc.exists()) {
+              const listingData = listingDoc.data() as Listing;
+              pinnedListings.push({
+                ...listingData,
+                id: listingDoc.id,
+                modalId: "modal-" + listingDoc.id,
+              });
+            } else {
+              console.log(`Listing with ID ${listingId} not found.`);
+            }
+          } catch (error) {
+            console.error(`Error fetching listing with ID ${listingId}:`, error);
+          }
         }
-      });
-      return listingIds; // Return the array of listingIds
+      }
+
+      console.log("Pinned listings found:", pinnedListings);
+      return pinnedListings;
     }
   } catch (error) {
     console.error("Error getting pinned listings: ", error);
     return [];
   }
 }
+
+
