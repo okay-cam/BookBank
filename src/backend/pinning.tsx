@@ -1,9 +1,29 @@
 import { Listing } from "./types";
+import { db } from "../config/firebase";
+import { collection, query, where, getDocs, deleteDoc, addDoc } from "firebase/firestore";
 
-// feel free to rename file and use it more generally
+export async function togglePinListing(listing: Listing, userId: string) {
+  const pinsRef = collection(db, "pins");
 
-// toggle pin listing function
-export function togglePinListing(listing: Listing) {
-  /* this function passes in the listing that the user wants to be pinned */
-  console.log("pin listing function called")
+  console.log("userId:", userId, "listingId:", listing.id);
+  const q = query(pinsRef, where("userId", "==", userId), where("listingId", "==", listing.id));
+
+  try {
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) { // If a pin is found, unpin the listing
+      const docRef = querySnapshot.docs[0].ref; // Get the first matching document
+      await deleteDoc(docRef);
+      console.log(`Unpinned listing: ${listing.id}`);
+    } else { // If no pin is found, pin the listing
+      
+      await addDoc(pinsRef, {
+        userId: userId,
+        listingId: listing.id,
+      });
+      console.log(`Pinned listing: ${listing.id}`);
+    }
+  } catch (error) {
+    console.error("Error toggling pin: ", error);
+  }
 }

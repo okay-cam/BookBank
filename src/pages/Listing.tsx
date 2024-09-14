@@ -10,6 +10,7 @@ import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
 import { togglePinListing } from "../backend/pinning";
+import { auth } from "../config/firebase";
 
 const Listing: React.FC = () => {
   // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -90,7 +91,7 @@ const Listing: React.FC = () => {
         <button
           type="button"
           className="corner-btn"
-          onClick={() => togglePinListing(listing!)}
+          onClick={() => togglePinListing(listing!, auth.currentUser!.uid)}
         >
           Pin this listing
         </button>
