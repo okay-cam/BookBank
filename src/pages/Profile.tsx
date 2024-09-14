@@ -21,7 +21,7 @@ const Profile = () => {
     };
 
     fetchAndSetProfileData();
-    getPins(auth.currentUser!.uid);
+    // getPins();
   }, []);
 
   useEffect(() => {

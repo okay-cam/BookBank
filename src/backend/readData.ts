@@ -119,7 +119,8 @@ export function checkListingOwner(listing: Listing): boolean {
   return false;
 }
 
-export async function getPins(userId: string): Promise<Listing[]> {
+export async function getPins(): Promise<Listing[]> {
+  const userId = auth.currentUser!.uid;
   const pinsRef = collection(db, "pins");
   const listingsRef = collection(db, "listings");
   const pinsQuery = query(pinsRef, where("userId", "==", userId));

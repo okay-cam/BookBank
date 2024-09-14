@@ -91,7 +91,7 @@ const Listing: React.FC = () => {
         <button
           type="button"
           className="corner-btn"
-          onClick={() => togglePinListing(listing!, auth.currentUser!.uid)}
+          onClick={() => togglePinListing(listing!)}
         >
           Pin this listing
         </button>

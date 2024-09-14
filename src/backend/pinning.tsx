@@ -1,10 +1,10 @@
 import { Listing } from "./types";
-import { db } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import { collection, query, where, getDocs, deleteDoc, addDoc } from "firebase/firestore";
 
-export async function togglePinListing(listing: Listing, userId: string) {
+export async function togglePinListing(listing: Listing) {
   const pinsRef = collection(db, "pins");
-
+  const userId = auth.currentUser!.uid; // user pinning will always be current user
   console.log("userId:", userId, "listingId:", listing.id);
   const q = query(pinsRef, where("userId", "==", userId), where("listingId", "==", listing.id));
 
