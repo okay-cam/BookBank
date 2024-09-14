@@ -119,26 +119,31 @@ export function checkListingOwner(listing: Listing): boolean {
   return false;
 }
 
-export async function getPins(userId: string) {
-  const listingsRef = collection(db, "pins");
+export async function getPins(userId: string): Promise<string[]> {
+  const pinsRef = collection(db, "pins");
 
-  // Create a compound query to filter listings by listingId and userId
-  const q = query(listingsRef, where("userId", "==", userId));
+  const q = query(pinsRef, where("userId", "==", userId));
 
   try {
-    // Execute the query
     const querySnapshot = await getDocs(q);
 
-    // Check if there are any results
+    // If no results, return an empty array
     if (querySnapshot.empty) {
       console.log("No matching documents found.");
+      return [];
     } else {
-      // Log the results
+      // Get listingIds from docs
+      const listingIds: string[] = [];
       querySnapshot.forEach((doc) => {
-        console.log(`Found listing: ${doc.id} =>`, doc.data());
+        const data = doc.data();
+        if (data.listingId) {
+          listingIds.push(data.listingId); // Add listingId to the array
+        }
       });
+      return listingIds; // Return the array of listingIds
     }
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error("Error getting pinned listings: ", error);
+    return [];
   }
 }
