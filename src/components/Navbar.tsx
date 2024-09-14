@@ -40,6 +40,7 @@ const Navbar = () => {
           </form>
 
           <div className={styles.navLinks}>
+            <Link to="/home" className={styles.navButton}>Home</Link>
             <Link to="/pins" className={styles.navButton}>Pins</Link>
             <Link to="/create" className={styles.navButton}>Create a listing</Link>
             <div className={styles.profileDropdown}>

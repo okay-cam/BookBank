@@ -93,3 +93,22 @@
 .dropdownMenu hr {
     margin: 5px 0;
 }
+
+.searchButton {
+    background-color: #2690a0;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.searchButton:hover {
+    background-color: #1b6f84;
+    border: none;
+    color: white;
+}
+
+.searchButton:disabled {
+    background-color: #7a9a9f;
+    cursor: not-allowed;
+}
