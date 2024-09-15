@@ -6,6 +6,7 @@ import { Listing } from "../backend/types";
 import { getListings } from "../backend/readData";
 
 import { useLocation } from "react-router-dom";
+import { addWishlist } from "../backend/wishlist";
 
 const Search = () => {
 
@@ -56,22 +57,34 @@ const Search = () => {
   return (
     <main className={styles.gridContainer}>
       <div className={styles.listingsSection}>
-        
+
         <h1>Search Results for "{searchQuery}"</h1>
         <br />
         {
-          
+
           loadingListings ? (
-						<div className="spinner-border text-dark" role="status">
-							<span className="sr-only"></span>
-						</div>
-					) : listings.length > 0? (
-						// Pass the listings from state
-						<CardContainer listings={listings} />
-					) : (
-						<p>No listings found for "{searchQuery}". Please try another search.</p>
-					)
-				}
+            <div className="spinner-border text-dark" role="status">
+              <span className="sr-only"></span>
+            </div>
+          ) : listings.length > 0 ? (
+            // Pass the listings from state
+            <>
+              <CardContainer listings={listings} />
+              <br />
+              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
+                <button className={styles.wishlistButton} onClick={() => addWishlist(searchQuery!)}>Wishlist</button>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>No listings found for "{searchQuery}". Please try another search.</p>
+              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
+                <button className={styles.wishlistButton} onClick={() => addWishlist(searchQuery!)}>Wishlist</button>
+              </p>
+            </>
+          )
+        }
+
       </div>
     </main>
   );
