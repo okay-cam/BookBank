@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "./EnquiryPopup";
@@ -5,6 +6,7 @@ import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 import DeleteListingPopup from "./DeleteListingPopup";
 import { checkListingOwner } from "../backend/readData";
+import { togglePinListing, isPinned } from "../backend/pinning";
 
 interface CardData {
   listing: Listing;
@@ -15,6 +17,20 @@ interface CardData {
 const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
   const removeID = `${listing.modalId}-remove`;
+  const [pinned, setPinned] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchPinnedStatus = async () => {
+      if (listing?.id) {
+        const status = await isPinned(listing.id);
+        setPinned(status);
+      }
+    };
+
+    if (listing) {
+      fetchPinnedStatus();
+    }
+  }, [listing]);
 
   return (
     <>
@@ -27,11 +43,21 @@ const Card = ({ listing }: CardData) => {
         to={`/listing/${listing.id}`}
         className={`card no-underline ${styles.card}`}
       >
-        <img
-          src={listing.imageUrl || defaultImagePath} // Use the image or fallback to defaultImagePath
-          className={`card-img-top ${styles.cardImage}`}
-          alt="Listing image"
-        />
+        <div className={styles.imageContainer}>
+          <img
+            src={listing.imageUrl || defaultImagePath} // Use the image or fallback to defaultImagePath
+            className={`card-img-top ${styles.cardImage}`}
+            alt="Listing image"
+          />
+          <button
+            type="button"
+            className={`${styles.pinButton} ${pinned ? styles.pinActive : ''}`}
+            title="Pin this listing"
+            onClick={() => togglePinListing(listing)}
+          >
+            📌
+          </button>
+        </div>
         <div className="card-body">
           <h5 className="card-title">{listing.title}</h5>
           <p className="card-text">By {listing.authors}</p>

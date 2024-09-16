@@ -1,29 +1,10 @@
-import React, { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
-import { Listing } from "../backend/types";
-import { getListings } from "../backend/readData";
+import { useListings } from "../backend/readData";
 
 const Home = () => {
-  // State to hold the listings fetched from the database
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [loadingListings, setLoadingListings] = useState(true);
-
-  // Fetch listings when the component mounts
-  useEffect(() => {
-    const fetchListings = async () => {
-      try {
-        const updatedListings = await getListings(); // Fetch listings from backend
-        setLoadingListings(false);
-        setListings(updatedListings); // Update state with fetched listings
-      } catch (error) {
-        console.error("Error fetching listings:", error); // Handle any errors
-      }
-    };
-
-    fetchListings(); // Trigger the fetch when the component mounts
-  }, []); // Empty dependency array ensures this runs once when the component is mounted
+  const { listings, loading, error } = useListings();
 
   return (
     <main className={styles.gridContainer}>
@@ -34,7 +15,7 @@ const Home = () => {
         <h1>Current listings</h1>
         <br />
         {
-          loadingListings ? (
+          loading ? (
               <div className="spinner-border text-dark" role="status">
                 <span className="sr-only"></span>
               </div>

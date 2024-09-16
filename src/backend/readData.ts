@@ -1,9 +1,35 @@
 
 import { Listing, ProfileData } from "../backend/types";
+import { useState, useEffect } from "react";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { User } from "firebase/auth";
+
+export const useListings = (field?: string, value?: string) => {
+  const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
+  const [loading, setLoading] = useState<boolean>(true); // State to manage loading status
+  const [error, setError] = useState<string | null>(null); // State to manage errors
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true); // Start loading
+      try {
+        const fetchedListings = await getListings(field, value); // Fetch listings using the function
+        setListings(fetchedListings); // Set the fetched listings
+        setError(null); // Reset error state
+      } catch (err) {
+        setError("Failed to fetch the listings."); // Set error state
+        console.error(err);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchListings(); // Call fetch function
+  }, [field, value]); // Re-run effect if field or value changes
+
+  return { listings, loading, error }; // Return state and fetched data
+};
 
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]>{ // field? allows for the values to be empty
@@ -55,6 +81,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
       const profileData: ProfileData = {
         
         // data from users collection
+        userId: userID,
         name: data.name,
         profilePic: data.profilePic,
         university: data.university,
@@ -92,3 +119,56 @@ export function checkListingOwner(listing: Listing): boolean {
   }
   return false;
 }
+
+export async function getPins(): Promise<Listing[]> {
+  const userId = auth.currentUser!.uid;
+  const pinsRef = collection(db, "pins");
+  const listingsRef = collection(db, "listings");
+  const pinsQuery = query(pinsRef, where("userId", "==", userId));
+
+  // get pinned collection for userId
+  try {
+    const querySnapshot = await getDocs(pinsQuery);
+
+    if (querySnapshot.empty) {
+      console.log("No matching documents found.");
+      return [];
+    } else {
+      const pinnedListings: Listing[] = [];
+
+      // iterate through pinned listing collection and use id's to create listing[]
+      for (const docSnap of querySnapshot.docs) {
+        const data = docSnap.data();
+        const listingId = data.listingId;
+
+        if (listingId) {
+          try {
+            const listingDocRef = doc(listingsRef, listingId);
+            const listingDoc = await getDoc(listingDocRef);
+
+            if (listingDoc.exists()) {
+              const listingData = listingDoc.data() as Listing;
+              pinnedListings.push({
+                ...listingData,
+                id: listingDoc.id,
+                modalId: "modal-" + listingDoc.id,
+              });
+            } else {
+              console.log(`Listing with ID ${listingId} not found.`);
+            }
+          } catch (error) {
+            console.error(`Error fetching listing with ID ${listingId}:`, error);
+          }
+        }
+      }
+
+      console.log("Pinned listings found:", pinnedListings);
+      return pinnedListings;
+    }
+  } catch (error) {
+    console.error("Error getting pinned listings: ", error);
+    return [];
+  }
+}
+
+
