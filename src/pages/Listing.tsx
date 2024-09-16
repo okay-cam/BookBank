@@ -12,10 +12,7 @@ import DeleteListingPopup from "../components/DeleteListingPopup";
 import { togglePinListing } from "../backend/pinning";
 
 const Listing: React.FC = () => {
-  // const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
-  // const listingId = parseInt(id || "0", 10); // Convert id to an integer, defaulting to 0 if id is not provided.
-
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
   const [loading, setLoading] = useState(true); // State to manage loading status
 

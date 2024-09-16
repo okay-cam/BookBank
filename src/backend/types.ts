@@ -1,5 +1,6 @@
 // stores donor and listing info
 export interface ProfileData {
+  userId: string
     name: string;
     // from auth, set on sign-in
     email: string;

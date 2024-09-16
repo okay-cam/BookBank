@@ -1,8 +1,6 @@
 
 import { Listing, ProfileData } from "../backend/types";
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore"; 
-import { doc, getDoc } from "firebase/firestore";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
@@ -83,6 +81,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
       const profileData: ProfileData = {
         
         // data from users collection
+        userId: userID,
         name: data.name,
         profilePic: data.profilePic,
         university: data.university,

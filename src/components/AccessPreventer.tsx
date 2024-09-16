@@ -15,7 +15,7 @@ const ForcePages: React.FC<ForcePagesProps> = ({ setLoading }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	
-	const authPages = ["/", "/signup", "/resetpassword", "/passwordemailsent"];
+	const authPages = ["/", "/signup", "/reset-password", "/passwordemailsent"];
 	
 	useEffect(() => {
 		// go to login page when attempting to reach a non-auth page while signed out
