@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "./EnquiryPopup";
@@ -6,7 +6,7 @@ import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 import DeleteListingPopup from "./DeleteListingPopup";
 import { checkListingOwner } from "../backend/readData";
-import { togglePinListing } from "../backend/pinning";
+import { togglePinListing, isPinned } from "../backend/pinning";
 
 interface CardData {
   listing: Listing;
@@ -16,6 +16,20 @@ interface CardData {
 
 const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
+  const [pinned, setPinned] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchPinnedStatus = async () => {
+      if (listing?.id) {
+        const status = await isPinned(listing.id);
+        setPinned(status);
+      }
+    };
+
+    if (listing) {
+      fetchPinnedStatus();
+    }
+  }, [listing]);
 
   return (
     <>
@@ -36,7 +50,7 @@ const Card = ({ listing }: CardData) => {
           />
           <button
             type="button"
-            className={styles.pinButton}
+            className={`${styles.pinButton} ${pinned ? styles.pinActive : ''}`}
             title="Pin this listing"
             onClick={() => togglePinListing(listing)}
           >

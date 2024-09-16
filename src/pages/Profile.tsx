@@ -4,7 +4,7 @@ import defaultImage from "../assets/default-image-path.jpg";
 import { ProfileData as ProfileType } from "../backend/types";
 import { getProfileData } from "../backend/readData";
 import { auth } from "../config/firebase";
-import { getListings } from "../backend/readData";
+import { getListings, getPins } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,7 @@ const Profile: React.FC = () => {
     };
 
     fetchAndSetProfileData();
+    // getPins();
   }, []);
 
   useEffect(() => {
