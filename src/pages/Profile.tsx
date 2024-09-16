@@ -91,6 +91,7 @@ const Profile: React.FC = () => {
         )}
         <br />
         <h1>Reviews</h1>
+        <p>No reviews yet.</p>
       </div>
     </main>
   );
