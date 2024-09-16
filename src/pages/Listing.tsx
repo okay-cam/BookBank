@@ -42,14 +42,12 @@ const Listing: React.FC = () => {
 
   // check if this is the current users listing
   const isListingOwner = checkListingOwner(listing!);
+  const removeID = `${listing!.modalId}-remove`;
 
   return (
     <main className={styles.gridContainer}>
       <EnquiryPopup title={listing!.title} modalId={listing!.modalId} />
-      <DeleteListingPopup
-        title={listing!.title}
-        modalId={`${listing!.modalId}-remove`}
-      />
+      <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
         <BackButton />
         <img
@@ -69,7 +67,8 @@ const Listing: React.FC = () => {
             type="button"
             className="danger"
             data-bs-toggle="modal"
-            data-bs-target={`#${listing!.modalId}-remove`}
+            data-bs-target={`#${removeID}`}
+            onClick={() => console.log("Delete listing popup ID: ", removeID)}
           >
             Remove listing
           </button>

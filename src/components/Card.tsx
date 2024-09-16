@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "./EnquiryPopup";
@@ -15,13 +14,14 @@ interface CardData {
 
 const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
+  const removeID = `${listing.modalId}-remove`;
 
   return (
     <>
       <EnquiryPopup title={listing.title} modalId={listing.modalId} />
       <DeleteListingPopup
         title={listing.title}
-        modalId={`${listing.modalId}-remove`}
+        modalId={removeID}
       />
       <Link
         to={`/listing/${listing.id}`}
@@ -41,7 +41,8 @@ const Card = ({ listing }: CardData) => {
               type="button"
               className="danger"
               data-bs-toggle="modal"
-              data-bs-target={`#${listing.modalId}-remove`}
+              data-bs-target={`#${removeID}`}
+              onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
             >
               Remove
             </button>

@@ -42,7 +42,11 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
             >
               Close
             </button>
-            <button type="button" className="danger" onClick={() => deleteListing(modalId)} >
+            <button
+              type="button"
+              className="danger"
+              onClick={() => deleteListing(modalId)}
+            >
               Delete
             </button>
           </div>

@@ -34,7 +34,7 @@ export async function getListings(field?: string, value?: string): Promise<Listi
       };
       listings.push(listing);
     });
-  console.log(listings);
+  // console.log(listings);
   return listings;
 }
 
