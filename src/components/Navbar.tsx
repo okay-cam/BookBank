@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom'
 import { doSignOut } from '../config/auth'
 import { useAuth } from '../contexts/auth_context'
 import defaultImage from "../assets/default-image-path.jpg";
-import { auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
