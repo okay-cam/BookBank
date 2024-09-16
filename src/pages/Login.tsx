@@ -95,7 +95,7 @@ const Login = () => {
         <br />
         <p>
           {/* add reset password functionality */}
-          <Link to={'/resetpassword'}>Forgot Password?</Link>
+          <Link to={'/reset-password'}>Forgot Password?</Link>
         </p>
 
         <input

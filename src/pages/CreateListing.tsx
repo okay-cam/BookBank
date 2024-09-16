@@ -5,6 +5,7 @@ import { collection, addDoc, setDoc } from "firebase/firestore";
 import { db, auth, storage } from "../config/firebase";
 import BackButton from "../components/BackButton";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 interface ListingData {
   title: string;
@@ -15,15 +16,16 @@ interface ListingData {
 }
 
 const CreateListing: React.FC = () => {
-
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const [listingData, setListingData] = useState<ListingData>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
-    userID: auth.currentUser!.uid.toString()  // User can't be null when entering this page
+    userID: auth.currentUser!.uid.toString(), // User can't be null when entering this page
   });
 
   const [file, setFile] = useState<File | null>(null);  // Manage file state
@@ -51,10 +53,12 @@ const CreateListing: React.FC = () => {
 
     // Prevent listings that don't have an image
     if (!file) {
-      setErrorMessage("Please upload a photo of your textbook.")
+      setErrorMessage("Please upload a photo of your textbook.");
       return;
     }
-    
+
+    setIsSubmitting(true);
+
     // Create document entry
     const docRef = await addDoc(collection(db, "listings"), {
       title: listingData.title,
@@ -67,19 +71,32 @@ const CreateListing: React.FC = () => {
     // This code still has functionality for no images if we make it optional in future
 
     // Upload image to Cloud Storage if file exists
-    if (file) {
-      const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
-      await uploadBytes(imageRef, file);
-      const imageUrl = await getDownloadURL(imageRef);
+    try {
+      if (file) {
+        const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
+        await uploadBytes(imageRef, file);
+        const imageUrl = await getDownloadURL(imageRef);
 
-      // Create Firestore document with imageUrl
-      await setDoc(docRef, {
-        ...listingData,
-        imageUrl,
-      }, { merge: true });
-    } else {
-      // Create Firestore document without image
-      await setDoc(docRef, listingData, { merge: true });
+        // Create Firestore document with imageUrl
+        await setDoc(
+          docRef,
+          {
+            ...listingData,
+            imageUrl,
+          },
+          { merge: true }
+        );
+      } else {
+        // Create Firestore document without image
+        await setDoc(docRef, listingData, { merge: true });
+      }
+
+      navigate("/home");
+    } catch (error) {
+      console.error("Error creating listing:", error);
+    } finally {
+      // Reset the loading state
+      setIsSubmitting(false);
     }
   };
 
@@ -166,12 +183,11 @@ const CreateListing: React.FC = () => {
 
             <input
               type="submit"
-              value="Submit"
+              value={isSubmitting ? "Submitting..." : "Submit"}
               className="button call-to-action"
+              disabled={isSubmitting}
             />
-            <p className="error-msg">
-              {errorMessage}
-            </p>
+            <p className="error-msg">{errorMessage}</p>
           </form>
         </div>
       </main>
