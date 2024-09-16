@@ -7,17 +7,17 @@ import { auth } from "../config/firebase";
 import { getListings } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
+import { useParams } from "react-router-dom";
 
-const Profile = () => {
+const Profile: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>(); // Extract id from the route parameters.
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
   const [activeListings, setActiveListings] = useState<ListingType[]>([]);
 
   useEffect(() => {
     const fetchAndSetProfileData = async () => {
-      if (auth.currentUser) {
-        const data = await getProfileData(auth.currentUser.uid);
-        setProfileData(data);
-      }
+      const data = await getProfileData(userId!);
+      setProfileData(data);
     };
 
     fetchAndSetProfileData();
@@ -25,12 +25,10 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
-      if (auth.currentUser) {
-        const data = await getListings("userID", auth.currentUser.uid);
-        console.log("Fetched Listings:", data);
-        console.log("User ID is ", auth.currentUser.uid);
-        setActiveListings(data);
-      }
+      const data = await getListings("userID", userId);
+      console.log("Fetched Listings:", data);
+      console.log("User ID is ", userId);
+      setActiveListings(data);
     };
 
     fetchAndSetActiveListings();
@@ -58,14 +56,12 @@ const Profile = () => {
                 <br />
                 Join Date:{" "}
                 {profileData.joinDate
-                  // ? profileData.joinDate.toDateString()
-                  ? profileData.joinDate
+                  ? new Date(profileData.joinDate).toDateString()
                   : "N/A"}
                 <br />
                 Last Logged In:{" "}
                 {profileData.lastLoggedIn
-                  // ? profileData.lastLoggedIn.toDateString()
-                  ? profileData.lastLoggedIn
+                  ? new Date(profileData.lastLoggedIn).toDateString()
                   : "N/A"}
                 <br />
                 Total Ratings Received: {profileData.totalRatingsReceived}

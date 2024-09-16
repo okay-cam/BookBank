@@ -1,21 +1,35 @@
 import "../styles/general.css";
 import styles from "../styles/navbar.module.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // used for signing out - may be moved later
 import { useNavigate } from 'react-router-dom'
 import { doSignOut } from '../config/auth'
 import { useAuth } from '../contexts/auth_context'
 import defaultImage from "../assets/default-image-path.jpg";
+import { auth } from "../config/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
   const navigate = useNavigate()
   const { userLoggedIn } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleSearchSubmit = (e) => {
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid); // Set userId when a user is signed in
+      } else {
+        setUserId(null); // Clear userId when no user is signed in
+      }
+    });
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchQuery.trim()) { // only navigate if searchQuery is not empty
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
@@ -48,7 +62,7 @@ const Navbar = () => {
             </div>
             {dropdownOpen && (
               <div className={styles.dropdownMenu}>
-                <Link to="/profile" className={styles.dropdownButton}>Profile page</Link>
+                <Link to={`/profile/${userId}`} className={styles.dropdownButton}>Profile page</Link>
                 <Link to="/edit-account" className={styles.dropdownButton}>Edit account</Link>
                 <hr />
                 <button className={styles.dropdownButton} onClick={() => {

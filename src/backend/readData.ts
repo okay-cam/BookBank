@@ -81,6 +81,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
       const profileData: ProfileData = {
         
         // data from users collection
+        userId: userID,
         name: data.name,
         profilePic: data.profilePic,
         university: data.university,

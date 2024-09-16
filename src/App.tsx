@@ -65,7 +65,7 @@ const App = () => {
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
             <Route path="/pins" element={<Pins />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/edit-account" element={<EditAccount />}/>
             <Route path="/search" element={<Search />}/>
             <Route path="*" element={<Error404 />} />
