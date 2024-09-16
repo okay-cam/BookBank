@@ -3,6 +3,7 @@ import { auth } from "../../config/firebase";
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../config/firebase"
 import { onAuthStateChanged } from "firebase/auth";
+import { getProfileData } from '../../backend/readData';
 
 // stores currentUser (firebase auth data or null),
 // userLoggedIn (bool),
@@ -33,6 +34,13 @@ export function AuthProvider({ children }) {
                 lastLoggedIn: auth.currentUser.metadata.lastSignInTime
             });
             setUserLoggedIn(true);
+
+            // Fetch and store profile picture in local storage
+            const profileData = await getProfileData(user.uid);
+            if (profileData?.profilePic) {
+                localStorage.setItem('profilePic', profileData.profilePic);
+            }
+
         }
         else {
             setCurrentUser(null);
