@@ -27,3 +27,25 @@ export async function togglePinListing(listing: Listing) {
     console.error("Error toggling pin: ", error);
   }
 }
+
+// Function to check if a listing is pinned
+export const isPinned = async (listingId: string): Promise<boolean> => {
+  const pinsRef = collection(db, "pins");
+  const userId = auth.currentUser?.uid; // Use optional chaining to handle cases where user may be null
+
+  if (!userId) {
+    console.log("No user is currently logged in.");
+    return false;
+  }
+
+  // Query to find if the listing is pinned by the current user
+  const q = query(pinsRef, where("userId", "==", userId), where("listingId", "==", listingId));
+
+  try {
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty; // Return true if any documents are found
+  } catch (error) {
+    console.error("Error checking pinned status: ", error);
+    return false;
+  }
+};
