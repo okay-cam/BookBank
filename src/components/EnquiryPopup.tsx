@@ -3,9 +3,10 @@ import React, { useState } from "react";
 interface ModalDetails {
   modalId: string;
   title: string;
+  email: string;
 }
 
-const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
+const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );
@@ -47,7 +48,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>Enquiring for: {title}</p>
+            <p>Enquiring for '{title}'</p>
             <label>Message:</label>
             <br />
             <textarea

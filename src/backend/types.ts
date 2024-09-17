@@ -37,7 +37,7 @@ export interface Listing {
     courseCode: string;
     description: string;
     imageUrl: string;
-    userID: string;
+    userID: string; // stores the id of the user who created the listing
     modalId: string; // to display the correct enquiry popup when request button is pressed
   }
 
