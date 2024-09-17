@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/pins.module.css";
 import PinsCardContainer from "../components/PinsCardContainer";
-import testListings from "../backend/testListings";
-import { getPins, getListings } from "../backend/readData";
+//import testListings from "../backend/testListings";
+import { getPins, getListings, getWishlist } from "../backend/readData";
 import { auth } from "../config/firebase";
 // This page needs to be updated so that the actual listings are passed in instead of test listings
 // The test listings don't have request functionality attached
@@ -11,6 +11,7 @@ import { Listing } from "../backend/types";
 const Pins = () => {
   const [pins, setPins] = useState<Listing[]>([]); // Copied code for getting listings from Home.tsx
   const [activeListings, setActiveListings] = useState<Listing[]>([]);
+  const [wishlist, setWishlist] = useState<Listing[]>([]);
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -30,6 +31,13 @@ const Pins = () => {
     };
 
     fetchAndSetActiveListings();
+
+    const fetchWishlist = async () => {
+      const wishlistListings = await getWishlist();
+      setWishlist(wishlistListings);
+    };
+
+    fetchWishlist();
   }, []);
 
   return (
@@ -53,13 +61,15 @@ const Pins = () => {
       </div>
 
       <div className={styles.listingsSection}>
-        <h1 className={styles.pinsHeader}>Your watchlist</h1>
-        {/* {testListings.length > 0 ? (
-          <PinsCardContainer listings={pins} />
+        <h1 className={styles.pinsHeader}>Your wishlist</h1>
+        {wishlist.length > 0 ? (
+          <>
+            <p>These are listings with course codes that you have wishlisted</p>
+            <PinsCardContainer listings={wishlist} />
+          </>
         ) : (
-          <p>You have no watchlist items</p>
-        )} */}
-        <p>Watchlist feature not yet available.</p>
+          <p>You have no wishlisted courses</p>
+        )}
       </div>
     </>
   );
