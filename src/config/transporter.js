@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Load environment variables
+dotenv.config(); // Load environment variables again
+// ( dotenv needs to be done here too for some reason, i guess it
+//   runs before server.js? )
 
 import nodemailer from 'nodemailer';
 

@@ -46,6 +46,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
 
     console.log(message);
     // Perform additional actions here, such as closing the modal
+    // !! Close the modal
   };
 
   return (
