@@ -40,7 +40,10 @@ const DonorInfo = ({ donorId }: DonorIDProps) => {
   return (
     <Link to={`/profile/${donorId}`} className="no-underline">
       <div className={styles.donorInfo}>
-        <img src={defaultImage} className={styles.profilePic} />
+        <img
+          src={profile.profilePic || defaultImage}
+          className={styles.profilePic}
+        />
         <div className={styles.donorContent}>
           <h1>{profile.name}</h1>
           {profile.location ? (

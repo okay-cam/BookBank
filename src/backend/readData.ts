@@ -32,10 +32,10 @@ export const useListings = (field?: string, value?: string) => {
 };
 
 
-export async function getListings(field?: string, value?: string): Promise<Listing[]>{ // field? allows for the values to be empty
-  
+export async function getListings(field?: string, value?: string): Promise<Listing[]> { // field? allows for the values to be empty
+
   const listingsRef = collection(db, "listings");
-  
+
   let q;
   if (field && value) {
     q = query(listingsRef, where(field, "==", value)); // Return all listings that match parameters
@@ -49,17 +49,17 @@ export async function getListings(field?: string, value?: string): Promise<Listi
   querySnapshot.forEach((doc) => {
     const data = doc.data() as Listing;
     const listing: Listing = {
-        id: doc.id,
-        title: data.title,
-        authors: data.authors,
-        courseCode: data.courseCode,
-        description: data.description,
-        imageUrl: data.imageUrl,
-        userID: data.userID,
-        modalId: "modal-"+doc.id
-      };
-      listings.push(listing);
-    });
+      id: doc.id,
+      title: data.title,
+      authors: data.authors,
+      courseCode: data.courseCode,
+      description: data.description,
+      imageUrl: data.imageUrl,
+      userID: data.userID,
+      modalId: "modal-" + doc.id
+    };
+    listings.push(listing);
+  });
   console.log(listings);
   return listings;
 }
@@ -79,7 +79,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
 
       // Assign values based on ProfileData interface and convert necessary types
       const profileData: ProfileData = {
-        
+
         // data from users collection
         userId: userID,
         name: data.name,
@@ -93,12 +93,12 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
 
         // data from auth -> users collection
         email: data.email,
-        joinDate: data.joinDate, 
+        joinDate: data.joinDate,
         lastLoggedIn: data.lastLoggedIn
 
         // Add other fields as needed
       };
-      
+
 
 
       return profileData;
@@ -118,4 +118,114 @@ export function checkListingOwner(listing: Listing): boolean {
     return auth.currentUser.uid === listing.userID;
   }
   return false;
+}
+
+export async function getPins(): Promise<Listing[]> {
+  const userId = auth.currentUser!.uid;
+  const pinsRef = collection(db, "pins");
+  const listingsRef = collection(db, "listings");
+  const pinsQuery = query(pinsRef, where("userId", "==", userId));
+
+  // get pinned collection for userId
+  try {
+    const querySnapshot = await getDocs(pinsQuery);
+
+    if (querySnapshot.empty) {
+      console.log("No matching documents found.");
+      return [];
+    } else {
+      const pinnedListings: Listing[] = [];
+
+      // iterate through pinned listing collection and use id's to create listing[]
+      for (const docSnap of querySnapshot.docs) {
+        const data = docSnap.data();
+        const listingId = data.listingId;
+
+        if (listingId) {
+          try {
+            const listingDocRef = doc(listingsRef, listingId);
+            const listingDoc = await getDoc(listingDocRef);
+
+            if (listingDoc.exists()) {
+              const listingData = listingDoc.data() as Listing;
+              pinnedListings.push({
+                ...listingData,
+                id: listingDoc.id,
+                modalId: "modal-" + listingDoc.id,
+              });
+            } else {
+              console.log(`Listing with ID ${listingId} not found.`);
+            }
+          } catch (error) {
+            console.error(`Error fetching listing with ID ${listingId}:`, error);
+          }
+        }
+      }
+
+      console.log("Pinned listings found:", pinnedListings);
+      return pinnedListings;
+    }
+  } catch (error) {
+    console.error("Error getting pinned listings: ", error);
+    return [];
+  }
+}
+
+export async function getWishlist(): Promise<Listing[]> {
+  const userId = auth.currentUser!.uid;
+  const wishlistRef = collection(db, "wishlist");
+  const listingsRef = collection(db, "listings");
+
+  // Create a query to get all wishlist entries for the current user
+  const wishlistQuery = query(wishlistRef, where("userId", "==", userId));
+
+  try {
+    const wishlistSnapshot = await getDocs(wishlistQuery);
+
+    if (wishlistSnapshot.empty) {
+      console.log("No wishlist entries found.");
+      return [];
+    }
+
+    // Collect all course codes from the wishlist
+    const courseCodes: string[] = [];
+    wishlistSnapshot.docs.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.courseCode) {
+        courseCodes.push(data.courseCode);
+      }
+    });
+
+    if (courseCodes.length === 0) {
+      console.log("No course codes found in wishlist.");
+      return [];
+    }
+
+    // Create a query to get all listings that match the course codes
+    const listingsQuery = query(listingsRef, where("courseCode", "in", courseCodes));
+    const listingsSnapshot = await getDocs(listingsQuery);
+
+    if (listingsSnapshot.empty) {
+      console.log("No matching listings found.");
+      return [];
+    }
+
+    // Collect and return all matching listings
+    const wishlistListings: Listing[] = [];
+    listingsSnapshot.docs.forEach(docSnap => {
+      const data = docSnap.data() as Listing;
+      wishlistListings.push({
+        ...data,
+        id: docSnap.id,
+        modalId: "modal-" + docSnap.id,
+      });
+    });
+
+    console.log("Wishlist listings found:", wishlistListings);
+    return wishlistListings;
+
+  } catch (error) {
+    console.error("Error getting wishlist listings: ", error);
+    return [];
+  }
 }

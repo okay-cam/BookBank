@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
 import EnquiryPopup from "./EnquiryPopup";
@@ -6,7 +6,7 @@ import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 import DeleteListingPopup from "./DeleteListingPopup";
 import { checkListingOwner } from "../backend/readData";
-import { togglePinListing } from "../backend/pinning";
+import { togglePinListing, isPinned } from "../backend/pinning";
 
 interface CardData {
   listing: Listing;
@@ -16,13 +16,28 @@ interface CardData {
 
 const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
+  const removeID = `${listing.modalId}-remove`;
+  const [pinned, setPinned] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchPinnedStatus = async () => {
+      if (listing?.id) {
+        const status = await isPinned(listing.id);
+        setPinned(status);
+      }
+    };
+
+    if (listing) {
+      fetchPinnedStatus();
+    }
+  }, [listing]);
 
   return (
     <>
       <EnquiryPopup title={listing.title} modalId={listing.modalId} />
       <DeleteListingPopup
         title={listing.title}
-        modalId={`${listing.modalId}-remove`}
+        modalId={removeID}
       />
       <Link
         to={`/listing/${listing.id}`}
@@ -36,7 +51,7 @@ const Card = ({ listing }: CardData) => {
           />
           <button
             type="button"
-            className={styles.pinButton}
+            className={`${styles.pinButton} ${pinned ? styles.pinActive : ''}`}
             title="Pin this listing"
             onClick={() => togglePinListing(listing)}
           >
@@ -51,8 +66,9 @@ const Card = ({ listing }: CardData) => {
             <button
               type="button"
               className="danger"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing.modalId}-remove`}
+              // data-bs-toggle="modal"
+              // data-bs-target={`#${removeID}`}
+              // onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
             >
               Remove
             </button>
@@ -60,8 +76,8 @@ const Card = ({ listing }: CardData) => {
             <button
               type="button"
               className="call-to-action"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing.modalId}`}
+              // data-bs-toggle="modal"
+              // data-bs-target={`#${listing.modalId}`}
             >
               Request
             </button>

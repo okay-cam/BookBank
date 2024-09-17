@@ -4,6 +4,7 @@ import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
 import { Listing } from "../backend/types";
 import { getListings } from "../backend/readData";
+import WishlistButton from "../components/WishlistButton";
 
 import { useLocation } from "react-router-dom";
 
@@ -56,22 +57,30 @@ const Search = () => {
   return (
     <main className={styles.gridContainer}>
       <div className={styles.listingsSection}>
-        
+
         <h1>Search Results for "{searchQuery}"</h1>
         <br />
         {
-          
+
           loadingListings ? (
-						<div className="spinner-border text-dark" role="status">
-							<span className="sr-only"></span>
-						</div>
-					) : listings.length > 0? (
-						// Pass the listings from state
-						<CardContainer listings={listings} />
-					) : (
-						<p>No listings found for "{searchQuery}". Please try another search.</p>
-					)
-				}
+            <div className="spinner-border text-dark" role="status">
+              <span className="sr-only"></span>
+            </div>
+          ) : listings.length > 0 ? (
+            // Pass the listings from state
+            <>
+              <CardContainer listings={listings} />
+              <br />
+              <WishlistButton courseCode={searchQuery} />
+            </>
+          ) : (
+            <>
+              <p>No listings found for "{searchQuery}". Please try another search.</p>
+              <WishlistButton courseCode={searchQuery} />
+            </>
+          )
+        }
+
       </div>
     </main>
   );

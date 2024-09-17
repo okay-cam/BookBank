@@ -9,13 +9,14 @@ import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
-import { togglePinListing } from "../backend/pinning";
+import { togglePinListing, isPinned } from "../backend/pinning";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
   const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
+  const [pinned, setPinned] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -37,18 +38,37 @@ const Listing: React.FC = () => {
   // }, [id, listing]);
   }, [id]);
 
-  // Redirect to 404 page if listing is not found
+  useEffect(() => {
+    const fetchPinnedStatus = async () => {
+      if (listing?.id) {
+        const status = await isPinned(listing.id);
+        setPinned(status);
+      }
+    };
+
+    if (listing) {
+      fetchPinnedStatus();
+    }
+  }, [listing]);
+
   if (!loading && !listing) {
     return <Navigate to="/404" />;
   }
 
-  // Show a loading message while fetching the listing
   if (loading) {
     return <div>Loading...</div>;
   }
 
   // check if this is the current users listing
-  const isListingOwner = checkListingOwner(listing!);
+  const isListingOwner = listing ? checkListingOwner(listing) : false;
+  const removeID = `${listing!.modalId}-remove`;
+  const handlePinToggle = async () => {
+    if (listing) {
+      await togglePinListing(listing);
+      const updatedStatus = await isPinned(listing.id);
+      setPinned(updatedStatus);
+    }
+  };
 
   return (
     <main className={styles.gridContainer}>
@@ -57,14 +77,11 @@ const Listing: React.FC = () => {
         modalId={listing!.modalId}
         email={listerEmail!}
       />
-      <DeleteListingPopup
-        title={listing!.title}
-        modalId={`${listing!.modalId}-remove`}
-      />
+      <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
         <BackButton />
         <img
-          src={listing?.imageUrl || defaultImagePath} // Use the imageUrl or fallback to defaultImagePath
+          src={listing!.imageUrl || defaultImagePath}
           alt="Listing image"
           style={{
             maxWidth: "100%",
@@ -74,13 +91,13 @@ const Listing: React.FC = () => {
         />
         <br />
         <br />
-        {/* buttons and popups */}
         {isListingOwner ? (
           <button
             type="button"
             className="danger"
             data-bs-toggle="modal"
-            data-bs-target={`#${listing!.modalId}-remove`}
+            data-bs-target={`#${removeID}`}
+            onClick={() => console.log("Delete listing popup ID: ", removeID)}
           >
             Remove listing
           </button>
@@ -96,19 +113,18 @@ const Listing: React.FC = () => {
         )}
       </div>
       <div className={styles.content}>
-        {/* pin button */}
         <button
           type="button"
           className="corner-btn"
-          onClick={() => togglePinListing(listing!)}
+          onClick={handlePinToggle}
         >
-          Pin this listing
+          {pinned ? "Unpin this listing" : "Pin this listing"}
         </button>
         <br />
-        <h1>{listing?.title}</h1>
-        <label>{listing?.authors}</label>
-        <h3>{listing?.courseCode}</h3>
-        <p>{listing?.description}</p>
+        <h1>{listing!.title}</h1>
+        <label>{listing!.authors}</label>
+        <h3>{listing!.courseCode}</h3>
+        <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
       </div>

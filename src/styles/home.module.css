@@ -3,13 +3,14 @@
     display: grid;
     grid-template-rows: auto auto;
     grid-template-columns: 1fr;
-    grid-template-areas: 
-    "bannerSection" 
-    "listingsSection";
+    grid-template-areas:
+        "bannerSection"
+        "listingsSection";
     justify-items: center;
 }
 
-.bannerSection, .listingsSection {
+.bannerSection,
+.listingsSection {
     padding: 20px;
     width: 100%;
     text-align: center;
@@ -24,4 +25,12 @@
 .listingsSection {
     grid-area: listingsSection;
     background-color: #efefefff;
+}
+
+.wishlistButton,
+.wishlistButton:hover {
+    color: #0000EE;
+    text-decoration: underline;
+    border: none;
+    background-color: none;
 }
