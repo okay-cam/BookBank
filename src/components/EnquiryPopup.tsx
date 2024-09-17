@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { sendEmail, EmailData } from '../backend/emailService';
 
+import { auth } from "../config/firebase";
+
 interface ModalDetails {
   modalId: string;
   title: string;
@@ -15,11 +17,17 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Create a formatted HTML message
+  const formattedMessage = `
+  <p><strong>Enquiry Details Email:</strong> ${auth.currentUser?.email}</p>
+  <p><strong>Enquiry:</strong> ${message}</p>
+`;
+
   const handleSendEmail = async () => {
     const emailData : EmailData = {
-      email: 'camoarrow4586@gmail.com',
-      subject: 'test email from app!',
-      message: 'This is a test message from our app!',
+      email: 'camoarrow4586@gmail.com', // use personal email for now, later switch to email variable
+      subject: `New request for your textbook '${title}'`,
+      message: formattedMessage,
     };
   
     try {
