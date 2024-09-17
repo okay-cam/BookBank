@@ -71,6 +71,12 @@ button:hover, .button:hover {
     padding: 5px 10px;
 }
 
+.danger:disabled {
+    background-color: rgb(180, 46, 46);
+    color: rgb(47, 47, 47);
+    border: solid 2px rgb(47, 47, 47);
+}
+
 .corner-btn {
     font-size: 70%;
     border: 1.5px solid black;

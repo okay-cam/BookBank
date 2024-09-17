@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { deleteListing } from "../backend/deleteData";
+import { useNavigate } from "react-router-dom";
 
 interface ModalDetails {
   modalId: string;
@@ -7,6 +8,24 @@ interface ModalDetails {
 }
 
 const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
+  const navigate = useNavigate();
+  const [isDeleting, setDeleting] = useState<boolean>(false);
+
+  // Handle delete action
+  async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
+    try {
+      e.preventDefault();
+      setDeleting(true); // to make sure the delete button is disabled
+
+      // Call your delete function from backend
+      await deleteListing(modalId);
+      setDeleting(false);
+      navigate("/home"); // navigate back to home
+    } catch (error) {
+      console.error("Error during deletion:", error);
+    }
+  }
+
   return (
     <div
       className="modal fade"
@@ -45,9 +64,11 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
             <button
               type="button"
               className="danger"
-              onClick={() => deleteListing(modalId)}
+              onClick={handleDelete}
+              data-bs-dismiss="modal"
+              disabled={isDeleting}
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>

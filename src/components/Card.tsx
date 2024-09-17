@@ -66,9 +66,9 @@ const Card = ({ listing }: CardData) => {
             <button
               type="button"
               className="danger"
-              data-bs-toggle="modal"
-              data-bs-target={`#${removeID}`}
-              onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
+              // data-bs-toggle="modal"
+              // data-bs-target={`#${removeID}`}
+              // onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
             >
               Remove
             </button>
@@ -76,8 +76,8 @@ const Card = ({ listing }: CardData) => {
             <button
               type="button"
               className="call-to-action"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing.modalId}`}
+              // data-bs-toggle="modal"
+              // data-bs-target={`#${listing.modalId}`}
             >
               Request
             </button>
