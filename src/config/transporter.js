@@ -1,4 +1,5 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
 // configure host, port, and auth data for the email transporter
 
@@ -7,12 +8,12 @@ const transporter = nodemailer.createTransport({
     port: 465, 
     secure: true, 
     auth: {
-        user: import.meta.env.VITE_EMAIL_USER, // Zoho email address
-        pass: import.meta.env.VITE_EMAIL_PASS // Zoho app password
+        user: process.env.EMAIL_USER, // Zoho email address
+        pass: process.env.EMAIL_PASS // Zoho app password
     },
     tls: {
         rejectUnauthorized: false
     }
 });
 
-module.exports = transporter;
+export default transporter;

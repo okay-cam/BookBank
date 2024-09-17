@@ -24,15 +24,18 @@ const Listing: React.FC = () => {
 
       setListing(foundListing || null); // Set the found listing or null if not found
 
-      // find email of the person who created the listing
-      const listerProfile = await getProfileData(listing!.userID); // fetch profile data
-      setListerEmail(listerProfile?.email || null)
+      // Fetch email if listing is found
+      if (foundListing) {
+        const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
+        setListerEmail(listerProfile?.email || null);
+      }
 
       setLoading(false); // Set loading to false after fetching
     };
 
     fetchListing(); // Call the fetch function when the component mounts
-  }, [id, listing]);
+  // }, [id, listing]);
+  }, [id]);
 
   // Redirect to 404 page if listing is not found
   if (!loading && !listing) {

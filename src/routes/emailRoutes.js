@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const transporter = require('../config/transporter');
+import { Router } from 'express';
+import transporter from '../config/transporter.js';
+
+const router = Router();
 
 // Route to send email
 router.post('/send-email', async (req, res) => {
@@ -24,4 +25,4 @@ router.post('/send-email', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
