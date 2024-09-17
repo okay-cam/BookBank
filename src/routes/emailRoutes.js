@@ -14,7 +14,7 @@ router.post('/send-email', async (req, res) => {
     // Using personal email for now, since our test accounts aren't our own emails
     const mailOptions = {
         from: 'BookBank <bookbank@zohomail.com.au>',
-        to: "camoarrow4586@gmail.com",  // Recipient email
+        to: "camoarrow4586@gmail.com",  // Recipient email (my personal email)
         subject: subject,  // Email subject
         text: message,  // Plain text version of the message
         html: `<p>${message}</p>`  // HTML version of the message

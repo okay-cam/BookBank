@@ -59,7 +59,7 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Close
+              Cancel
             </button>
             <button
               type="button"

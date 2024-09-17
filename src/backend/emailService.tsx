@@ -1,5 +1,6 @@
+// Email data must contain an email, subject and message
 export interface EmailData {
-    email: string;
+    email: string; // recipient email
     subject: string;
     message: string;
 }

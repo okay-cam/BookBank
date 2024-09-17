@@ -69,6 +69,7 @@ const Signup = () => {
         const currentUser: User = userCredential.user
         
         const newProfile: ProfileData = {
+          userID: userID,
           name: name.trim(),
           // No profile picture initially
           profilePic: null,
@@ -84,8 +85,10 @@ const Signup = () => {
           lastLoggedIn: currentUser.metadata.lastSignInTime!
         }
 
-        // Add placeholder user data to "users" document
+        // Add user data to "users" document
         await setDoc(doc(db, "users", userID), newProfile);
+
+        setIsRegistering(false);
 
       } catch (error) {
         // show correct error message depending on the issue
@@ -145,7 +148,7 @@ const Signup = () => {
         />
         <br />
         <br />
-        <label htmlFor="username">Enter Display Name</label>
+        <label htmlFor="username">Display Name</label>
         <br />
         <input
           type="text"
@@ -156,7 +159,7 @@ const Signup = () => {
         />
         <br />
         <br />
-        <label htmlFor="password">Enter Password</label>
+        <label htmlFor="password">Password</label>
         <br />
         <input
           type="password"

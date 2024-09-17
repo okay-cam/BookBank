@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { auth } from "../../config/firebase";
-import { updateDoc, doc } from "firebase/firestore";
+import { getDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../config/firebase"
 import { onAuthStateChanged } from "firebase/auth";
 import { getProfileData } from '../../backend/readData';
@@ -28,11 +28,25 @@ export function AuthProvider({ children }) {
 
     async function initializeUser(user) {
         if (user) {
-            setCurrentUser({ ...user });
-            // Update only the lastLoggedIn field
-            await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-                lastLoggedIn: auth.currentUser.metadata.lastSignInTime
-            });
+            
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnapshot = await getDoc(userDocRef);
+
+            // Check if the user document exists before attempting to update
+            if (userDocSnapshot.exists()) {
+                // Update only the lastLoggedIn field
+                await updateDoc(userDocRef, {
+                    lastLoggedIn: auth.currentUser.metadata.lastSignInTime,
+                });
+            } else {
+                console.log("User document doesn't exist yet, skipping update.");
+            }
+
+            // setCurrentUser({ ...user });
+            // // Update only the lastLoggedIn field
+            // await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+            //     lastLoggedIn: auth.currentUser.metadata.lastSignInTime
+            // });
             setUserLoggedIn(true);
 
             // Fetch and store profile picture in local storage
