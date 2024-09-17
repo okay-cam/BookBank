@@ -1,29 +1,61 @@
 import React, { useState } from "react";
+import { sendEmail, EmailData } from '../backend/emailService';
+
+import { auth } from "../config/firebase";
 
 interface ModalDetails {
   modalId: string;
   title: string;
+  email: string;
 }
 
-const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
+const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Create a formatted HTML message
+  const formattedMessage = `
+  <p><strong>Enquiry Details Email:</strong> ${auth.currentUser?.email}</p>
+  <p><strong>Enquiry:</strong> ${message}</p>
+`;
 
-  function handleSubmit() {
+  const handleSendEmail = async () => {
+    const emailData : EmailData = {
+      email: 'camoarrow4586@gmail.com', // use personal email for now, later switch to email variable
+      subject: `New request for your textbook '${title}'`,
+      message: formattedMessage,
+    };
+  
+    try {
+      const response = await sendEmail(emailData);
+      setSuccessMessage(response); // Set success message
+      setMessage(""); // Clear the message field on success
+    } catch (error: any) {
+      setErrorMessage(error.message || 'Failed to send email');
+    } finally {
+      setIsSubmitting(false); // Re-enable the button
+    }
+  };
+  
+  const handleSubmit = () => {
     if (message.trim() === "") {
-      // If message is empty, set error message
       setErrorMessage("Message cannot be empty.");
       return;
     }
 
-    setErrorMessage(""); // Clear any previous error message
+    setErrorMessage(""); // Clear any previous error
+    setSuccessMessage(""); // Clear any previous success
 
-    // Proceed with handling the message (e.g., send it to a server)
+    handleSendEmail(); // Send the email
+
     console.log(message);
     // Perform additional actions here, such as closing the modal
-  }
+    // !! Close the modal
+  };
 
   return (
     <div
@@ -47,7 +79,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>Enquiring for: {title}</p>
+            <p>Enquiring for '{title}'</p>
             <label>Message:</label>
             <br />
             <textarea

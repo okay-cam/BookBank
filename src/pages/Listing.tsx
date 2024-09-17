@@ -4,7 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import { getListings } from "../backend/readData";
+import { getListings, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
@@ -14,18 +14,28 @@ import { togglePinListing, isPinned } from "../backend/pinning";
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
+  const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchListing = async () => {
-      const listings = await getListings();
-      const foundListing = listings.find((l) => l.id === id);
-      setListing(foundListing || null);
-      setLoading(false);
+      const listings = await getListings(); // Fetch all listings
+      const foundListing = listings.find((l) => l.id === id); // Find the listing by id
+
+      setListing(foundListing || null); // Set the found listing or null if not found
+
+      // Fetch email if listing is found
+      if (foundListing) {
+        const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
+        setListerEmail(listerProfile?.email || null);
+      }
+
+      setLoading(false); // Set loading to false after fetching
     };
 
-    fetchListing();
+    fetchListing(); // Call the fetch function when the component mounts
+  // }, [id, listing]);
   }, [id]);
 
   useEffect(() => {
@@ -62,7 +72,11 @@ const Listing: React.FC = () => {
 
   return (
     <main className={styles.gridContainer}>
-      <EnquiryPopup title={listing!.title} modalId={listing!.modalId} />
+      <EnquiryPopup
+        title={listing!.title}
+        modalId={listing!.modalId}
+        email={listerEmail!}
+      />
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
         <BackButton />
