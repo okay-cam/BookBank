@@ -4,7 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import { getListings } from "../backend/readData";
+import { getListings, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
@@ -14,6 +14,7 @@ import { togglePinListing } from "../backend/pinning";
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
+  const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
 
   useEffect(() => {
@@ -22,11 +23,16 @@ const Listing: React.FC = () => {
       const foundListing = listings.find((l) => l.id === id); // Find the listing by id
 
       setListing(foundListing || null); // Set the found listing or null if not found
+
+      // find email of the person who created the listing
+      const listerProfile = await getProfileData(listing!.userID); // fetch profile data
+      setListerEmail(listerProfile?.email || null)
+
       setLoading(false); // Set loading to false after fetching
     };
 
     fetchListing(); // Call the fetch function when the component mounts
-  }, [id]);
+  }, [id, listing]);
 
   // Redirect to 404 page if listing is not found
   if (!loading && !listing) {
@@ -43,7 +49,11 @@ const Listing: React.FC = () => {
 
   return (
     <main className={styles.gridContainer}>
-      <EnquiryPopup title={listing!.title} modalId={listing!.modalId} />
+      <EnquiryPopup
+        title={listing!.title}
+        modalId={listing!.modalId}
+        email={listerEmail!}
+      />
       <DeleteListingPopup
         title={listing!.title}
         modalId={`${listing!.modalId}-remove`}

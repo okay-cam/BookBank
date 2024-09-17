@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { sendEmail, EmailData } from '../backend/emailService';
 
 interface ModalDetails {
   modalId: string;
@@ -11,20 +12,41 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     "Hi, I am interested in this textbook. Is it still available?"
   );
   const [errorMessage, setErrorMessage] = useState("");
-
-  function handleSubmit() {
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const handleSendEmail = async () => {
+    const emailData : EmailData = {
+      email: 'camoarrow4586@gmail.com',
+      subject: 'test email from app!',
+      message: 'This is a test message from our app!',
+    };
+  
+    try {
+      const response = await sendEmail(emailData);
+      setSuccessMessage(response); // Set success message
+      setMessage(""); // Clear the message field on success
+    } catch (error: any) {
+      setErrorMessage(error.message || 'Failed to send email');
+    } finally {
+      setIsSubmitting(false); // Re-enable the button
+    }
+  };
+  
+  const handleSubmit = () => {
     if (message.trim() === "") {
-      // If message is empty, set error message
       setErrorMessage("Message cannot be empty.");
       return;
     }
 
-    setErrorMessage(""); // Clear any previous error message
+    setErrorMessage(""); // Clear any previous error
+    setSuccessMessage(""); // Clear any previous success
 
-    // Proceed with handling the message (e.g., send it to a server)
+    handleSendEmail(); // Send the email
+
     console.log(message);
     // Perform additional actions here, such as closing the modal
-  }
+  };
 
   return (
     <div
