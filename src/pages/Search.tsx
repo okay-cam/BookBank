@@ -4,9 +4,9 @@ import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
 import { Listing } from "../backend/types";
 import { getListings } from "../backend/readData";
+import WishlistButton from "../components/WishlistButton";
 
 import { useLocation } from "react-router-dom";
-import { addWishlist } from "../backend/wishlist";
 
 const Search = () => {
 
@@ -71,16 +71,12 @@ const Search = () => {
             <>
               <CardContainer listings={listings} />
               <br />
-              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
-                <button className={styles.wishlistButton} onClick={() => addWishlist(searchQuery!)}>Wishlist</button>
-              </p>
+              <WishlistButton courseCode={searchQuery} />
             </>
           ) : (
             <>
               <p>No listings found for "{searchQuery}". Please try another search.</p>
-              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
-                <button className={styles.wishlistButton} onClick={() => addWishlist(searchQuery!)}>Wishlist</button>
-              </p>
+              <WishlistButton courseCode={searchQuery} />
             </>
           )
         }
