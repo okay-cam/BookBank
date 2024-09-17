@@ -6,7 +6,8 @@ export interface EmailData {
 
 export const sendEmail = async (emailData: EmailData): Promise<string> => {
     try {
-        const response = await fetch('/send-email', {
+        const backendPort = import.meta.env.VITE_BACKEND_PORT || '3000';
+        const response = await fetch(`http://localhost:${backendPort}/send-email`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

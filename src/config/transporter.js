@@ -1,7 +1,13 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables
+
+import nodemailer from 'nodemailer';
 
 // configure host, port, and auth data for the email transporter
+
+// Log environment variables to verify
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.zoho.com.au', // Your Zoho SMTP server

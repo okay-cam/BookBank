@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
@@ -6,7 +9,7 @@ import { fileURLToPath } from 'url';
 import emailRoutes from './routes/emailRoutes.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.BACKEND_PORT || '3000';
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -7,6 +7,10 @@ const router = Router();
 router.post('/send-email', async (req, res) => {
     const { email, subject, message } = req.body; // Get dynamic email data from the request body
 
+    if (!email || !subject || !message) {
+        return res.status(400).json({ success: false, message: 'Email, subject, and message are required.' });
+    }
+
     const mailOptions = {
         from: 'bookbank@zohomail.com.au',
         to: email,  // Recipient email
