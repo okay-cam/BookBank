@@ -19,7 +19,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   
   // Create a formatted HTML message
   const formattedMessage = `
-  <p><strong>Enquiry Details Email:</strong> ${auth.currentUser?.email}</p>
+  <p><strong>Enquiry Details</strong></p>
+  <p><strong>Email:</strong> ${auth.currentUser?.email}</p>
   <p><strong>Enquiry:</strong> ${message}</p>
 `;
 
