@@ -10,6 +10,7 @@ interface ModalDetails {
 }
 
 const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
+  console.log('Email in enquiry popup is ', email);
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );
@@ -27,7 +28,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   // Send email to the textbook donor
   const handleSendEnquiryEmail = async () => {
     const emailData : EmailData = {
-      email: email, // send email to the testbook owner's email
+      email: email, // send email to the testbook owner's email !! this is going to the wrong email?
       subject: `New request for your textbook '${title}'`,
       message: formattedEnquiryMessage,
     };
@@ -62,6 +63,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
       return false;
     }
 
+    console.log("REQUESTER EMAIL: ", requesterEmail)
+
     const emailData : EmailData = {
       email: requesterEmail, // use personal email for now, later switch to email variable
       subject: `Your request receipt for the textbook '${title}'`,
@@ -72,7 +75,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Receipt email sent!")
+      console.log("Receipt email sent! Data: ", emailData)
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || 'Failed to send email');
@@ -81,7 +84,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (message.trim() === "") {
       setErrorMessage("Message cannot be empty.");
       return;
@@ -91,8 +94,9 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     setSuccessMessage(""); // Clear any previous success
     setIsSubmitting(true);
     
-    handleSendEnquiryEmail(); // Send the email
-    handleSendReceiptEmail(); // Send receipt if email goes through successfully
+    // This code is broken still
+    await handleSendEnquiryEmail(); // Send the email
+    await handleSendReceiptEmail(); // Send receipt if email goes through successfully
 
     appendArray("listings", "19ZBcLxqOvaZcTVxZ3Vs", "enquired", auth.currentUser!.uid)
     // TODO: Update second parameter "19ZB" to instead use listingId
