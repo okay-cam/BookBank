@@ -2,14 +2,19 @@ import React, { useState } from "react";
 import { sendEmail, EmailData } from "../backend/emailService";
 import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
+import { Listing } from "../backend/types";
 
 interface ModalDetails {
-  modalId: string;
-  title: string;
+  listing: Listing;
   email: string;
+  setEnquiredVariables: Function; // function in listing.tsx to update enquired and pinned states to true
 }
 
-const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
+const EnquiryPopup: React.FC<ModalDetails> = ({
+  listing,
+  email,
+  setEnquiredVariables,
+}) => {
   console.log("Email in enquiry popup is ", email);
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
@@ -29,7 +34,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   const handleSendEnquiryEmail = async () => {
     const emailData: EmailData = {
       email: email, // send email to the testbook owner's email !! this is going to the wrong email?
-      subject: `New request for your textbook '${title}'`,
+      subject: `New request for your textbook '${listing.title}'`,
       message: formattedEnquiryMessage,
     };
 
@@ -66,7 +71,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
 
     const emailData: EmailData = {
       email: requesterEmail, // use personal email for now, later switch to email variable
-      subject: `Your request receipt for the textbook '${title}'`,
+      subject: `Your request receipt for the textbook '${listing.title}'`,
       message: formattedReceiptMessage,
     };
 
@@ -96,27 +101,22 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     await handleSendEnquiryEmail(); // Send the email
     await handleSendReceiptEmail(); // Send receipt if email goes through successfully
 
-    appendArray(
-      "listings",
-      "19ZBcLxqOvaZcTVxZ3Vs",
-      "enquired",
-      auth.currentUser!.uid
+    // add user id to the enquired field
+    await appendArray(
+      "listings", // name of the collection
+      listing.id, // listing id
+      "enquired", // field
+      auth.currentUser!.uid // id of the user that enquired
     );
-    // TODO: Update second parameter "19ZB" to instead use listingId
-
-    console.log(message);
-    // Perform additional actions here, such as closing the modal
-    setIsSubmitting(false);
-
-    // !! Close the modal
+    setEnquiredVariables(); // set listing as enquired and pinned
   };
 
   return (
     <div
       className="modal fade"
-      id={modalId} // Use the unique modal ID
+      id={listing.modalId} // Use the unique modal ID
       tabIndex={-1}
-      aria-labelledby={`${modalId}Label`}
+      aria-labelledby={`${listing.modalId}Label`}
       aria-hidden="true"
     >
       <div className="modal-dialog modal-dialog-centered">
@@ -133,7 +133,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>Enquiring for '{title}'</p>
+            <p>Enquiring for '{listing.title}'</p>
             <label>Message:</label>
             <br />
             <textarea

@@ -5,8 +5,9 @@ import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 // import EnquiryPopup from "./EnquiryPopup";
 // import DeleteListingPopup from "./DeleteListingPopup";
-import { checkListingOwner } from "../backend/readData";
+import { checkArray, checkListingOwner } from "../backend/readData";
 import { togglePinListing, isPinned } from "../backend/pinning";
+import { auth } from "../config/firebase";
 
 interface CardData {
   listing: Listing;
@@ -18,7 +19,9 @@ const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
   const removeID = `${listing.modalId}-remove`;
   const [pinned, setPinned] = useState<boolean>(false);
+  const [enquired, setEnquired] = useState<boolean>(false);
 
+  // check if user has pinned or enquired
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.id) {
@@ -27,8 +30,21 @@ const Card = ({ listing }: CardData) => {
       }
     };
 
+    const fetchEnquiredStatus = async () => {
+      if (listing?.id) {
+        const status = await checkArray(
+          "listings", // name of the collection
+          listing.id, // listing id
+          "enquired", // field
+          auth.currentUser!.uid // id of the user that enquired
+        );
+        setEnquired(status);
+      }
+    };
+
     if (listing) {
       fetchPinnedStatus();
+      fetchEnquiredStatus();
     }
   }, [listing]);
 
@@ -51,7 +67,7 @@ const Card = ({ listing }: CardData) => {
           />
           <button
             type="button"
-            className={`${styles.pinButton} ${pinned ? styles.pinActive : ''}`}
+            className={`${styles.pinButton} ${pinned ? styles.pinActive : ""}`}
             title="Pin this listing"
             onClick={() => togglePinListing(listing)}
           >
@@ -73,12 +89,16 @@ const Card = ({ listing }: CardData) => {
             >
               Remove
             </button>
+          ) : enquired ? (
+            <button type="button" className="call-to-action" disabled={true}>
+              Enquired
+            </button>
           ) : (
             <button
               type="button"
               className="call-to-action"
-              // data-bs-toggle="modal"
-              // data-bs-target={`#${listing.modalId}`}
+              data-bs-toggle="modal"
+              data-bs-target={`#${listing!.modalId}`}
             >
               Request
             </button>

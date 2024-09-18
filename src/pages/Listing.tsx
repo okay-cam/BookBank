@@ -10,6 +10,8 @@ import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
 import { togglePinListing, isPinned } from "../backend/pinning";
+import { checkArray } from "../backend/readData";
+import { auth } from "../config/firebase";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -17,6 +19,13 @@ const Listing: React.FC = () => {
   const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
+  const [enquired, setEnquired] = useState<boolean>(false);
+
+  // instant update for when a user enquires a listing
+  function setEnquiredVariables() {
+    setEnquired(true); // disable the button so they can't enquire several times
+    setPinned(true); // automatically pin the listing for quick reference
+  }
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -31,27 +40,25 @@ const Listing: React.FC = () => {
         setListerEmail(listerProfile!.email || null);
         console.log("lister profile: ", listerProfile);
         console.log("lister profile email: ", listerProfile?.email);
+      } else {
+        console.log("listing not found");
       }
-      else {
-        console.log("listing not found")
-      }
-      
+
       console.log("lister email: ", listerEmail);
 
       setLoading(false); // Set loading to false after fetching
     };
 
     fetchListing(); // Call the fetch function when the component mounts
-  // }, [id, listing]);
   }, [id]);
 
   useEffect(() => {
     if (listerEmail) {
       console.log("Updated lister email: ", listerEmail);
-
     }
   }, [listerEmail]);
 
+  // check if user has pinned or enquired
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.id) {
@@ -60,8 +67,21 @@ const Listing: React.FC = () => {
       }
     };
 
+    const fetchEnquiredStatus = async () => {
+      if (listing?.id) {
+        const status = await checkArray(
+          "listings", // name of the collection
+          listing.id, // listing id
+          "enquired", // field
+          auth.currentUser!.uid // id of the user that enquired
+        );
+        setEnquired(status);
+      }
+    };
+
     if (listing) {
       fetchPinnedStatus();
+      fetchEnquiredStatus();
     }
   }, [listing]);
 
@@ -87,11 +107,11 @@ const Listing: React.FC = () => {
   return (
     <main className={styles.gridContainer}>
       {listing && listerEmail && (
-      <EnquiryPopup
-        title={listing.title}
-        modalId={listing.modalId}
-        email={listerEmail}
-      />
+        <EnquiryPopup
+          listing={listing}
+          email={listerEmail}
+          setEnquiredVariables={setEnquiredVariables}
+        />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
@@ -107,33 +127,37 @@ const Listing: React.FC = () => {
         />
         <br />
         <br />
-        {isListingOwner ? (
-          <button
-            type="button"
-            className="danger"
-            data-bs-toggle="modal"
-            data-bs-target={`#${removeID}`}
-            onClick={() => console.log("Delete listing popup ID: ", removeID)}
-          >
-            Remove listing
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="call-to-action"
-            data-bs-toggle="modal"
-            data-bs-target={`#${listing!.modalId}`}
-          >
-            Request/Enquire
-          </button>
-        )}
+        {
+          // check if user is the listing owner
+          isListingOwner ? (
+            <button
+              type="button"
+              className="danger"
+              data-bs-toggle="modal"
+              data-bs-target={`#${removeID}`}
+              onClick={() => console.log("Delete listing popup ID: ", removeID)}
+            >
+              Remove listing
+            </button>
+          ) : // check if user has enquired previously
+          enquired ? (
+            <button type="button" className="call-to-action" disabled={true}>
+              Already enquired
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="call-to-action"
+              data-bs-toggle="modal"
+              data-bs-target={`#${listing!.modalId}`}
+            >
+              Request/Enquire
+            </button>
+          )
+        }
       </div>
       <div className={styles.content}>
-        <button
-          type="button"
-          className="corner-btn"
-          onClick={handlePinToggle}
-        >
+        <button type="button" className="corner-btn" onClick={handlePinToggle}>
           {pinned ? "Unpin this listing" : "Pin this listing"}
         </button>
         <br />
