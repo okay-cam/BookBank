@@ -29,7 +29,15 @@ const Search = () => {
           return;
         }
         console.log("Search query: '" + searchQuery + "' ")
-        const updatedListings = await getListings("title", searchQuery); // Fetch listings from backend
+        
+        // First fetch listings based on course code
+        let updatedListings = await getListings("courseCode", searchQuery); 
+        
+        if (updatedListings.length <= 0) {
+          // Fetch listings based on listing titles instead
+          updatedListings = await getListings("title", searchQuery);
+        }
+        
         setLoadingListings(false);
         setListings(updatedListings); // Update state with fetched listings
       } catch (error) {
