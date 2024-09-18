@@ -3,7 +3,7 @@ import { db } from "../config/firebase";
 
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
-export async function appendOrCreateField(
+export async function appendArray(
   collection: string, 
   docId: string, 
   fieldName: string, 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { sendEmail, EmailData } from '../backend/emailService';
-
+import { appendArray } from '../backend/writeData';
 import { auth } from "../config/firebase";
 
 interface ModalDetails {
@@ -51,7 +51,11 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     setErrorMessage(""); // Clear any previous error
     setSuccessMessage(""); // Clear any previous success
 
+
     handleSendEmail(); // Send the email
+
+    // TODO: Update second parameter "19ZB" to instead use listingId
+    appendArray("listings", "19ZBcLxqOvaZcTVxZ3Vs", "enquired", auth.currentUser!.uid)
 
     console.log(message);
     // Perform additional actions here, such as closing the modal
