@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { sendEmail, EmailData } from '../backend/emailService';
-import { appendArray } from '../backend/writeData';
+import { sendEmail, EmailData } from "../backend/emailService";
+import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
 
 interface ModalDetails {
@@ -10,30 +10,30 @@ interface ModalDetails {
 }
 
 const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
-  console.log('Email in enquiry popup is ', email);
+  console.log("Email in enquiry popup is ", email);
   const [message, setMessage] = useState(
     "Hi, I am interested in this textbook. Is it still available?"
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Create a formatted HTML message for enquiry
   const formattedEnquiryMessage = `
   <p><strong>Enquiry Details</strong></p>
   <p><strong>From Email:</strong> ${auth.currentUser?.email}</p>
   <p><strong>Enquiry:</strong> ${message}</p>
 `;
-  
+
   // Send email to the textbook donor
   const handleSendEnquiryEmail = async () => {
-    const emailData : EmailData = {
+    const emailData: EmailData = {
       email: email, // send email to the testbook owner's email !! this is going to the wrong email?
       subject: `New request for your textbook '${title}'`,
       message: formattedEnquiryMessage,
     };
-    
-    console.log("enquiry email data: ", emailData)
+
+    console.log("enquiry email data: ", emailData);
 
     try {
       const response = await sendEmail(emailData);
@@ -42,12 +42,12 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
       console.log("Enquiry email sent!");
       return true;
     } catch (error: any) {
-      setErrorMessage(error.message || 'Failed to send email');
+      setErrorMessage(error.message || "Failed to send email");
       console.log("Enquiry email failed: ", error.message);
       return false;
     }
   };
-  
+
   // Create a formatted HTML message for receipts
   const formattedReceiptMessage = `
   <p><strong>Enquiry Receipt</strong></p>
@@ -56,30 +56,29 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
 
   // Send email to requester
   const handleSendReceiptEmail = async () => {
-
-    const requesterEmail = auth.currentUser!.email
+    const requesterEmail = auth.currentUser!.email;
     if (!requesterEmail) {
       console.log("Problem with email. Can't send receipt.");
       return false;
     }
 
-    console.log("REQUESTER EMAIL: ", requesterEmail)
+    console.log("REQUESTER EMAIL: ", requesterEmail);
 
-    const emailData : EmailData = {
+    const emailData: EmailData = {
       email: requesterEmail, // use personal email for now, later switch to email variable
       subject: `Your request receipt for the textbook '${title}'`,
       message: formattedReceiptMessage,
     };
-    
+
     try {
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Receipt email sent! Data: ", emailData)
+      console.log("Receipt email sent! Data: ", emailData);
       return true;
     } catch (error: any) {
-      setErrorMessage(error.message || 'Failed to send email');
-      console.log("Receipt email failed: ", error.message)
+      setErrorMessage(error.message || "Failed to send email");
+      console.log("Receipt email failed: ", error.message);
       return false;
     }
   };
@@ -93,18 +92,22 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     setErrorMessage(""); // Clear any previous error
     setSuccessMessage(""); // Clear any previous success
     setIsSubmitting(true);
-    
-    // This code is broken still
+
     await handleSendEnquiryEmail(); // Send the email
     await handleSendReceiptEmail(); // Send receipt if email goes through successfully
 
-    appendArray("listings", "19ZBcLxqOvaZcTVxZ3Vs", "enquired", auth.currentUser!.uid)
+    appendArray(
+      "listings",
+      "19ZBcLxqOvaZcTVxZ3Vs",
+      "enquired",
+      auth.currentUser!.uid
+    );
     // TODO: Update second parameter "19ZB" to instead use listingId
 
     console.log(message);
     // Perform additional actions here, such as closing the modal
     setIsSubmitting(false);
-    
+
     // !! Close the modal
   };
 
@@ -143,13 +146,22 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
             {errorMessage && <p className="error-msg">{errorMessage}</p>}
           </div>
           <div className="modal-footer">
-            <input
+            <button
               type="button"
-              className="button call-to-action"
-              value="Send"
+              className="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="call-to-action"
               onClick={handleSubmit}
+              data-bs-dismiss="modal"
               disabled={isSubmitting}
-            />
+            >
+              {isSubmitting ? "Sending..." : "Send"}
+            </button>
           </div>
         </div>
       </div>

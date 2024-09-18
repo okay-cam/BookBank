@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
-import EnquiryPopup from "./EnquiryPopup";
 import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import DeleteListingPopup from "./DeleteListingPopup";
+// import EnquiryPopup from "./EnquiryPopup";
+// import DeleteListingPopup from "./DeleteListingPopup";
 import { checkListingOwner } from "../backend/readData";
 import { togglePinListing, isPinned } from "../backend/pinning";
 
@@ -34,11 +34,11 @@ const Card = ({ listing }: CardData) => {
 
   return (
     <>
-      <EnquiryPopup title={listing.title} modalId={listing.modalId} />
+      {/* <EnquiryPopup title={listing.title} modalId={listing.modalId} />
       <DeleteListingPopup
         title={listing.title}
         modalId={removeID}
-      />
+      /> */}
       <Link
         to={`/listing/${listing.id}`}
         className={`card no-underline ${styles.card}`}
@@ -62,6 +62,7 @@ const Card = ({ listing }: CardData) => {
           <h5 className="card-title">{listing.title}</h5>
           <p className="card-text">By {listing.authors}</p>
           {/* BUTTON */}
+          {/* Popup functionality is disabled and currently the buttons will simply navigate to the card */}
           {isListingOwner ? (
             <button
               type="button"
