@@ -17,18 +17,19 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Create a formatted HTML message
-  const formattedMessage = `
+  // Create a formatted HTML message for enquiry
+  const formattedEnquiryMessage = `
   <p><strong>Enquiry Details</strong></p>
   <p><strong>Email:</strong> ${auth.currentUser?.email}</p>
   <p><strong>Enquiry:</strong> ${message}</p>
 `;
-
-  const handleSendEmail = async () => {
+  
+  // Send email to the textbook donor
+  const handleSendEnquiryEmail = async () => {
     const emailData : EmailData = {
-      email: 'camoarrow4586@gmail.com', // use personal email for now, later switch to email variable
+      email: email, // use personal email for now, later switch to email variable
       subject: `New request for your textbook '${title}'`,
-      message: formattedMessage,
+      message: formattedEnquiryMessage,
     };
   
     try {
@@ -42,6 +43,38 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
     }
   };
   
+  // Create a formatted HTML message for receipts
+  const formattedReceiptMessage = `
+  <p><strong>Enquiry Receipt</strong></p>
+  <p><strong>Your enquiry:</strong> ${message}</p>
+`;
+
+  // Send email to requester
+  const handleSendReceiptEmail = async () => {
+
+    const requesterEmail = auth.currentUser!.email
+    if (!requesterEmail) {
+      console.log("Problem with email. Can't send receipt.");
+      return false;
+    }
+
+    const emailData : EmailData = {
+      email: requesterEmail, // use personal email for now, later switch to email variable
+      subject: `Your request receipt for the textbook '${title}'`,
+      message: formattedReceiptMessage,
+    };
+    
+    try {
+      const response = await sendEmail(emailData);
+      setSuccessMessage(response); // Set success message
+      setMessage(""); // Clear the message field on success
+      return true;
+    } catch (error: any) {
+      setErrorMessage(error.message || 'Failed to send email');
+      return false;
+    }
+  };
+
   const handleSubmit = () => {
     if (message.trim() === "") {
       setErrorMessage("Message cannot be empty.");
@@ -50,15 +83,18 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
 
     setErrorMessage(""); // Clear any previous error
     setSuccessMessage(""); // Clear any previous success
+    setIsSubmitting(true);
+    
+    handleSendEnquiryEmail(); // Send the email
+    handleSendReceiptEmail(); // Send receipt if email goes through successfully
 
-
-    handleSendEmail(); // Send the email
-
-    // TODO: Update second parameter "19ZB" to instead use listingId
     appendArray("listings", "19ZBcLxqOvaZcTVxZ3Vs", "enquired", auth.currentUser!.uid)
+    // TODO: Update second parameter "19ZB" to instead use listingId
 
     console.log(message);
     // Perform additional actions here, such as closing the modal
+    setIsSubmitting(false);
+    
     // !! Close the modal
   };
 
