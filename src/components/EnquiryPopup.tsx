@@ -20,26 +20,30 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
   // Create a formatted HTML message for enquiry
   const formattedEnquiryMessage = `
   <p><strong>Enquiry Details</strong></p>
-  <p><strong>Email:</strong> ${auth.currentUser?.email}</p>
+  <p><strong>From Email:</strong> ${auth.currentUser?.email}</p>
   <p><strong>Enquiry:</strong> ${message}</p>
 `;
   
   // Send email to the textbook donor
   const handleSendEnquiryEmail = async () => {
     const emailData : EmailData = {
-      email: email, // use personal email for now, later switch to email variable
+      email: email, // send email to the testbook owner's email
       subject: `New request for your textbook '${title}'`,
       message: formattedEnquiryMessage,
     };
-  
+    
+    console.log("enquiry email data: ", emailData)
+
     try {
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
+      console.log("Enquiry email sent!");
+      return true;
     } catch (error: any) {
       setErrorMessage(error.message || 'Failed to send email');
-    } finally {
-      setIsSubmitting(false); // Re-enable the button
+      console.log("Enquiry email failed: ", error.message);
+      return false;
     }
   };
   
@@ -68,9 +72,11 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
+      console.log("Receipt email sent!")
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || 'Failed to send email');
+      console.log("Receipt email failed: ", error.message)
       return false;
     }
   };
@@ -138,6 +144,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({ title, modalId, email }) => {
               className="button call-to-action"
               value="Send"
               onClick={handleSubmit}
+              disabled={isSubmitting}
             />
           </div>
         </div>

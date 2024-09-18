@@ -28,8 +28,15 @@ const Listing: React.FC = () => {
       // Fetch email if listing is found
       if (foundListing) {
         const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
-        setListerEmail(listerProfile?.email || null);
+        setListerEmail(listerProfile!.email || null);
+        console.log("lister profile: ", listerProfile);
+        console.log("lister profile email: ", listerProfile?.email);
       }
+      else {
+        console.log("listing not found")
+      }
+      
+      console.log("lister email: ", listerEmail);
 
       setLoading(false); // Set loading to false after fetching
     };
@@ -37,6 +44,13 @@ const Listing: React.FC = () => {
     fetchListing(); // Call the fetch function when the component mounts
   // }, [id, listing]);
   }, [id]);
+
+  useEffect(() => {
+    if (listerEmail) {
+      console.log("Updated lister email: ", listerEmail);
+
+    }
+  }, [listerEmail]);
 
   useEffect(() => {
     const fetchPinnedStatus = async () => {
@@ -72,11 +86,13 @@ const Listing: React.FC = () => {
 
   return (
     <main className={styles.gridContainer}>
+      {listing && listerEmail && (
       <EnquiryPopup
-        title={listing!.title}
-        modalId={listing!.modalId}
-        email={listerEmail!}
+        title={listing.title}
+        modalId={listing.modalId}
+        email={listerEmail}
       />
+      )}
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
         <BackButton />
