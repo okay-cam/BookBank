@@ -132,3 +132,9 @@
         width: 100%; /* One card per row */
     }
 }
+
+.wishlistButton,
+.wishlistButton:hover {
+    margin-left: 10px;
+    font-size: 12px;
+}

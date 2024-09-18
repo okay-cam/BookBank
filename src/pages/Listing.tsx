@@ -10,6 +10,7 @@ import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
 import { togglePinListing, isPinned } from "../backend/pinning";
+import WishlistButton from "../components/WishlistButton";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -35,14 +36,14 @@ const Listing: React.FC = () => {
       else {
         console.log("listing not found")
       }
-      
+
       console.log("lister email: ", listerEmail);
 
       setLoading(false); // Set loading to false after fetching
     };
 
     fetchListing(); // Call the fetch function when the component mounts
-  // }, [id, listing]);
+    // }, [id, listing]);
   }, [id]);
 
   useEffect(() => {
@@ -87,11 +88,11 @@ const Listing: React.FC = () => {
   return (
     <main className={styles.gridContainer}>
       {listing && listerEmail && (
-      <EnquiryPopup
-        title={listing.title}
-        modalId={listing.modalId}
-        email={listerEmail}
-      />
+        <EnquiryPopup
+          title={listing.title}
+          modalId={listing.modalId}
+          email={listerEmail}
+        />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
       <div className={styles.aside}>
@@ -139,7 +140,7 @@ const Listing: React.FC = () => {
         <br />
         <h1>{listing!.title}</h1>
         <label>{listing!.authors}</label>
-        <h3>{listing!.courseCode}</h3>
+        <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
         <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
