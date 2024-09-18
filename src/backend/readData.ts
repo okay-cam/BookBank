@@ -229,3 +229,28 @@ export async function getWishlist(): Promise<Listing[]> {
     return [];
   }
 }
+
+export async function checkArray(
+  collection: string,
+  docId: string,
+  fieldName: string,
+  userId: string
+): Promise<boolean> {
+  const docRef = doc(db, collection, docId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    const arrayField = data[fieldName] as string[] | undefined;
+
+    if (Array.isArray(arrayField)) {
+      if (arrayField.includes(userId)) {
+        console.log(`UserID (${userId}) found in ${collection}: ${docId}, field: ${fieldName}`);
+        return true;
+      }
+    }
+  }
+  
+  console.log(`UserID (${userId}) not found in ${collection}: ${docId}, field: ${fieldName}`);
+  return false;
+}
