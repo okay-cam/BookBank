@@ -108,3 +108,9 @@
 .donorContent p {
     color: #737373
 }
+
+.wishlistButton,
+.wishlistButton:hover {
+    margin-left: 10px;
+    font-size: 12px;
+}

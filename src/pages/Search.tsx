@@ -30,10 +30,10 @@ const Search = () => {
           return;
         }
         console.log("Search query: '" + searchQuery + "' ")
-        
+
         // First fetch listings based on course code
-        let updatedListings = await getListings("courseCode", searchQuery); 
-        
+        let updatedListings = await getListings("courseCode", searchQuery);
+
         if (updatedListings.length <= 0) {
           // Fetch listings based on listing titles instead
           updatedListings = await getListings("title", searchQuery);
@@ -41,8 +41,8 @@ const Search = () => {
 
         setLoadingListings(false);
         setListings(updatedListings); // Update state with fetched listings
-          
-        
+
+
       } catch (error) {
         console.error("Error fetching listings:", error); // Handle any errors
       } finally {
@@ -82,12 +82,16 @@ const Search = () => {
             <>
               <CardContainer listings={listings} />
               <br />
-              <WishlistButton courseCode={searchQuery} />
+              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
+                <WishlistButton className={styles.wishlistButton} courseCode={searchQuery} />
+              </p>
             </>
           ) : (
             <>
               <p>No listings found for "{searchQuery}". Please try another search.</p>
-              <WishlistButton courseCode={searchQuery} />
+              <p>Do you want to wishlist textbooks with the course code "{searchQuery}"?
+                <WishlistButton className={styles.wishlistButton} courseCode={searchQuery} />
+              </p>
             </>
           )
         }

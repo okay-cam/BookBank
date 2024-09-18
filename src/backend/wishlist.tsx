@@ -27,3 +27,18 @@ export async function toggleWishlisting(code: string) {
     console.error("Error wishlisting course code", error);
   }
 }
+
+export const isWishlisted = async (code: string): Promise<boolean> => {
+  const wishlistRef = collection(db, "wishlist");
+  const userId = auth.currentUser!.uid;
+
+  const q = query(wishlistRef, where("userId", "==", userId), where("courseCode", "==", code));
+
+  try {
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  } catch (error) {
+    console.error("Error checking wishlist status: ", error);
+    return false;
+  }
+};
