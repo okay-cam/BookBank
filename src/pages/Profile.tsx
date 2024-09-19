@@ -3,8 +3,7 @@ import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
 import { ProfileData as ProfileType } from "../backend/types";
 import { getProfileData } from "../backend/readData";
-import { auth } from "../config/firebase";
-import { getListings, getPins } from "../backend/readData";
+import { getListings } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { useParams } from "react-router-dom";
@@ -84,12 +83,13 @@ const Profile: React.FC = () => {
       </div>
       <div className={styles.content}>
         {profileData && <h1>{profileData.name}'s Active Listings</h1>}
-        {activeListings.length > 0 ? (
-          // Change to pin card container when display is fixed
-          <PinsCardContainer listings={activeListings} />
-        ) : (
-          <p>No active listings to show.</p>
-        )}
+        <div className={styles.cardContainer}>
+          {activeListings.length > 0 ? (
+            <PinsCardContainer listings={activeListings} />
+          ) : (
+            <p>No active listings to show.</p>
+          )}
+        </div>
         <br />
         <h1>Reviews</h1>
         <p>No reviews yet.</p>
