@@ -8,6 +8,7 @@ import defaultImagePath from "../assets/default-image-path.jpg";
 import { checkArray, checkListingOwner } from "../backend/readData";
 import { togglePinListing, isPinned } from "../backend/pinning";
 import { auth } from "../config/firebase";
+import { collection_name, listings_field } from "../config/config";
 
 interface CardData {
   listing: Listing;
@@ -33,9 +34,9 @@ const Card = ({ listing }: CardData) => {
     const fetchEnquiredStatus = async () => {
       if (listing?.id) {
         const status = await checkArray(
-          "listings", // name of the collection
-          listing.id, // listing id
-          "enquired", // field
+          collection_name.listings, // name of the collection
+          listings_field.id, // listing id
+          listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );
         setEnquired(status);
