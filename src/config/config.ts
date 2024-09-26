@@ -23,6 +23,7 @@ export class listings_field {
     static imageUrl = "imageUrl";
     static title = "title";
     static userId = USER_ID;
+    static enquired = "enquired";
 }
 
 // field names for users documents
