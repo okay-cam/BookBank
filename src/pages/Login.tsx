@@ -25,6 +25,7 @@ const Login = () => {
       setIsSigningIn(true);
       try {
         await doSignInWithEmailAndPassword(email, password);
+        window.location.reload(); // refresh page to update pfp in nav
       } catch (error) {
         setIsSigningIn(false);
         // Type assertion to FirebaseError
@@ -74,7 +75,7 @@ const Login = () => {
           name="email"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
-          autoComplete='email'
+          autoComplete="email"
           required
         />
         <br />
@@ -86,7 +87,7 @@ const Login = () => {
           value={password}
           name="password"
           id="password"
-          autoComplete='current-password'
+          autoComplete="current-password"
           onChange={(e) => setPassword(e.target.value)}
           required
         />
@@ -95,7 +96,7 @@ const Login = () => {
         <br />
         <p>
           {/* add reset password functionality */}
-          <Link to={'/reset-password'}>Forgot Password?</Link>
+          <Link to={"/reset-password"}>Forgot Password?</Link>
         </p>
 
         <input
@@ -106,18 +107,15 @@ const Login = () => {
         />
         <br />
         <br />
-        {errorMessage && (
-          <p className="error-msg">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="error-msg">{errorMessage}</p>}
       </form>
 
       <br />
       <br />
       <div>
-        Don't have an account? {'   '}
-        <Link to={'/signup'}>Sign Up</Link>
+        Don't have an account? {"   "}
+        <Link to={"/signup"}>Sign Up</Link>
       </div>
-
     </>
   );
 };

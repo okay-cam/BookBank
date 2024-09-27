@@ -3,6 +3,7 @@ import { sendEmail, EmailData } from "../backend/emailService";
 import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
 import { Listing } from "../backend/types";
+import { collection_name, listings_field } from "../config/config";
 
 interface ModalDetails {
   listing: Listing;
@@ -104,9 +105,9 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
 
     // add user id to the enquired field
     await appendArray(
-      "listings", // name of the collection
-      listing.id, // listing id
-      "enquired", // field
+      collection_name.listings, // name of the collection
+      listings_field.id, // listing id
+      listings_field.enquired, // field
       auth.currentUser!.uid // id of the user that enquired
     );
     setEnquiredVariables(); // set listing as enquired and pinned
