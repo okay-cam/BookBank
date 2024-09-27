@@ -70,7 +70,7 @@ const Signup = () => {
         
         const newProfile: ProfileData = {
           userID: userID,
-          name: name.trim(),
+          username: name.trim(),
           // No profile picture initially
           profilePic: null,
           location: null,

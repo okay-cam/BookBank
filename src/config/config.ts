@@ -33,7 +33,7 @@ export class users_field {
     static joinDate = "joinDate";
     static lastLoggedIn = "lastLoggedIn";
     static location = "location";
-    static name = "name";
+    static username = "username";
     static overallRating = "overallRating";
     static profilePic = "profilePic";
     static totalDonations = "totalDonations";

@@ -83,7 +83,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
 
         // data from users collection
         userId: userID,
-        name: data.name,
+        username: data.name,
         profilePic: data.profilePic,
         university: data.university,
         degree: data.degree,

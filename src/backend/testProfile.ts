@@ -2,7 +2,7 @@ import { ProfileData } from "./types"; // Assuming Profile type is defined in ty
 import image from "../assets/default-image-path.jpg";
 
 const testProfile: ProfileData = {
-  name: "Chelsea Smith",
+  username: "Chelsea Smith",
   email: "chelsmith1999@gmail.com",
   profilePic: image,
   university: "University of Auckland",

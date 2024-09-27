@@ -43,7 +43,7 @@ const Profile: React.FC = () => {
           <div>
             <h1>
               <center>
-                {profileData.name ? profileData.name : "Name Unavailable"}
+                {profileData.username ? profileData.username : "Name Unavailable"}
               </center>
             </h1>
             <div className={styles.profileData}>
@@ -82,7 +82,7 @@ const Profile: React.FC = () => {
         )}
       </div>
       <div className={styles.content}>
-        {profileData && <h1>{profileData.name}'s Active Listings</h1>}
+        {profileData && <h1>{profileData.username}'s Active Listings</h1>}
         <div className={styles.cardContainer}>
           {activeListings.length > 0 ? (
             <PinsCardContainer listings={activeListings} />
