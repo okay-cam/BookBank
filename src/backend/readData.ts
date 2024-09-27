@@ -32,6 +32,30 @@ export const useListings = (field?: string, value?: string) => {
   return { listings, loading, error }; // Return state and fetched data
 };
 
+export async function getListingById(id: string): Promise<Listing | null> {
+  const listingRef = doc(db, collection_name.listings, id); // Get reference to the specific document by ID
+
+  const docSnap = await getDoc(listingRef); // Fetch the document
+
+  if (docSnap.exists()) {
+    const data = docSnap.data() as Listing; // Extract data from the document
+    const listing: Listing = {
+      id: docSnap.id,
+      title: data.title,
+      authors: data.authors,
+      courseCode: data.courseCode,
+      description: data.description,
+      imageUrl: data.imageUrl,
+      userID: data.userID,
+      modalId: "modal-" + docSnap.id
+    };
+    return listing; // Return the listing
+  } else {
+    console.log("No such document!");
+    return null; // Return null if no document is found
+  }
+}
+
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]> { // field? allows for the values to be empty
 
