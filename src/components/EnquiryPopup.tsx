@@ -44,7 +44,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Enquiry email sent!");
+      console.log("Enquiry email: ", response);
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || "Failed to send email");
@@ -79,7 +79,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Receipt email sent! Data: ", emailData);
+      console.log("Receipt email: ", response);
+      console.log("Receipt Data: ", emailData);
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || "Failed to send email");
