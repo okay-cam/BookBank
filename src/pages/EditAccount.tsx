@@ -77,7 +77,7 @@ const EditAccount = () => {
         const updatedProfileData: ProfileType = {
             ...newProfileData,
             profilePic: profilePicUrl,  // Keep the updated profilePic
-            name: newProfileData?.name || "",  // Ensure name is always a string
+            username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
             degree: newProfileData?.degree || "",  // Default to empty string
@@ -127,7 +127,7 @@ const EditAccount = () => {
                 <div>
                     <div className={styles.field}>
                         <label>Display Name:</label>
-                        <input type="text" id="name" value={newProfileData.name} onChange={handleInputChange('name')} />
+                        <input type="text" id="name" value={newProfileData.username} onChange={handleInputChange('name')} />
                     </div>
                     <div className={styles.field}>
                         <label>Location:</label>

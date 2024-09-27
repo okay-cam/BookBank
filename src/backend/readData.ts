@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { collection_name, listings_field, users_field } from "../config/config";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
@@ -34,7 +35,7 @@ export const useListings = (field?: string, value?: string) => {
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]> { // field? allows for the values to be empty
 
-  const listingsRef = collection(db, "listings");
+  const listingsRef = collection(db, collection_name.listings);
 
   let q;
   if (field && value) {
@@ -70,7 +71,7 @@ export async function getListings(field?: string, value?: string): Promise<Listi
 // Function to fetch profile data
 export async function getProfileData(userID: string): Promise<ProfileData | null> {
   try {
-    const docRef = doc(db, "users", userID);
+    const docRef = doc(db, collection_name.users, userID);
     const docSnapshot = await getDoc(docRef);
 
     if (docSnapshot.exists()) {
@@ -82,7 +83,7 @@ export async function getProfileData(userID: string): Promise<ProfileData | null
 
         // data from users collection
         userId: userID,
-        name: data.name,
+        username: data.name,
         profilePic: data.profilePic,
         university: data.university,
         degree: data.degree,
@@ -122,9 +123,9 @@ export function checkListingOwner(listing: Listing): boolean {
 
 export async function getPins(): Promise<Listing[]> {
   const userId = auth.currentUser!.uid;
-  const pinsRef = collection(db, "pins");
-  const listingsRef = collection(db, "listings");
-  const pinsQuery = query(pinsRef, where("userId", "==", userId));
+  const pinsRef = collection(db, collection_name.pins);
+  const listingsRef = collection(db, collection_name.listings);
+  const pinsQuery = query(pinsRef, where(users_field.userId, "==", userId));
 
   // get pinned collection for userId
   try {
@@ -173,11 +174,11 @@ export async function getPins(): Promise<Listing[]> {
 
 export async function getWishlist(): Promise<Listing[]> {
   const userId = auth.currentUser!.uid;
-  const wishlistRef = collection(db, "wishlist");
-  const listingsRef = collection(db, "listings");
+  const wishlistRef = collection(db, collection_name.wishlist);
+  const listingsRef = collection(db, collection_name.listings);
 
   // Create a query to get all wishlist entries for the current user
-  const wishlistQuery = query(wishlistRef, where("userId", "==", userId));
+  const wishlistQuery = query(wishlistRef, where(users_field.userId, "==", userId));
 
   try {
     const wishlistSnapshot = await getDocs(wishlistQuery);
@@ -202,7 +203,7 @@ export async function getWishlist(): Promise<Listing[]> {
     }
 
     // Create a query to get all listings that match the course codes
-    const listingsQuery = query(listingsRef, where("courseCode", "in", courseCodes));
+    const listingsQuery = query(listingsRef, where(listings_field.courseCode, "in", courseCodes));
     const listingsSnapshot = await getDocs(listingsQuery);
 
     if (listingsSnapshot.empty) {

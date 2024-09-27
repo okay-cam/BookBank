@@ -45,7 +45,7 @@ const DonorInfo = ({ donorId }: DonorIDProps) => {
           className={styles.profilePic}
         />
         <div className={styles.donorContent}>
-          <h1>{profile.name}</h1>
+          <h1>{profile.username}</h1>
           {profile.location ? (
             <p>
               <p>Located in {profile.location}</p>

@@ -1,5 +1,6 @@
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { collection_name } from "../config/config";
 
 // Function to delete a document by its ID
 export const deleteListing = async (modalId: string) => {
@@ -9,7 +10,7 @@ export const deleteListing = async (modalId: string) => {
 
     console.log("Document starting deletion", listingId);
     try {
-      const docRef = doc(db, "listings", listingId);
+      const docRef = doc(db, collection_name.listings, listingId);
   
       await deleteDoc(docRef);
   
