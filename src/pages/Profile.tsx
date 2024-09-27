@@ -6,7 +6,7 @@ import { getProfileData } from "../backend/readData";
 import { getListings } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>(); // Extract id from the route parameters.
@@ -37,13 +37,19 @@ const Profile: React.FC = () => {
   return (
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
-        <img src={profileData?.profilePic || defaultImage} className={styles.profilePic} alt="Profile" />
+        <img
+          src={profileData?.profilePic || defaultImage}
+          className={styles.profilePic}
+          alt="Profile"
+        />
         <br />
         {profileData ? (
           <div>
             <h1>
               <center>
-                {profileData.username ? profileData.username : "Name Unavailable"}
+                {profileData.username
+                  ? profileData.username
+                  : "Name Unavailable"}
               </center>
             </h1>
             <div className={styles.profileData}>
@@ -93,6 +99,9 @@ const Profile: React.FC = () => {
         <br />
         <h1>Reviews</h1>
         <p>No reviews yet.</p>
+        <Link to={`/report/user/${userId}`} className="no-underline">
+          <button>Report this user</button>
+        </Link>
       </div>
     </main>
   );

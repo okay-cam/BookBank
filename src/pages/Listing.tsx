@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
-import { Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
@@ -176,6 +176,9 @@ const Listing: React.FC = () => {
         <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
+        <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+          <button>Report this listing</button>
+        </Link>
       </div>
     </main>
   );
