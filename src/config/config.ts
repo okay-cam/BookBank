@@ -2,6 +2,7 @@
 // variables used in multiple listings
 const USER_ID = "userId";
 const COURSE_CODE = "courseCode";
+const IMAGE_URL = "imageUrl"
 
 // Firestore Constants
 
@@ -20,7 +21,7 @@ export class listings_field {
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
-    static imageUrl = "imageUrl";
+    static imageUrl = IMAGE_URL;
     static title = "title";
     static userId = USER_ID;
     static enquired = "enquired";
@@ -35,7 +36,7 @@ export class users_field {
     static location = "location";
     static username = "username";
     static overallRating = "overallRating";
-    static profilePic = "profilePic";
+    static imageUrl = IMAGE_URL;
     static totalDonations = "totalDonations";
     static totalRatingsRecieved = "totalRatingsRecieved";
     static university = "university";
