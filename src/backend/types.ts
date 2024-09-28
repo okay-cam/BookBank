@@ -28,14 +28,16 @@ export interface ProfileData {
 // }
   
 export interface Listing {
-    id: string;
+    // Required:
     title: string;
     authors: string;
     courseCode: string;
     description: string;
-    imageUrl: string;
     userID: string; // stores the id of the user who created the listing
-    modalId: string; // to display the correct enquiry popup when request button is pressed
+    // Optional: 
+    id?: string;
+    imageUrl?: string;
+    modalId?: string; // to display the correct enquiry popup when request button is pressed
+    enquired?: string[] | null;
   }
-
 
