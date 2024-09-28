@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
 import { ProfileData as ProfileType } from "../backend/types";
-import { getProfileData } from "../backend/readData";
-import { getListings } from "../backend/readData";
+import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
 import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
@@ -102,9 +101,13 @@ const Profile: React.FC = () => {
 
         <br />
 
-        <Link to={`/report/user/${userId}`} className="no-underline">
-          <button>🚩 Report this user</button>
-        </Link>
+        {/* only report other people's profiles */}
+        { !checkProfileOwner(userId) && (
+          <Link to={`/report/user/${userId}`} className="no-underline">
+            <button>🚩 Report this user</button>
+          </Link>
+        )}
+        
 
       </div>
     </main>

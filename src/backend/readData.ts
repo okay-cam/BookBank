@@ -145,6 +145,14 @@ export function checkListingOwner(listing: Listing): boolean {
   return false;
 }
 
+export function checkProfileOwner(profileID : string | undefined): boolean {
+  // Ensure auth.currentUser and the listing's userID exist
+  if (auth.currentUser && profileID) {
+    return auth.currentUser.uid === profileID;
+  }
+  return false;
+}
+
 export async function getPins(): Promise<Listing[]> {
   const userId = auth.currentUser!.uid;
   const pinsRef = collection(db, collection_name.pins);

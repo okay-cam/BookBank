@@ -179,9 +179,12 @@ const Listing: React.FC = () => {
         
         <br />
 
-        <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+        {/* only report other people's listings */}
+        { !isListingOwner && (
+          <Link to={`/report/listing/${listing!.id}`} className="no-underline">
           <button>🚩 Report this listing</button>
         </Link>
+        )}
 
       </div>
     </main>
