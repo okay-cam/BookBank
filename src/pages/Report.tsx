@@ -35,11 +35,12 @@ const Report: React.FC = () => {
         } catch (error) {
           console.error("Error fetching profile:", error);
           setNotFound(true);
+        } finally {
+          setLoading(false);
         }
       };
       fetchAndSetProfileData();
     }
-    setLoading(false);
   }, [type, id]); // update if any url parameters change
 
   // Fetch listing data if type is "listing"
@@ -59,6 +60,8 @@ const Report: React.FC = () => {
         } catch (error) {
           console.error("Error fetching listing:", error);
           setNotFound(true);
+        } finally {
+          setLoading(false);
         }
       };
       fetchListing();
