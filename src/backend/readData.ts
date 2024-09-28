@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { auth } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { collection_name, listings_field, users_field } from "../config/config";
+import { fb_location, listings_field, users_field } from "../config/config";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
@@ -35,7 +35,7 @@ export const useListings = (field?: string, value?: string) => {
 
 export async function getListings(field?: string, value?: string): Promise<Listing[]> { // field? allows for the values to be empty
 
-  const listingsRef = collection(db, collection_name.listings);
+  const listingsRef = collection(db, fb_location.listings);
 
   let q;
   if (field && value) {
@@ -69,49 +69,27 @@ export async function getListings(field?: string, value?: string): Promise<Listi
 
 
 // Function to fetch profile data
-export async function getProfileData(userID: string): Promise<ProfileData | null> {
+export const getProfileData = async (userID: string): Promise<ProfileData | null> => {
+  console.log("Fetching profile data for userID:", userID); // Add this line
+  if (!userID) {
+    console.error("userID is undefined or null");
+    return null; // Early return if userID is not valid
+  }
+
   try {
-    const docRef = doc(db, collection_name.users, userID);
-    const docSnapshot = await getDoc(docRef);
-
-    if (docSnapshot.exists()) {
-      console.log("UID: ", userID);
-      const data = docSnapshot.data();
-
-      // Assign values based on ProfileData interface and convert necessary types
-      const profileData: ProfileData = {
-
-        // data from users collection
-        userId: userID,
-        username: data.name,
-        profilePic: data.profilePic,
-        university: data.university,
-        degree: data.degree,
-        location: data.location,
-        totalDonations: data.totalDonations,
-        totalRatingsReceived: data.totalRatingsReceived,
-        overallRating: data.overallRating,
-
-        // data from auth -> users collection
-        email: data.email,
-        joinDate: data.joinDate,
-        lastLoggedIn: data.lastLoggedIn
-
-        // Add other fields as needed
-      };
-
-
-
-      return profileData;
+    const docRef = doc(db, fb_location.users, userID); // Ensure this is a valid path
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data() as ProfileData; // Adjust according to your data structure
     } else {
-      console.log("No such document!");
-      return null;
+      console.error("No such document!");
+      return null; // Return null if no document is found
     }
   } catch (error) {
     console.error("Error fetching profile data: ", error);
-    return null;
+    return null; // Handle the error appropriately
   }
-}
+};
 
 export function checkListingOwner(listing: Listing): boolean {
   // Ensure auth.currentUser and the listing's userID exist
@@ -123,8 +101,8 @@ export function checkListingOwner(listing: Listing): boolean {
 
 export async function getPins(): Promise<Listing[]> {
   const userId = auth.currentUser!.uid;
-  const pinsRef = collection(db, collection_name.pins);
-  const listingsRef = collection(db, collection_name.listings);
+  const pinsRef = collection(db, fb_location.pins);
+  const listingsRef = collection(db, fb_location.listings);
   const pinsQuery = query(pinsRef, where(users_field.userId, "==", userId));
 
   // get pinned collection for userId
@@ -174,8 +152,8 @@ export async function getPins(): Promise<Listing[]> {
 
 export async function getWishlist(): Promise<Listing[]> {
   const userId = auth.currentUser!.uid;
-  const wishlistRef = collection(db, collection_name.wishlist);
-  const listingsRef = collection(db, collection_name.listings);
+  const wishlistRef = collection(db, fb_location.wishlist);
+  const listingsRef = collection(db, fb_location.listings);
 
   // Create a query to get all wishlist entries for the current user
   const wishlistQuery = query(wishlistRef, where(users_field.userId, "==", userId));
