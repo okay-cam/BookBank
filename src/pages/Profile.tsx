@@ -99,9 +99,13 @@ const Profile: React.FC = () => {
         <br />
         <h1>Reviews</h1>
         <p>No reviews yet.</p>
+
+        <br />
+
         <Link to={`/report/user/${userId}`} className="no-underline">
-          <button>Report this user</button>
+          <button>🚩 Report this user</button>
         </Link>
+
       </div>
     </main>
   );

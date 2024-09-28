@@ -176,9 +176,13 @@ const Listing: React.FC = () => {
         <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
+        
+        <br />
+
         <Link to={`/report/listing/${listing!.id}`} className="no-underline">
-          <button>Report this listing</button>
+          <button>🚩 Report this listing</button>
         </Link>
+
       </div>
     </main>
   );

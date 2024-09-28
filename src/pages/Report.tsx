@@ -14,7 +14,8 @@ const Report: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [listing, setListing] = useState<Listing | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add submit loading state
+  const [loading, setLoading] = useState(true); // Add page loading state
   const [isListingReport, setListingReport] = useState(true); // Returns true if it is a listing report, false if a user report
   //   const [errorMessage, setErrorMessage] = useState("");
 
@@ -38,6 +39,7 @@ const Report: React.FC = () => {
       };
       fetchAndSetProfileData();
     }
+    setLoading(false);
   }, [type, id]); // update if any url parameters change
 
   // Fetch listing data if type is "listing"
@@ -77,14 +79,23 @@ const Report: React.FC = () => {
       {/* content on left panel */}
       <div className={styles.aside}>
         <BackButton />
-        {isListingReport ? (
-          <div>
-            <h1>Listing information</h1>
-            <p>Title: {listing?.title}</p>
-          </div>
-        ) : null}
-        <h1>User information</h1>
-        <p>Name: {profileData?.username}</p>
+
+        { loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+          {isListingReport && (
+            <div>
+              <h1>Listing information</h1>
+              <p>Title: {listing?.title}</p>
+            </div>
+          )}
+
+          <h1>User information</h1>
+          <p>Name: {profileData?.username}</p>
+          </>
+        )}
+        
       </div>
 
       {/* content on right panel */}
