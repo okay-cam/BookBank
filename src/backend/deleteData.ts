@@ -1,6 +1,6 @@
 import { doc, deleteDoc } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
-import { collection_name } from "../config/config";
+import { fb_location } from "../config/config";
 import { ref, deleteObject } from "firebase/storage";
 import { getImageUrl } from "../backend/readData";
 
@@ -26,9 +26,9 @@ export const deleteListing = async (modalId: string) => {
   console.log("Document starting deletion", listingId);
 
   try {
-    const docRef = doc(db, collection_name.listings, listingId);
+    const docRef = doc(db, fb_location.listings, listingId);
 
-    const imageUrl = await getImageUrl(collection_name.listings, listingId);
+    const imageUrl = await getImageUrl(fb_location.listings, listingId);
     if (imageUrl) {
       await deleteImage(imageUrl);
     }

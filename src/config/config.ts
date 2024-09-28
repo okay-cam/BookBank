@@ -1,13 +1,13 @@
-
 // variables used in multiple listings
 const USER_ID = "userId";
 const COURSE_CODE = "courseCode";
 const IMAGE_URL = "imageUrl"
 
 // Firestore Constants
+// Ensure that classes that store fields match 
 
 // points to where collection is located on database
-export class collection_name {
+export class fb_location {
     static listings = "listings";
     static pins = "pins";
     static users = "users";
@@ -41,10 +41,4 @@ export class users_field {
     static totalRatingsRecieved = "totalRatingsRecieved";
     static university = "university";
     static userId = USER_ID;
-}
-
-// filepaths for images
-export class image_path {
-    static listings = "listings";
-    static profile_pictures = "profilePictures";
 }
