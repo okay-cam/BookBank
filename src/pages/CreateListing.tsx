@@ -4,8 +4,9 @@ import FileDropzone from "../components/FileDropzone";
 import { collection, addDoc, setDoc } from "firebase/firestore";
 import { db, auth, storage } from "../config/firebase";
 import BackButton from "../components/BackButton";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import { collection_name, image_path, listings_field } from "../config/config";
+import { uploadImage } from "../backend/writeData";
 
 interface ListingData {
   title: string;
@@ -60,7 +61,7 @@ const CreateListing: React.FC = () => {
     setIsSubmitting(true);
 
     // Create document entry
-    const docRef = await addDoc(collection(db, "listings"), {
+    const docRef = await addDoc(collection(db, collection_name.listings), {
       title: listingData.title,
       authors: listingData.authors,
       courseCode: listingData.courseCode,
@@ -73,9 +74,7 @@ const CreateListing: React.FC = () => {
     // Upload image to Cloud Storage if file exists
     try {
       if (file) {
-        const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
-        await uploadBytes(imageRef, file);
-        const imageUrl = await getDownloadURL(imageRef);
+        const imageUrl = await uploadImage(image_path.listings, docRef.id, file);
 
         // Create Firestore document with imageUrl
         await setDoc(
