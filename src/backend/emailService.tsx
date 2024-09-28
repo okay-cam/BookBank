@@ -6,6 +6,13 @@ export interface EmailData {
 }
 
 export const sendEmail = async (emailData: EmailData): Promise<string> => {
+
+    // prevent emails if disabled in the .env
+    const isEmailEnabled: boolean = import.meta.env.VITE_SEND_EMAILS === 'true';
+    if (!isEmailEnabled) {
+        return 'Email is disabled in the .env file';
+    }
+
     try {
         const backendPort = import.meta.env.VITE_BACKEND_PORT || '3000';
         const response = await fetch(`http://localhost:${backendPort}/send-email`, {

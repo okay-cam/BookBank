@@ -1,17 +1,14 @@
 // stores donor and listing info
 export interface ProfileData {
-    userId: string
+    userID: string
     username: string;
-    // from auth, set on sign-in
-    email: string;
-    profilePic: string | null;
+    email: string; // from auth, set on sign-in
+    imageUrl: string | null;
     university: string | null;
     degree: string | null;
     location: string | null;
-    // from auth, set on sign-in
-    joinDate: string;
-    // from auth, updated on login
-    lastLoggedIn: string;
+    joinDate: string; // from auth, set on sign-in
+    lastLoggedIn: string; // from auth, updated on login
     totalDonations: number;
     totalRatingsReceived: number;
     overallRating: number;
@@ -31,14 +28,16 @@ export interface ProfileData {
 // }
   
 export interface Listing {
-    id: string;
+    // Required:
     title: string;
     authors: string;
     courseCode: string;
     description: string;
-    imageUrl: string;
     userID: string; // stores the id of the user who created the listing
-    modalId: string; // to display the correct enquiry popup when request button is pressed
+    // Optional: 
+    id?: string;
+    imageUrl?: string;
+    modalId?: string; // to display the correct enquiry popup when request button is pressed
+    enquired?: string[] | null;
   }
-
 

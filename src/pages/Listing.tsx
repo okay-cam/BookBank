@@ -39,15 +39,20 @@ const Listing: React.FC = () => {
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
-      if (foundListing) {
-        const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
-        setListerEmail(listerProfile!.email || null);
-        console.log("lister profile: ", listerProfile);
-        console.log("lister profile email: ", listerProfile?.email);
-      } else {
-        console.log("listing not found");
+      try{
+        if (foundListing) {
+          const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
+          setListerEmail(listerProfile!.email || null);
+          console.log("lister profile: ", listerProfile);
+          console.log("lister profile email: ", listerProfile?.email);
+        } else {
+          console.log("listing not found");
+        }
+        console.log("lister email: ", listerEmail);
+      } catch (error){
+        console.error("Unable to present donor information", error);
       }
-      console.log("lister email: ", listerEmail);
+      
 
       setLoading(false); // Set loading to false after fetching
     };

@@ -1,31 +1,26 @@
 import React, { useState } from "react";
 import styles from "../styles/listing.module.css";
 import FileDropzone from "../components/FileDropzone";
-import { collection, addDoc, setDoc } from "firebase/firestore";
-import { db, auth, storage } from "../config/firebase";
+import { auth } from "../config/firebase";
 import BackButton from "../components/BackButton";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import { fb_location } from "../config/config";
+import { uploadImage, writeListing } from "../backend/writeData";
+import { Listing } from "../backend/types";
 
-interface ListingData {
-  title: string;
-  authors: string;
-  courseCode: string;
-  description: string;
-  userID: string;
-}
 
 const CreateListing: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const [listingData, setListingData] = useState<ListingData>({
+  const [listingData, setListingData] = useState<Listing>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
     userID: auth.currentUser!.uid.toString(), // User can't be null when entering this page
+    enquired: [],
   });
 
   const [file, setFile] = useState<File | null>(null);  // Manage file state
@@ -60,44 +55,20 @@ const CreateListing: React.FC = () => {
     setIsSubmitting(true);
 
     // Create document entry
-    const docRef = await addDoc(collection(db, "listings"), {
-      title: listingData.title,
-      authors: listingData.authors,
-      courseCode: listingData.courseCode,
-      description: listingData.description,
-      userID: listingData.userID,
-    });
-
-    // This code still has functionality for no images if we make it optional in future
-
-    // Upload image to Cloud Storage if file exists
-    try {
-      if (file) {
-        const imageRef = ref(storage, `listings/${Date.now()}-${file.name}`);
-        await uploadBytes(imageRef, file);
-        const imageUrl = await getDownloadURL(imageRef);
-
-        // Create Firestore document with imageUrl
-        await setDoc(
-          docRef,
-          {
-            ...listingData,
-            imageUrl,
-          },
-          { merge: true }
-        );
-      } else {
-        // Create Firestore document without image
-        await setDoc(docRef, listingData, { merge: true });
+    try{
+      const listingID = await writeListing(listingData);
+      if(listingID){
+        await uploadImage(fb_location.listings, listingID, file);
+      }else{
+        console.log("Unable to upload image, no listingID");
       }
-
-      navigate("/home");
-    } catch (error) {
-      console.error("Error creating listing:", error);
-    } finally {
-      // Reset the loading state
-      setIsSubmitting(false);
+    } catch (error){
+      console.error("Unable to create listing");
     }
+    
+    navigate("/home");
+    // Reset the loading state
+    setIsSubmitting(false);
   };
 
   return (
