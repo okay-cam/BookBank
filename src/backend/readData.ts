@@ -255,3 +255,18 @@ export async function checkArray(
   console.log(`UserID (${userId}) not found in ${collection}: ${docId}, field: ${fieldName}`);
   return false;
 }
+
+export async function getImageUrl(collection: string, docId: string) {
+  const docRef = doc(db, collection, docId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const listingData = docSnap.data();
+    if (listingData[listings_field.imageUrl]) {
+      console.log(listingData[listings_field.imageUrl]);
+      return listingData[listings_field.imageUrl];
+    } else {
+      return null;
+    }
+  }
+}
