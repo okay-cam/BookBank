@@ -1,6 +1,8 @@
-import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore"; 
+import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection } from "firebase/firestore"; 
 import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Listing } from "../backend/types";
+import { fb_location, listings_field } from "../config/config";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
@@ -51,4 +53,37 @@ export async function uploadImage(collection: string, id: string, image: File) {
     console.error("Error uploading image or updating document: ", error);
     return null; // Return null if there's an error
   }
+}
+
+export async function writeListing(listingData: Listing, id?: string) {
+  // using an id will cause this function to update instead of write
+  try {
+    let docRef; // Declare docRef outside the if-else block
+
+    if (id) {
+      // If an id is provided, update the existing document
+      docRef = doc(db, fb_location.listings, id);
+    } else {
+      // If no id is provided, create a new document and get the reference
+      docRef = await addDoc(collection(db, fb_location.listings), {});
+    }
+
+    // Update or create the Firestore document using the fields from listings_field
+    await setDoc(docRef, {
+      [listings_field.authors]: listingData.authors,
+      [listings_field.courseCode]: listingData.courseCode,
+      [listings_field.description]: listingData.description,
+      [listings_field.title]: listingData.title,
+      [listings_field.userId]: listingData.userID,
+    }, { merge: true }); // Merge the updates with existing data
+
+    console.log("Listing updated successfully!");
+    return docRef.id;
+    
+
+  } catch (error) {
+    console.error("Error updating/creating listing: ", error);
+    return null;
+  }
+  
 }
