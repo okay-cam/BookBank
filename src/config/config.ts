@@ -41,3 +41,9 @@ export class users_field {
     static university = "university";
     static userId = USER_ID;
 }
+
+// filepaths for images
+export class image_path {
+    static listings = "listings";
+    static profile_pictures = "profilePictures";
+}
