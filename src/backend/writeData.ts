@@ -74,7 +74,7 @@ export async function writeListing(listingData: Listing, id?: string) {
       [listings_field.courseCode]: listingData.courseCode,
       [listings_field.description]: listingData.description,
       [listings_field.title]: listingData.title,
-      [listings_field.userId]: listingData.userID,
+      [listings_field.userID]: listingData.userID,
     }, { merge: true }); // Merge the updates with existing data
 
     console.log("Listing updated successfully!");

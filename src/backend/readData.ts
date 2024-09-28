@@ -100,12 +100,12 @@ export function checkListingOwner(listing: Listing): boolean {
 }
 
 export async function getPins(): Promise<Listing[]> {
-  const userId = auth.currentUser!.uid;
+  const userID = auth.currentUser!.uid;
   const pinsRef = collection(db, fb_location.pins);
   const listingsRef = collection(db, fb_location.listings);
-  const pinsQuery = query(pinsRef, where(users_field.userId, "==", userId));
+  const pinsQuery = query(pinsRef, where(users_field.userID, "==", userID));
 
-  // get pinned collection for userId
+  // get pinned collection for userID
   try {
     const querySnapshot = await getDocs(pinsQuery);
 
@@ -151,12 +151,12 @@ export async function getPins(): Promise<Listing[]> {
 }
 
 export async function getWishlist(): Promise<Listing[]> {
-  const userId = auth.currentUser!.uid;
+  const userID = auth.currentUser!.uid;
   const wishlistRef = collection(db, fb_location.wishlist);
   const listingsRef = collection(db, fb_location.listings);
 
   // Create a query to get all wishlist entries for the current user
-  const wishlistQuery = query(wishlistRef, where(users_field.userId, "==", userId));
+  const wishlistQuery = query(wishlistRef, where(users_field.userID, "==", userID));
 
   try {
     const wishlistSnapshot = await getDocs(wishlistQuery);

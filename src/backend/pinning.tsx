@@ -7,7 +7,7 @@ export async function togglePinListing(listing: Listing) {
   const pinsRef = collection(db, fb_location.pins);
   const userId = auth.currentUser!.uid; // user pinning will always be current user
   console.log("userId:", userId, "listingId:", listing.id);
-  const q = query(pinsRef, where(listings_field.userId, "==", userId), where(listings_field.id, "==", listing.id));
+  const q = query(pinsRef, where(listings_field.userID, "==", userId), where(listings_field.id, "==", listing.id));
 
   try {
     const querySnapshot = await getDocs(q);
@@ -40,7 +40,7 @@ export const isPinned = async (listingId: string): Promise<boolean> => {
   }
 
   // Query to find if the listing is pinned by the current user
-  const q = query(pinsRef, where(listings_field.userId, "==", userId), where(listings_field.id, "==", listingId));
+  const q = query(pinsRef, where(listings_field.userID, "==", userId), where(listings_field.id, "==", listingId));
 
   try {
     const querySnapshot = await getDocs(q);
