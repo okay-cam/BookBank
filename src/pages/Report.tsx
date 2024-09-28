@@ -11,7 +11,7 @@ import {
 
 const Report: React.FC = () => {
   const { id, type } = useParams<{ id: string; type: string }>(); // Extract id and type from the route parameters.
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [reportedProfileData, setReportedProfileData] = useState<ProfileData | null>(null); // data of the profile that is being reported
   const [listing, setListing] = useState<Listing | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submit loading state
@@ -27,7 +27,7 @@ const Report: React.FC = () => {
         try {
           const data = await getProfileData(id);
           if (data) {
-            setProfileData(data); // set profile data if it exists
+            setReportedProfileData(data); // set profile data if it exists
             setListingReport(false);
           } else {
             setNotFound(true); // If no profile is found, set not found state
@@ -52,7 +52,8 @@ const Report: React.FC = () => {
           if (listing) {
             setListing(listing);
             const user = await getProfileData(listing.userID);
-            setProfileData(user); // set user data based on the owner of the listing
+            console.log("user: ", user)
+            setReportedProfileData(user); // set user data based on the owner of the listing
             setListingReport(true);
           } else {
             setNotFound(true); // If no listing is found, set not found state
@@ -62,6 +63,7 @@ const Report: React.FC = () => {
           setNotFound(true);
         } finally {
           setLoading(false);
+          console.log("listing: ", listing)
         }
       };
       fetchListing();
@@ -75,6 +77,12 @@ const Report: React.FC = () => {
 
   function handleChange(event: ChangeEvent<HTMLTextAreaElement>): void {
     throw new Error("Function not implemented.");
+  }
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+
   }
 
   return (
@@ -104,7 +112,7 @@ const Report: React.FC = () => {
       {/* content on right panel */}
       <div className={styles.content}>
         <h1>Reporting a {type}</h1>
-        <form>
+        <form onSubmit={}>
           <label htmlFor="issue">Describe the issue</label>
           <br />
           <textarea
