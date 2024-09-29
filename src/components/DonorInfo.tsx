@@ -41,7 +41,7 @@ const DonorInfo = ({ donorId }: DonorIDProps) => {
     <Link to={`/profile/${donorId}`} className="no-underline">
       <div className={styles.donorInfo}>
         <img
-          src={profile.profilePic || defaultImage}
+          src={profile.imageUrl || defaultImage}
           className={styles.profilePic}
         />
         <div className={styles.donorContent}>
