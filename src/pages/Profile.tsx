@@ -37,7 +37,7 @@ const Profile: React.FC = () => {
     <main className={styles.gridContainer}>
       <div className={styles.aside}>
         <img
-          src={profileData?.profilePic || defaultImage}
+          src={profileData?.imageUrl || defaultImage}
           className={styles.profilePic}
           alt="Profile"
         />

@@ -33,7 +33,7 @@ export const useListings = (field?: string, value?: string) => {
 };
 
 export async function getListingById(id: string): Promise<Listing | null> {
-  const listingRef = doc(db, collection_name.listings, id); // Get reference to the specific document by ID
+  const listingRef = doc(db, fb_location.listings, id); // Get reference to the specific document by ID
 
   const docSnap = await getDoc(listingRef); // Fetch the document
 
