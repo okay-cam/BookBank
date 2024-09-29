@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
-import { ProfileData as ProfileType } from '../backend/types';
+import { ProfileData as ProfileType } from '../config/config';
 import { getProfileData } from '../backend/readData';
 import { doc, setDoc } from "firebase/firestore";
 import { db, auth, storage } from '../config/firebase';

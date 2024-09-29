@@ -6,7 +6,7 @@ import BackButton from "../components/BackButton";
 import { useNavigate } from "react-router-dom";
 import { fb_location } from "../config/config";
 import { uploadImage, writeListing } from "../backend/writeData";
-import { Listing } from "../backend/types";
+import { Listing } from "../config/config";
 
 
 const CreateListing: React.FC = () => {

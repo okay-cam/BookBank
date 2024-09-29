@@ -1,8 +1,3 @@
-import { listings_field, users_field } from "../config/config";
-
-export type profileData = keyof typeof users_field;
-export type Listing = keyof typeof listings_field;
-
 // stores donor and listing info
 // export interface ProfileData {
 //     userID: string
