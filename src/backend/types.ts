@@ -41,8 +41,8 @@ export interface Listing {
     enquired?: string[] | null;
   }
 
-  export interface Report {
-    message: string;
+  export interface ReportType {
+    issue: string;
     reportedInfo: Map<string, unknown>;
     submitterInfo: Map<string, unknown>;
   }

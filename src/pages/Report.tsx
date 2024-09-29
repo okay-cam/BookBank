@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Listing, ProfileData } from "../backend/types";
+import { Listing, ProfileData, ReportType } from "../backend/types";
 import styles from "../styles/listing.module.css";
 import BackButton from "../components/BackButton";
 import { Navigate, useParams } from "react-router-dom";
@@ -11,15 +11,105 @@ import {
 
 const Report: React.FC = () => {
   const { id, type } = useParams<{ id: string; type: string }>(); // Extract id and type from the route parameters.
-  const [reportedProfileData, setReportedProfileData] = useState<ProfileData | null>(null); // data of the profile that is being reported
+  
+  const [reportedProfileData, setReportedProfileData] = useState<GeneralReport>({
+    issue: '',
+    reportedProfileInfo: {
+      userID: '',
+      username: '',
+      email: '',
+      imageUrl: '',
+    },
+    submitterInfo: {
+      userID: '',
+      username: '',
+      email: '',
+    },
+  });
+  
   const [listing, setListing] = useState<Listing | null>(null);
+  const [report, setReport] = useState<GeneralReport|null>(null);
+
   const [notFound, setNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submit loading state
   const [loading, setLoading] = useState(true); // Add page loading state
   const [isListingReport, setListingReport] = useState(true); // Returns true if it is a listing report, false if a user report
   //   const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch profile data if type is "user"
+
+  interface ReportedProfileInfo {
+    userID: string;
+    username: string;
+    email: string;
+    imageUrl: string | null;
+  }
+  
+  interface ReportedListingInfo {
+    title: string;
+    authors: string;
+    courseCode: string;
+    imageUrl: string | undefined;
+    description: string;
+  }
+  
+  interface SubmitterInfo {
+    userID: string;
+    username: string;
+    email: string;
+  }
+  
+  // Define separate interfaces for different report types
+  interface GeneralReport {
+    issue: string;
+    reportedProfileInfo: ReportedProfileInfo;
+    reportedListingInfo?: ReportedListingInfo; // Optional or undefined
+    submitterInfo: SubmitterInfo;
+  }
+
+  const handleReportedProfileData = (data: ProfileData) => {
+    const { userID, username, email, imageUrl } = data;
+    setReportedProfileData(prevData => ({
+      ...prevData,
+      reportedProfileInfo: {
+        userID,
+        username,
+        email,
+        imageUrl,
+      },
+    }));
+  };
+
+  const handleListingData = (data: Listing) => {
+    const { title, authors, courseCode, imageUrl, description } = data;
+    setReportedProfileData(prevData => ({
+      ...prevData,
+      reportedListingInfo: {
+        title,
+        authors,
+        courseCode,
+        imageUrl,
+        description,
+      },
+    }));
+  };
+
+  const handleSubmitterData = (data: ProfileData) => {
+    const { userID, username, email } = data;
+    setReportedProfileData(prevData => ({
+      ...prevData,
+      submitterInfo: {
+        userID,
+        username,
+        email,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    handleSubmitterData()
+  }, [type, id]);
+
+  // For profiles, ONLY get reported profile data
   useEffect(() => {
     if (type === "user" && id) {
       // check if user and id exists
@@ -43,7 +133,7 @@ const Report: React.FC = () => {
     }
   }, [type, id]); // update if any url parameters change
 
-  // Fetch listing data if type is "listing"
+  // For listings, get BOTH listing data and reported profile data
   useEffect(() => {
     if (type === "listing" && id) {
       const fetchListing = async () => {
@@ -75,9 +165,15 @@ const Report: React.FC = () => {
     return <Navigate to="/404" />;
   }
 
-  function handleChange(event: ChangeEvent<HTMLTextAreaElement>): void {
-    throw new Error("Function not implemented.");
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setReport((prevReport) => ({
+      ...prevReport,
+      [name]: value,
+    }));
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,13 +193,13 @@ const Report: React.FC = () => {
           <>
           {isListingReport && (
             <div>
-              <h1>Listing information</h1>
+              <h1>Listing Information</h1>
               <p>Title: {listing?.title}</p>
             </div>
           )}
 
-          <h1>User information</h1>
-          <p>Name: {profileData?.username}</p>
+          <h1>Reported User Information</h1>
+          <p>Name: {reportedProfileData?.username}</p>
           </>
         )}
         
@@ -112,7 +208,7 @@ const Report: React.FC = () => {
       {/* content on right panel */}
       <div className={styles.content}>
         <h1>Reporting a {type}</h1>
-        <form onSubmit={}>
+        <form onSubmit={onSubmit}>
           <label htmlFor="issue">Describe the issue</label>
           <br />
           <textarea
