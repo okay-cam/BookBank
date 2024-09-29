@@ -3,16 +3,31 @@ import { Listing, ProfileData, ReportType } from "../backend/types";
 import styles from "../styles/listing.module.css";
 import BackButton from "../components/BackButton";
 import { Navigate, useParams } from "react-router-dom";
+import { auth } from "../config/firebase";
 import {
   getListingById,
   getListings,
   getProfileData,
 } from "../backend/readData";
 
+// !! change code later so it uses config.ts constants
+
 const Report: React.FC = () => {
-  const { id, type } = useParams<{ id: string; type: string }>(); // Extract id and type from the route parameters.
+  // Extract id and type from the route parameters.
+  // id may refer to the profile id or the listing id
+  // type may refer to 'user' or 'listing'
+  const { id, type } = useParams<{ id: string; type: string }>(); 
   
-  const [reportedProfileData, setReportedProfileData] = useState<GeneralReport>({
+  const [reportedProfileData, setReportedProfileData] = useState<ReportedProfileInfo>({
+    userID: '',
+    username: '',
+    email: '',
+    imageUrl: null,
+  });
+  
+  const [listing, setListing] = useState<ReportedListingInfo | null>(null);
+
+  const [report, setReport] = useState<GeneralReport>({
     issue: '',
     reportedProfileInfo: {
       userID: '',
@@ -26,14 +41,11 @@ const Report: React.FC = () => {
       email: '',
     },
   });
-  
-  const [listing, setListing] = useState<Listing | null>(null);
-  const [report, setReport] = useState<GeneralReport|null>(null);
 
   const [notFound, setNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submit loading state
   const [loading, setLoading] = useState(true); // Add page loading state
-  const [isListingReport, setListingReport] = useState(true); // Returns true if it is a listing report, false if a user report
+  const [isListingReport, setIsListingReport] = useState(false); // Returns true if it is a listing report, false if a user report
   //   const [errorMessage, setErrorMessage] = useState("");
 
 
@@ -80,85 +92,194 @@ const Report: React.FC = () => {
   };
 
   const handleListingData = (data: Listing) => {
-    const { title, authors, courseCode, imageUrl, description } = data;
-    setReportedProfileData(prevData => ({
-      ...prevData,
-      reportedListingInfo: {
-        title,
-        authors,
-        courseCode,
-        imageUrl,
-        description,
-      },
-    }));
+    const { title, authors, courseCode, imageUrl = '', description } = data;
+    setListing({
+      title,
+      authors,
+      courseCode,
+      imageUrl,
+      description,
+    });
   };
 
-  const handleSubmitterData = (data: ProfileData) => {
-    const { userID, username, email } = data;
-    setReportedProfileData(prevData => ({
-      ...prevData,
-      submitterInfo: {
-        userID,
-        username,
-        email,
-      },
-    }));
-  };
-
-  useEffect(() => {
-    handleSubmitterData()
-  }, [type, id]);
-
-  // For profiles, ONLY get reported profile data
-  useEffect(() => {
-    if (type === "user" && id) {
-      // check if user and id exists
-      const fetchAndSetProfileData = async () => {
-        try {
-          const data = await getProfileData(id);
-          if (data) {
-            setReportedProfileData(data); // set profile data if it exists
-            setListingReport(false);
-          } else {
-            setNotFound(true); // If no profile is found, set not found state
-          }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-          setNotFound(true);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchAndSetProfileData();
+  const handleSubmitterData = (data: ProfileData | null) => {
+    if (!data) {
+      return false;
     }
-  }, [type, id]); // update if any url parameters change
 
-  // For listings, get BOTH listing data and reported profile data
+    const { userID, username, email, imageUrl } = data;
+    setReportedProfileData({
+      userID,
+      username,
+      email,
+      imageUrl
+    });
+  };
+
+
+  // Load all data on mount
   useEffect(() => {
-    if (type === "listing" && id) {
+
+    // Load profile data of whoever submit the report
+    const loadSubmitterData = async () => {
+      try {
+        const submitterData = await getProfileData(auth.currentUser!.uid);
+        handleSubmitterData(submitterData);
+      } catch (error) {
+        console.error("Error loading submitter data:", error);
+      }
+    };
+    loadSubmitterData();
+
+    // Check if listing id / profile id doesn't exist
+    if (!id) {
+      console.error("Id not found: ", id);
+      setNotFound(true);
+      return;
+    }
+
+    // Used to get the reported user ID
+    const getReportedProfileID = async () => {
+      if (type === 'user') { // ID is a user id for profile reports
+        return id;
+      } else if (type === 'listing') { // ID is a listing id for listing reports
+        const listing = await getListingById(id);
+        return listing?.userID;
+      } else {
+        return null;
+      }
+    }
+
+    // Load reported profile
+    const loadReportedProfileData = async () => {
+      try {
+
+        // get ID of reported person
+        const reportedProfileID = await getReportedProfileID();
+        if (reportedProfileID) {
+          console.error("ProfileID not found");
+          setNotFound(true); // If no profile is found, set not found state
+          return;
+        }
+
+        // Get profile data of reported person
+        const data = await getProfileData(reportedProfileID!);
+        if (data) {
+          handleReportedProfileData(data); // Set profile data if it exists
+        } else {
+          console.error("Reported Profile not found");
+          setNotFound(true); // If no profile is found, set not found state
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    }
+    loadReportedProfileData();
+
+    // Load reported listing
+    if (type === 'listing') {
+      setIsListingReport(true);
       const fetchListing = async () => {
         try {
           const listing = await getListingById(id);
           if (listing) {
-            setListing(listing);
-            const user = await getProfileData(listing.userID);
-            console.log("user: ", user)
-            setReportedProfileData(user); // set user data based on the owner of the listing
-            setListingReport(true);
+            handleListingData(listing);
           } else {
+            console.error("Listing not found");
             setNotFound(true); // If no listing is found, set not found state
           }
         } catch (error) {
           console.error("Error fetching listing:", error);
           setNotFound(true);
-        } finally {
-          setLoading(false);
-          console.log("listing: ", listing)
         }
-      };
+      }
       fetchListing();
     }
-  }, [type, id]);
+
+    setLoading(false);
+
+  }, [id, type]);
+
+  //   // Load reported listing
+  //   if (type === 'listing') {
+  //     setIsListingReport(true);
+  //     const fetchListing = async () => {
+  //       try {
+  //         const listing = await getListingById(id);
+  //         if (listing) {
+  //           setListing(listing);
+  //           console.log("user: ", user)
+  //           setReportedProfileData(user); // set user data based on the owner of the listing
+  //           setListingReport(true);
+  //         } else {
+  //           setNotFound(true); // If no listing is found, set not found state
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching listing:", error);
+  //         setNotFound(true);
+  //       } finally {
+  //         setLoading(false);
+  //         console.log("listing: ", listing)
+  //       }
+  //     };
+  //     fetchListing();
+  //   }
+        
+
+
+
+  // // For profiles, ONLY get reported profile data
+  // useEffect(() => {
+  //   if (type === "user" && id) {
+  //     // check if user and id exists
+  //     const fetchAndSetProfileData = async () => {
+  //       try {
+  //         const data = await getProfileData(id);
+  //         if (data) {
+  //           setReportedProfileData(data); // set profile data if it exists
+  //           setListingReport(false);
+  //         } else {
+  //           setNotFound(true); // If no profile is found, set not found state
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching profile:", error);
+  //         setNotFound(true);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //     fetchAndSetProfileData();
+  //   }
+  // }, [type, id]); // update if any url parameters change
+
+  // // For listings, get BOTH listing data and reported profile data
+  // useEffect(() => {
+  //   if (type === "listing" && id) {
+  //     const fetchListing = async () => {
+  //       try {
+  //         const listing = await getListingById(id);
+  //         if (listing) {
+  //           setListing(listing);
+  //           const user = await getProfileData(listing.userID);
+  //           console.log("user: ", user)
+  //           setReportedProfileData(user); // set user data based on the owner of the listing
+  //           setListingReport(true);
+  //         } else {
+  //           setNotFound(true); // If no listing is found, set not found state
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching listing:", error);
+  //         setNotFound(true);
+  //       } finally {
+  //         setLoading(false);
+  //         console.log("listing: ", listing)
+  //       }
+  //     };
+  //     fetchListing();
+  //   }
+  // }, [type, id]);
+
+
 
   // If type is invalid or data not found, navigate to 404
   if (!["user", "listing"].includes(type!) || notFound) {
@@ -177,8 +298,8 @@ const Report: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-
+    console.log("report data:");
+    console.log(report);
   }
 
   return (
