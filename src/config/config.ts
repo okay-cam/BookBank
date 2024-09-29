@@ -26,7 +26,7 @@ export class listings_field {
     static userID = USER_ID;
     static enquired = "enquired";
 }
-export type Listing = keyof typeof listings_field; // replaces type.ts
+export type Listing = Omit<typeof listings_field, 'prototype'>; // replaces type.ts
 
 // field names for users documents
 export class users_field {
@@ -43,4 +43,4 @@ export class users_field {
     static university = "university";
     static userID = USER_ID;
 }
-export type ProfileData = keyof typeof users_field; // replaces type.ts
+export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts

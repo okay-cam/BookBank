@@ -1,8 +1,6 @@
 import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection } from "firebase/firestore"; 
 import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Listing } from "../backend/types";
-import { fb_location, listings_field } from "../config/config";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
@@ -55,35 +53,38 @@ export async function uploadImage(collection: string, id: string, image: File) {
   }
 }
 
-export async function writeListing(listingData: Listing, id?: string) {
-  // using an id will cause this function to update instead of write
+export async function writeToFirestore<T extends Record<string, any>>(
+  fieldsClass: T, // Class that holds the field names
+  collectionName: string, // Firestore collection name
+  data: Partial<Record<keyof T, any>>, // Data to write, keyed by the class field names
+  id?: string // Optional id for updating a document
+): Promise<string | null> {
   try {
-    let docRef; // Declare docRef outside the if-else block
+    let docRef;
 
+    // If an id is provided, update the existing document
     if (id) {
-      // If an id is provided, update the existing document
-      docRef = doc(db, fb_location.listings, id);
+      docRef = doc(db, collectionName, id);
     } else {
       // If no id is provided, create a new document and get the reference
-      docRef = await addDoc(collection(db, fb_location.listings), {});
+      docRef = await addDoc(collection(db, collectionName), {});
     }
 
-    // Update or create the Firestore document using the fields from listings_field
-    await setDoc(docRef, {
-      [listings_field.authors]: listingData.authors,
-      [listings_field.courseCode]: listingData.courseCode,
-      [listings_field.description]: listingData.description,
-      [listings_field.title]: listingData.title,
-      [listings_field.userID]: listingData.userID,
-    }, { merge: true }); // Merge the updates with existing data
+    // Map the input data to the Firestore document based on field names in the provided class
+    const firestoreData = Object.keys(data).reduce((result, key) => {
+      result[fieldsClass[key as keyof T]] = data[key as keyof T];
+      return result;
+    }, {} as Record<string, any>);
 
-    console.log("Listing updated successfully!");
-    return docRef.id;
-    
+    // Write the document data to Firestore with merge option
+    await setDoc(docRef, firestoreData, { merge: true });
+
+    console.log(`Document successfully written/updated in collection ${collectionName}!`);
+    return docRef.id; // Return the document ID
 
   } catch (error) {
-    console.error("Error updating/creating listing: ", error);
+    console.error(`Error writing/updating document in collection ${collectionName}:`, error);
     return null;
   }
-  
 }
+  

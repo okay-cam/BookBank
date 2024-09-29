@@ -5,8 +5,8 @@ import { auth } from "../config/firebase";
 import BackButton from "../components/BackButton";
 import { useNavigate } from "react-router-dom";
 import { fb_location } from "../config/config";
-import { uploadImage, writeListing } from "../backend/writeData";
-import { Listing } from "../config/config";
+import { uploadImage, writeListing, writeToFirestore } from "../backend/writeData";
+import { Listing, listings_field } from "../config/config";
 
 
 const CreateListing: React.FC = () => {
@@ -56,7 +56,7 @@ const CreateListing: React.FC = () => {
 
     // Create document entry
     try{
-      const listingID = await writeListing(listingData);
+      const listingID = await writeToFirestore(listings_field, fb_location.listings, listingData);
       if(listingID){
         await uploadImage(fb_location.listings, listingID, file);
       }else{
