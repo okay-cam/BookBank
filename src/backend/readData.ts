@@ -99,57 +99,6 @@ export function checkListingOwner(listing: Listing): boolean {
   return false;
 }
 
-export async function getPins(): Promise<Listing[]> {
-  const userID = auth.currentUser!.uid;
-  const pinsRef = collection(db, fb_location.pins);
-  const listingsRef = collection(db, fb_location.listings);
-  const pinsQuery = query(pinsRef, where(users_field.userID, "==", userID));
-
-  // get pinned collection for userID
-  try {
-    const querySnapshot = await getDocs(pinsQuery);
-
-    if (querySnapshot.empty) {
-      console.log("No matching documents found.");
-      return [];
-    } else {
-      const pinnedListings: Listing[] = [];
-
-      // iterate through pinned listing collection and use id's to create listing[]
-      for (const docSnap of querySnapshot.docs) {
-        const data = docSnap.data();
-        const listingId = data.listingId;
-
-        if (listingId) {
-          try {
-            const listingDocRef = doc(listingsRef, listingId);
-            const listingDoc = await getDoc(listingDocRef);
-
-            if (listingDoc.exists()) {
-              const listingData = listingDoc.data() as Listing;
-              pinnedListings.push({
-                ...listingData,
-                id: listingDoc.id,
-                modalId: "modal-" + listingDoc.id,
-              });
-            } else {
-              console.log(`Listing with ID ${listingId} not found.`);
-            }
-          } catch (error) {
-            console.error(`Error fetching listing with ID ${listingId}:`, error);
-          }
-        }
-      }
-
-      console.log("Pinned listings found:", pinnedListings);
-      return pinnedListings;
-    }
-  } catch (error) {
-    console.error("Error getting pinned listings: ", error);
-    return [];
-  }
-}
-
 export async function getWishlist(): Promise<Listing[]> {
   const userID = auth.currentUser!.uid;
   const wishlistRef = collection(db, fb_location.wishlist);
