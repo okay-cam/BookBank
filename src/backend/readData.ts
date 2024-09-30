@@ -210,10 +210,10 @@ export async function getWishlist(): Promise<Listing[]> {
 }
 
 export async function checkArray(
-  collection: string,
-  docId: string,
-  fieldName: string,
-  userId: string
+  collection: string, // collection name
+  docId: string, // document name
+  fieldName: string, // array name
+  userId: string // check if user in array
 ): Promise<boolean> {
   const docRef = doc(db, collection, docId);
   const docSnap = await getDoc(docRef);
