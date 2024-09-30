@@ -209,9 +209,9 @@ export async function getWishlist(): Promise<Listing[]> {
   }
 }
 
-export async function checkArray(
-  collection: string, // collection name
-  docId: string, // document name
+export async function checkArray( // returns boolean if user in array or not
+  collection: string, 
+  docId: string, 
   fieldName: string, // array name
   userId: string // check if user in array
 ): Promise<boolean> {
@@ -232,6 +232,28 @@ export async function checkArray(
   
   console.log(`UserID (${userId}) not found in ${collection}: ${docId}, field: ${fieldName}`);
   return false;
+}
+
+// TERRIBLE NAME: SHOULD BE RENAMED!!!!!!
+export async function getDocumentsWhereArray( // returns all documents where user is in specific array
+  collectionName: string,
+  fieldName: string, // array name
+  userID: string // check if user in array
+): Promise<any[]> {
+  try {
+    const q = query(collection(db, collectionName), where(fieldName, "array-contains", userID));
+    const querySnapshot = await getDocs(q);
+
+    const documents = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return documents;
+  } catch (error) {
+    console.error("Error retrieving documents: ", error);
+    return [];
+  }
 }
 
 export async function getImageUrl(collection: string, docId: string): Promise<string | null> {
