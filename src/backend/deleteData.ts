@@ -7,7 +7,7 @@ import { getImageUrl } from "../backend/readData";
 export const deleteImage = async (imageUrl: string) => {
   const imageRef = ref(storage, imageUrl);
 
-  deleteObject(imageRef)
+  await deleteObject(imageRef)
   .then(() => {
     console.log('Image deleted successfully');
   })
