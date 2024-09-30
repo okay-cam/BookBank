@@ -1,4 +1,4 @@
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
 import { fb_location } from "../config/config";
 import { ref, deleteObject } from "firebase/storage";
@@ -41,4 +41,20 @@ export const deleteListing = async (modalId: string) => {
   }
 };
 
-
+export async function removeFromArray(
+  collection: string, 
+  docId: string, 
+  fieldName: string, 
+  value: string
+): Promise<void> {
+  const docRef = doc(db, collection, docId);
+  
+  try {
+    await updateDoc(docRef, {
+      [fieldName]: arrayRemove(value)
+    });
+    console.log(`Successfully removed value from ${fieldName}`);
+  } catch (error) {
+    console.error(`Error removing value from field: ${fieldName}`, error);
+  }
+}
