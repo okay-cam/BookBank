@@ -54,7 +54,6 @@ export async function uploadImage(collection: string, id: string, image: File) {
 }
 
 export async function writeToFirestore<T extends Record<string, any>>(
-  fieldsClass: T, // Class that holds the field names
   collectionName: string, // Firestore collection name
   data: Partial<Record<keyof T, any>>, // Data to write, keyed by the class field names
   id?: string // Optional id for updating a document
@@ -70,14 +69,8 @@ export async function writeToFirestore<T extends Record<string, any>>(
       docRef = await addDoc(collection(db, collectionName), {});
     }
 
-    // Map the input data to the Firestore document based on field names in the provided class
-    const firestoreData = Object.keys(data).reduce((result, key) => {
-      result[fieldsClass[key as keyof T]] = data[key as keyof T];
-      return result;
-    }, {} as Record<string, any>);
-
     // Write the document data to Firestore with merge option
-    await setDoc(docRef, firestoreData, { merge: true });
+    await setDoc(docRef, data, { merge: true });
 
     console.log(`Document successfully written/updated in collection ${collectionName}!`);
     return docRef.id; // Return the document ID
