@@ -25,7 +25,7 @@ const Report: React.FC = () => {
     imageUrl: null,
   });
   
-  const [listing, setListing] = useState<ReportedListingInfo | null>(null);
+  const [reportedListing, setReportedListing] = useState<ReportedListingInfo | null>(null);
 
   const [report, setReport] = useState<GeneralReport>({
     issue: '',
@@ -74,7 +74,7 @@ const Report: React.FC = () => {
   interface GeneralReport {
     issue: string;
     reportedProfileInfo: ReportedProfileInfo;
-    reportedListingInfo?: ReportedListingInfo; // Optional or undefined
+    reportedListingInfo?: ReportedListingInfo | null; // Optional or undefined
     submitterInfo: SubmitterInfo;
   }
 
@@ -93,7 +93,7 @@ const Report: React.FC = () => {
 
   const handleListingData = (data: Listing) => {
     const { title, authors, courseCode, imageUrl = '', description } = data;
-    setListing({
+    setReportedListing({
       title,
       authors,
       courseCode,
@@ -119,6 +119,9 @@ const Report: React.FC = () => {
 
   // Load all data on mount
   useEffect(() => {
+
+    console.log("report ID: ", id)
+    console.log("report type: ", type)
 
     // Load profile data of whoever submit the report
     const loadSubmitterData = async () => {
@@ -156,7 +159,7 @@ const Report: React.FC = () => {
 
         // get ID of reported person
         const reportedProfileID = await getReportedProfileID();
-        if (reportedProfileID) {
+        if (!reportedProfileID) {
           console.error("ProfileID not found");
           setNotFound(true); // If no profile is found, set not found state
           return;
@@ -283,6 +286,7 @@ const Report: React.FC = () => {
 
   // If type is invalid or data not found, navigate to 404
   if (!["user", "listing"].includes(type!) || notFound) {
+    console.log("report type doesnt exist: ", type)
     return <Navigate to="/404" />;
   }
 
@@ -298,6 +302,15 @@ const Report: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // load data into report
+    setReport((prevReport) => ({
+      ...prevReport,
+      reportedProfileInfo: reportedProfileData,
+      reportedListingInfo: type === 'listing' ? reportedListing : null,
+    }));
+    
+
     console.log("report data:");
     console.log(report);
   }
@@ -315,7 +328,7 @@ const Report: React.FC = () => {
           {isListingReport && (
             <div>
               <h1>Listing Information</h1>
-              <p>Title: {listing?.title}</p>
+              <p>Title: {reportedListing?.title}</p>
             </div>
           )}
 
