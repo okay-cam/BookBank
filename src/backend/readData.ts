@@ -234,17 +234,21 @@ export async function checkArray(
   return false;
 }
 
-export async function getImageUrl(collection: string, docId: string) {
+export async function getImageUrl(collection: string, docId: string): Promise<string | null> {
   const docRef = doc(db, collection, docId);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     const listingData = docSnap.data();
-    if (listingData[listings_field.imageUrl]) {
-      console.log(listingData[listings_field.imageUrl]);
-      return listingData[listings_field.imageUrl];
+    // Check if the imageUrl field exists in document
+    if (listingData && listingData[listings_field.imageUrl]) {
+      console.log(listingData[listings_field.imageUrl]); 
+      return listingData[listings_field.imageUrl] as string; 
     } else {
-      return null;
+      return null; // Return null if the imageUrl field is missing
     }
+  } else {
+    console.log("Document does not exist!"); 
+    return null; 
   }
 }

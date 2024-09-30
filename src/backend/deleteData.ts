@@ -29,6 +29,7 @@ export const deleteListing = async (modalId: string) => {
     const docRef = doc(db, fb_location.listings, listingId);
 
     const imageUrl = await getImageUrl(fb_location.listings, listingId);
+    console.log("Deleting image url: ", imageUrl);
     if (imageUrl) {
       await deleteImage(imageUrl);
     }
