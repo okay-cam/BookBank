@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
-import { ProfileData as ProfileType } from '../config/config';
+import { ProfileData as ProfileType, fb_location } from '../config/config';
 import { getProfileData } from '../backend/readData';
-import { doc, setDoc } from "firebase/firestore";
-import { db, auth, storage } from '../config/firebase';
+import { auth, storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import FileDropzone from "../components/FileDropzone";
+import { writeToFirestore, uploadImage } from "../backend/writeData";
 
 const universities = [
     'Auckland University of Technology (AUT)',
@@ -68,7 +68,7 @@ const EditAccount = () => {
         // if a new profile picture file is uploaded, then upload it to Cloud Storage
         if (profilePhotoFile) {
             console.log("storing new profile picture")
-            const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
+            const imageRef = ref(storage, `${fb_location.users}/${auth.currentUser?.uid}-${Date.now()}`);
             await uploadBytes(imageRef, profilePhotoFile);
             profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
         }
@@ -76,7 +76,7 @@ const EditAccount = () => {
         // this seems overkill but idk man im struggling -Cam
         const updatedProfileData: ProfileType = {
             ...newProfileData,
-            imageUrl: profilePicUrl,  // Keep the updated profilePic
+            imageUrl: profilePicUrl || "",  // Keep the updated profilePic
             username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
@@ -92,8 +92,7 @@ const EditAccount = () => {
         console.log("submitting data:")
         console.log(updatedProfileData)
         // Update Firestore document with new profile data
-        const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
-        await setDoc(userDocRef, updatedProfileData, { merge: true });
+        await writeToFirestore(fb_location.users, updatedProfileData, auth.currentUser!.uid);
 
         // Set the old profile data to the new one after successful submission
         setOldProfileData(updatedProfileData);
