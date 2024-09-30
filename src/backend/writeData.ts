@@ -36,7 +36,6 @@ export async function uploadImage(collection: string, id: string, image: File) {
     const imageUrl = await getDownloadURL(imageRef);
     console.log("Image URL: ", imageUrl);
 
-    // Ensure the imageUrl is defined before updating Firestore
     if (!imageUrl) {
       throw new Error("Failed to retrieve image URL");
     }
@@ -45,11 +44,11 @@ export async function uploadImage(collection: string, id: string, image: File) {
     const docRef = doc(db, collection, id); // Reference to the Firestore document
     await setDoc(docRef, { imageUrl }, { merge: true }); // Merge the imageUrl field
 
-    return imageUrl; // Optionally return the imageUrl for further use
+    return imageUrl; // Return imageUrl in case needed
 
   } catch (error) {
     console.error("Error uploading image or updating document: ", error);
-    return null; // Return null if there's an error
+    return null; 
   }
 }
 
