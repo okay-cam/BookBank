@@ -6,13 +6,12 @@ import { getDocumentsWhereArray, getListings, getWishlist } from "../backend/rea
 import { auth } from "../config/firebase";
 // This page needs to be updated so that the actual listings are passed in instead of test listings
 // The test listings don't have request functionality attached
-import { Listing } from "../backend/types";
-import { fb_location, listings_field } from "../config/config";
+import { fb_location, listings_field, listingData } from "../config/config";
 
 const Pins = () => {
-  const [pins, setPins] = useState<Listing[]>([]); // Copied code for getting listings from Home.tsx
-  const [activeListings, setActiveListings] = useState<Listing[]>([]);
-  const [wishlist, setWishlist] = useState<Listing[]>([]);
+  const [pins, setPins] = useState<listingData[]>([]); // Copied code for getting listings from Home.tsx
+  const [activeListings, setActiveListings] = useState<listingData[]>([]);
+  const [wishlist, setWishlist] = useState<listingData[]>([]);
 
   useEffect(() => {
     const fetchPins = async () => {
