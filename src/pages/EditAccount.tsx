@@ -3,8 +3,7 @@ import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
 import { ProfileData as ProfileType, fb_location } from '../config/config';
 import { getProfileData, getImageUrl } from '../backend/readData';
-import { auth, storage } from '../config/firebase';
-import { ref, uploadBytes, getDownloadURL, StringFormat } from "firebase/storage";
+import { auth } from '../config/firebase';
 
 import FileDropzone from "../components/FileDropzone";
 import { writeToFirestore, uploadImage } from "../backend/writeData";
@@ -26,7 +25,6 @@ const EditAccount = () => {
     const [oldProfileData, setOldProfileData] = useState<ProfileType | null>(null);
     // store all data including new changes (except for pfp image changes)
     const [newProfileData, setNewProfileData] = useState<ProfileType | null>(null);
-    let oldImageUrl: string | null = null;
 
     const [profilePhotoSource, setProfilePhotoSource] = useState<string | null>(null); // Store photo source for the pfp image
     const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);  // Manage file state, uploaded to cloud
@@ -64,49 +62,42 @@ const EditAccount = () => {
         console.log(file)
       };
 
-    const onSubmit = async (e: React.FormEvent) => {
+      const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Retrieve the current image URL from Firestore
-        const oldImageUrl = getImageUrl(fb_location.users, auth.currentUser!.uid) || null;
-        console.log("Old image url: ",oldImageUrl);
-
-        // TODO: !! handle submits
-
-        let profilePicUrl = profilePhotoSource;
-
-        // if a new profile picture file is uploaded, then upload it to Cloud Storage
-        console.log("Profile photo file", profilePhotoFile);
+    
+        // Retrieve the current image URL from Firestore, for deleting
+        const oldImageUrl = await getImageUrl(fb_location.users, auth.currentUser!.uid) || null;
+        console.log("Old image url: ", oldImageUrl);
+    
+        let profilePicUrl = oldImageUrl;
+    
+        // Replace profile photo, and delete old if new entered
         if (profilePhotoFile) {
             console.log("Storing new profile picture");
-            
+    
             try {
                 // Upload the new image and get the URL
-                const profilePicUrl = await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
-                
-                if (profilePicUrl) {
-                    console.log("Uploaded image URL: ", profilePicUrl);
-                    
-                    
-                    
-                    if (oldImageUrl) {
-                        // Call deleteImage with the old image URL if it exists
-                        await deleteImage(oldImageUrl);
-                        console.log("Successfully deleted old image: ", oldImageUrl);
-                    } else {
-                        console.log("No old image to delete.");
-                    }
-                } else {
-                    console.error("Failed to upload the image.");
+                profilePicUrl = await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
+    
+                if (!profilePicUrl) {
+                    throw new Error("No Image Url");
                 }
             } catch (error) {
                 console.error("Error while uploading image: ", error);
+                return; // Exit if image upload fails
+            }
+
+            try{
+                await deleteImage(oldImageUrl as string);
+                console.log("Successfully deleted image: ", oldImageUrl);
+            } catch (error){
+                console.log("Unable to delete image: ", error);
             }
         }
-        // this seems overkill but idk man im struggling -Cam
+    
         const updatedProfileData: ProfileType = {
             ...newProfileData,
-            imageUrl: profilePicUrl || "",  // Keep the updated profilePic
+            imageUrl: profilePicUrl || "",  // Ensure profilePicUrl is used correctly here
             username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
@@ -118,19 +109,16 @@ const EditAccount = () => {
             totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
             totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
         };
-        
-        console.log("submitting data:")
-        console.log(updatedProfileData)
+    
+        console.log("Submitting data: ", updatedProfileData);
+    
         // Update Firestore document with new profile data
         await writeToFirestore(fb_location.users, updatedProfileData, auth.currentUser!.uid);
-        
-        // Delete old image
-
+    
         // Set the old profile data to the new one after successful submission
         setOldProfileData(updatedProfileData);
-
+    
         alert('Profile updated successfully!');
-
     }
 
     // !! TODO
