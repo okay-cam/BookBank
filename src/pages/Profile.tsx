@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { ProfileData as ProfileType } from "../backend/types";
+import { Listing as ListingType, ProfileData as ProfileType } from "../config/config";
 import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
-import { Listing as ListingType } from "../backend/types";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
 

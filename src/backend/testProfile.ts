@@ -4,7 +4,7 @@ import image from "../assets/default-image-path.jpg";
 const testProfile: ProfileData = {
   username: "Chelsea Smith",
   email: "chelsmith1999@gmail.com",
-  profilePic: image,
+  imageUrl: image,
   university: "University of Auckland",
   degree: "Bachelor of Arts",
   location: "Ponsonby",

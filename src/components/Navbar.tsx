@@ -45,7 +45,7 @@ const Navbar = () => {
         if (auth.currentUser) {
             const data = await getProfileData(auth.currentUser.uid);
             if (data) {
-              setProfilePictureSource(data.profilePic)
+              setProfilePictureSource(data.imageUrl)
             }
         }
     };

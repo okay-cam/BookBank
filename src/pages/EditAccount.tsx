@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
-import { ProfileData as ProfileType } from '../backend/types';
+import { ProfileData as ProfileType } from '../config/config';
 import { getProfileData } from '../backend/readData';
 import { doc, setDoc } from "firebase/firestore";
 import { db, auth, storage } from '../config/firebase';
@@ -38,7 +38,7 @@ const EditAccount = () => {
                 setOldProfileData(data);
                 setNewProfileData(data);
                 if (data) {
-                    setProfilePhotoSource(data.profilePic)
+                    setProfilePhotoSource(data.imageUrl)
                 }
             }
         };
@@ -76,7 +76,7 @@ const EditAccount = () => {
         // this seems overkill but idk man im struggling -Cam
         const updatedProfileData: ProfileType = {
             ...newProfileData,
-            profilePic: profilePicUrl,  // Keep the updated profilePic
+            imageUrl: profilePicUrl,  // Keep the updated profilePic
             username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
@@ -127,7 +127,7 @@ const EditAccount = () => {
                 <div>
                     <div className={styles.field}>
                         <label>Display Name:</label>
-                        <input type="text" id="name" value={newProfileData.username} onChange={handleInputChange('name')} />
+                        <input type="text" id="name" value={newProfileData.username} onChange={handleInputChange('username')} />
                     </div>
                     <div className={styles.field}>
                         <label>Location:</label>

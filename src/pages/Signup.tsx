@@ -72,7 +72,7 @@ const Signup = () => {
           userID: userID,
           username: name.trim(),
           // No profile picture initially
-          profilePic: null,
+          imageUrl: null,
           location: null,
           university: null,
           degree: null,
