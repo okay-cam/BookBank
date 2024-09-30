@@ -9,16 +9,14 @@ import { doCreateUserWithEmailAndPassword } from "../config/auth";
 import { FirebaseError } from "firebase/app";
 
 // get functions for adding new user data
-import { setDoc, doc } from "firebase/firestore";
-import { db } from "../config/firebase";
 import { User } from 'firebase/auth';
-
-import { ProfileData } from "../backend/types";
+import { ProfileData, fb_location } from "../config/config";
+import { writeToFirestore } from "../backend/writeData";
 
 const Signup = () => {
   
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
+  const [username, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
@@ -32,7 +30,7 @@ const Signup = () => {
       setIsRegistering(true);
 
       // ensure a non-blank username
-      if (name.trim().length === 0) {
+      if (username.trim().length === 0) {
         setErrorMessage('Please enter a non-blank name.');
         setIsRegistering(false);
         return;
@@ -70,12 +68,12 @@ const Signup = () => {
         
         const newProfile: ProfileData = {
           userID: userID,
-          username: name.trim(),
+          username: username.trim(),
           // No profile picture initially
-          imageUrl: null,
-          location: null,
-          university: null,
-          degree: null,
+          // imageUrl: null,  // not sure why null, better to assign as optional.
+          // location: null,
+          // university: null,
+          // degree: null,
           totalDonations: 0,
           totalRatingsReceived: 0,
           overallRating: 0,
@@ -86,7 +84,8 @@ const Signup = () => {
         }
 
         // Add user data to "users" document
-        await setDoc(doc(db, "users", userID), newProfile);
+        const createdID = await writeToFirestore(fb_location.users, newProfile, userID);
+        console.log(createdID);
 
         setIsRegistering(false);
 
@@ -152,7 +151,7 @@ const Signup = () => {
         <br />
         <input
           type="text"
-          value={name}
+          value={username}
           required
           onChange={(e) => setName(e.target.value)}
           id="nameField"
