@@ -14,6 +14,9 @@ import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
 
+import { fb_location, listings_field } from "../config/config"
+import { toggleArray } from "../backend/writeData";
+
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
@@ -67,7 +70,8 @@ const Listing: React.FC = () => {
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.id) {
-        const status = await isPinned(listing.id);
+        const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+        console.log("status: ", status);
         setPinned(status);
       }
     };
@@ -103,9 +107,10 @@ const Listing: React.FC = () => {
   const removeID = `${listing!.modalId}-remove`;
   const handlePinToggle = async () => {
     if (listing) {
-      await togglePinListing(listing);
-      const updatedStatus = await isPinned(listing.id);
-      setPinned(updatedStatus);
+      await toggleArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      console.log("status: ", status);
+      setPinned(status);
     }
   };
 

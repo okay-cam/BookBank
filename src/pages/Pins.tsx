@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import styles from "../styles/pins.module.css";
 import PinsCardContainer from "../components/PinsCardContainer";
 //import testListings from "../backend/testListings";
-import { getPins, getListings, getWishlist } from "../backend/readData";
+import { getDocumentsWhereArray, getListings, getWishlist } from "../backend/readData";
 import { auth } from "../config/firebase";
 // This page needs to be updated so that the actual listings are passed in instead of test listings
 // The test listings don't have request functionality attached
 import { Listing } from "../backend/types";
+import { fb_location, listings_field } from "../config/config";
 
 const Pins = () => {
   const [pins, setPins] = useState<Listing[]>([]); // Copied code for getting listings from Home.tsx
@@ -15,7 +16,7 @@ const Pins = () => {
 
   useEffect(() => {
     const fetchPins = async () => {
-      const updatedListings = await getPins();
+      const updatedListings = await getDocumentsWhereArray(fb_location.listings, listings_field.enquired, auth.currentUser!.uid);
       setPins(updatedListings);
     };
 

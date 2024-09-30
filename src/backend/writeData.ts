@@ -1,6 +1,8 @@
-import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection } from "firebase/firestore"; 
+import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection, getDoc } from "firebase/firestore"; 
 import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { checkArray } from "./readData";
+import { removeFromArray } from "./deleteData";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
@@ -15,12 +17,11 @@ export async function appendArray(
     await updateDoc(docRef, {
       [fieldName]: arrayUnion(value)
     });
-    console.log(`Successfully appended value to ${fieldName}`);
+    console.log("Successfully appended value to ", fieldName);
   } catch (error) {
     console.error("Error appending to field: ", error);
   }
 }
-
 export async function uploadImage(collection: string, id: string, image: File) {
   // collection is used for storage path and firestore collection
   // id represents id of the owner of the image listingID or userID
@@ -79,4 +80,27 @@ export async function writeToFirestore<T extends Record<string, any>>(
     return null;
   }
 }
-  
+
+// The Avatar of functions. Combining the effects of Read / Write / Delete, it will bring balance to the database
+export async function toggleArray(
+  collection: string, 
+  docId: string, 
+  fieldName: string, 
+  value: string
+): Promise<void> {
+  try {
+    const exists = await checkArray(collection, docId, fieldName, value);
+
+    if (exists) {
+      // If value exists in the array, remove it
+      console.log(`Value exists in ${fieldName}, removing...`);
+      await removeFromArray(collection, docId, fieldName, value);
+    } else {
+      // If value does not exist, append it
+      console.log(`Value does not exist in ${fieldName}, appending...`);
+      await appendArray(collection, docId, fieldName, value);
+    }
+  } catch (error) {
+    console.error(`Error toggling array value: ${error}`);
+  }
+}
