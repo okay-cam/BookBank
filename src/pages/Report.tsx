@@ -18,21 +18,6 @@ const Report: React.FC = () => {
   // type may refer to 'user' or 'listing'
   const { id, type } = useParams<{ id: string; type: string }>(); 
   
-  const [reportedProfileData, setReportedProfileData] = useState<ReportedProfileInfo>({
-    userID: '',
-    username: '',
-    email: '',
-    imageUrl: null,
-  });
-
-  const [submitterProfileData, setSubmitterProfileData] = useState<SubmitterInfo>({
-    userID: '',
-    username: '',
-    email: '',
-  });
-  
-  const [reportedListing, setReportedListing] = useState<ReportedListingInfo | null>(null);
-
   const [report, setReport] = useState<GeneralReport>({
     issue: '',
     reportedProfileInfo: {
@@ -85,22 +70,18 @@ const Report: React.FC = () => {
 
   const handleReportedProfileData = (userID: string, data: ProfileData) => {
     const { username, email, imageUrl } = data;
-    setReportedProfileData({
-      userID,
-      username,
-      email,
-      imageUrl
-  })};
+    setReport((prevReport) => ({
+      ...prevReport,
+      reportedProfileInfo: { userID, username, email, imageUrl },
+    }));
+  };
 
   const handleListingData = (data: Listing) => {
     const { title, authors, courseCode, imageUrl = '', description } = data;
-    setReportedListing({
-      title,
-      authors,
-      courseCode,
-      imageUrl,
-      description,
-    });
+    setReport((prevReport) => ({
+      ...prevReport,
+      reportedListingInfo: { title, authors, courseCode, imageUrl, description },
+    }));
   };
 
   const handleSubmitterData = (userID: string, data: ProfileData | null) => {
@@ -109,11 +90,10 @@ const Report: React.FC = () => {
     }
 
     const { username, email } = data;
-    setSubmitterProfileData({
-      userID,
-      username,
-      email
-    });
+    setReport((prevReport) => ({
+      ...prevReport,
+      submitterInfo: { userID, username, email },
+    }));
   };
 
 
@@ -234,19 +214,10 @@ useEffect(() => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // load data into report
-    setReport((prevReport) => ({
-      ...prevReport,
-      reportedProfileInfo: reportedProfileData,
-      reportedListingInfo: type === 'listing' ? reportedListing : null,
-    }));
-    
-
+    setIsSubmitting(true);
     console.log("report data:");
     console.log(report);
-    console.log(reportedProfileData);
-    console.log(reportedListing);
-    console.log(submitterProfileData);
+    setIsSubmitting(false);
   }
 
   return (
@@ -262,9 +233,9 @@ useEffect(() => {
           {(type === 'listing')  && (
             <div>
               <h1>Reported Listing Info</h1>
-              <p>{reportedListing?.title}</p>
+              <p>{report.reportedListingInfo?.title}</p>
               <img
-                src={reportedListing?.imageUrl}
+                src={report.reportedListingInfo?.imageUrl}
                 alt="Listing image"
                 style={{
                   maxWidth: "100%",
@@ -277,7 +248,7 @@ useEffect(() => {
 
           <br />
           <h1>Reported User Info</h1>
-          <p>Name: {reportedProfileData?.username}</p>
+          <p>Name: {report.reportedProfileInfo?.username}</p>
           </>
         )}
         
