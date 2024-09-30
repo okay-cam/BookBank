@@ -79,9 +79,9 @@ const Listing: React.FC = () => {
     const fetchEnquiredStatus = async () => {
       if (listing?.id) {
         const status = await checkArray(
-          "listings", // name of the collection
+          fb_location.listings, // name of the collection
           listing.id, // listing id
-          "enquired", // field
+          listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );
         setEnquired(status);
