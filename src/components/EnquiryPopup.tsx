@@ -106,7 +106,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
     // add user id to the enquired field
     await appendArray(
       fb_location.listings, // name of the collection
-      listings_field.id, // listing id
+      listings_field.listingID, // listing id
       listings_field.enquired, // field
       auth.currentUser!.uid // id of the user that enquired
     );

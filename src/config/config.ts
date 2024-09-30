@@ -18,29 +18,30 @@ export class fb_location {
 // field names for listings documents
 // Variable objects must match INTERFACE, eg static authors = "authors" therefor authors: string
 export class listings_field {
-    static id = "listingId";
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
-    static imageUrl = IMAGE_URL;
     static title = "title";
     static userID = USER_ID;
     // optional
+    static listingID = "listingID";
+    static imageUrl = IMAGE_URL;
     static enquired = "enquired";
     static pinned = "pinned";
 }
 
-export interface Listing{
-  listingId: string; 
+export interface listingData{
+   
   authors: string; 
   courseCode: string; 
   description: string; 
-  imageUrl: string; 
   title: string; 
   userID: string; 
   // optional
-  enquired?: string[]; 
-  pinned?: string[];
+  listingID?: string | null;
+  imageUrl?: string | null ; 
+  enquired?: string[] | null; 
+  pinned?: string[] | null;
 }
 // export type Listing = Omit<typeof ListingsField, 'prototype'>; // replaces type.ts
 
@@ -50,29 +51,34 @@ export class users_field {
     static email = "email";
     static joinDate = "joinDate";
     static lastLoggedIn = "lastLoggedIn";
-    static location = "location";
+    
     static username = "username";
     static overallRating = "overallRating";
-    static imageUrl = IMAGE_URL;
+    
     static totalDonations = "totalDonations";
-    static totalRatingsRecieved = "totalRatingsRecieved";
+    static totalRatingsReceived = "totalRatingsReceived";
     static university = "university";
     static userID = USER_ID;
+    // optional
+    static location = "location";
+    static imageUrl = IMAGE_URL;
+    static wishlist = "wishlist";
 }
 
 export interface ProfileData{
-    degree: string;
     email: string;
     joinDate: string;
     lastLoggedIn: string;
-    location: string;
     username: string;
     overallRating: number;
-    iamgeUrl?: string;
     totalDonations: number;
-    totalRatingsRecieved: number;
-    university: string;
+    totalRatingsReceived: number;
     userID: string;
+    // optional 
+    degree?: string;
+    location?: string;
+    imageUrl?: string;
+    university?: string;
     wishlist?: string[]
 }
 // export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string

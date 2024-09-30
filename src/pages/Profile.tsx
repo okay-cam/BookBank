@@ -3,7 +3,7 @@ import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
 import { getProfileData } from "../backend/readData";
 import { getListings } from "../backend/readData";
-import { Listing as ListingType, ProfileData as ProfileType } from "../config/config";
+import { listingData as ListingType, ProfileData as ProfileType } from "../config/config";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { useParams } from "react-router-dom";
 
