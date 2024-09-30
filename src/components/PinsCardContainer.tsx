@@ -1,9 +1,9 @@
 import Card from "./Card";
 import styles from "../styles/pins.module.css";
-import { Listing } from "../backend/types";
+import { listingData } from "../config/config";
 
 interface ListingArray {
-  listings: Listing[];
+  listings: listingData[];
   className?: string;
 }
 
@@ -11,7 +11,7 @@ const PinsCardContainer = ({ listings, className }: ListingArray) => {
   return (
     <div className={`${styles.scrollContainer} ${className}`}>
       {listings.map((card) => (
-        <Card key={card.id} listing={card} />
+        <Card key={card.listingID} listing={card} />
       ))}
     </div>
   );
