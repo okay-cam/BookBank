@@ -235,23 +235,33 @@ export async function checkArray( // returns boolean if user in array or not
 }
 
 // TERRIBLE NAME: SHOULD BE RENAMED!!!!!!
-export async function getDocumentsWhereArray( // returns all documents where user is in specific array
+export async function getDocumentsWhereArray(
   collectionName: string,
   fieldName: string, // array name
-  userID: string // check if user in array
+  userID: string // check if user is in the array
 ): Promise<any[]> {
-  try {
-    const q = query(collection(db, collectionName), where(fieldName, "array-contains", userID));
-    const querySnapshot = await getDocs(q);
+  console.log(`Starting to get documents from collection: ${collectionName}, where field: ${fieldName} contains userID: ${userID}`);
 
+  try {
+    // Construct the query
+    const q = query(collection(db, collectionName), where(fieldName, "array-contains", userID));
+    
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+    
+    console.log(`Query executed, number of documents found: ${querySnapshot.size}`);
+
+    // Map the results to an array of documents
     const documents = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
+    console.log(`Documents retrieved: ${JSON.stringify(documents)}`);
+
     return documents;
   } catch (error) {
-    console.error("Error retrieving documents: ", error);
+    console.error(error);
     return [];
   }
 }
