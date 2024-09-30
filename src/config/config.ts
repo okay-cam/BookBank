@@ -30,38 +30,35 @@ export class listings_field {
     static pinned = "pinned";
 }
 
-export interface listingData{
-   
-  authors: string; 
-  courseCode: string; 
-  description: string; 
-  title: string; 
-  userID: string; 
-  // optional
-  listingID?: string | null;
-  imageUrl?: string | null ; 
-  enquired?: string[] | null; 
-  pinned?: string[] | null;
+export interface listingData{   
+    authors: string; 
+    courseCode: string; 
+    description: string; 
+    title: string; 
+    userID: string; 
+    // optional
+    listingID?: string | null;
+    imageUrl?: string | null ; 
+    enquired?: string[] | null; 
+    pinned?: string[] | null;
 }
-// export type Listing = Omit<typeof ListingsField, 'prototype'>; // replaces type.ts
+// export type Listing = Omit<typeof ListingsField, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
 
 // field names for users documents
 export class users_field {
-    static degree = "degree";
     static email = "email";
     static joinDate = "joinDate";
     static lastLoggedIn = "lastLoggedIn";
-    
     static username = "username";
     static overallRating = "overallRating";
-    
     static totalDonations = "totalDonations";
     static totalRatingsReceived = "totalRatingsReceived";
-    static university = "university";
-    static userID = USER_ID;
     // optional
+    static degree = "degree";
     static location = "location";
     static imageUrl = IMAGE_URL;
+    static university = "university";
+    static userID = USER_ID;
     static wishlist = "wishlist";
 }
 
@@ -73,12 +70,13 @@ export interface ProfileData{
     overallRating: number;
     totalDonations: number;
     totalRatingsReceived: number;
-    userID: string;
+    
     // optional 
     degree?: string;
     location?: string;
-    imageUrl?: string;
+    imageUrl?: string | undefined;
     university?: string;
+    userID?: string;
     wishlist?: string[]
 }
 // export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
