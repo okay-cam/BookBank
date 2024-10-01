@@ -12,6 +12,7 @@ export class fb_location {
     static pins = "pins";
     static users = "users";
     static wishlist = "wishlist";
+    static reports = "reports";
 }
 
 
@@ -44,3 +45,11 @@ export class users_field {
     static userID = USER_ID;
 }
 export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts
+
+// field names for users documents
+export class reports_field {
+    static issue = "issue";
+    static reportedProfileInfo = "reportedProfileInfo";
+    static submitterInfo = "submitterInfo";
+}
+export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces type.ts

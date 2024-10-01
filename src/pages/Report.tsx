@@ -9,6 +9,9 @@ import {
   getListings,
   getProfileData,
 } from "../backend/readData";
+import { fb_location } from "../config/config";
+import { writeToFirestore } from "../backend/writeData";
+import { reports_field } from "../config/config";
 
 // !! change code later so it uses config.ts constants
 
@@ -217,6 +220,10 @@ useEffect(() => {
     setIsSubmitting(true);
     console.log("report data:");
     console.log(report);
+
+    // !! if this returns null, then there was an error
+    await writeToFirestore(reports_field, fb_location.reports, report);
+
     setIsSubmitting(false);
   }
 
