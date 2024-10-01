@@ -13,6 +13,7 @@ import { togglePinListing, isPinned } from "../backend/pinning";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
+import ImageModal from "../components/ImageModal";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -21,6 +22,11 @@ const Listing: React.FC = () => {
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
   const [enquired, setEnquired] = useState<boolean>(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+
+  const handleImageClick = () => {
+    setIsImageModalOpen(true);
+  };
 
   // instant update for when a user enquires a listing
   function setEnquiredVariables() {
@@ -114,6 +120,12 @@ const Listing: React.FC = () => {
         />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
+      {isImageModalOpen && (
+        <ImageModal
+          imageUrl={listing!.imageUrl || defaultImagePath}
+          onClose={() => setIsImageModalOpen(false)}
+        />
+      )}
       <div className={styles.aside}>
         <BackButton />
         <img
@@ -123,7 +135,9 @@ const Listing: React.FC = () => {
             maxWidth: "100%",
             maxHeight: "300px",
             marginTop: "10px",
+            cursor: 'pointer',
           }}
+          onClick={handleImageClick}
         />
         <br />
         <br />
@@ -140,20 +154,20 @@ const Listing: React.FC = () => {
               Remove listing
             </button>
           ) : // check if user has enquired previously
-          enquired ? (
-            <button type="button" className="call-to-action" disabled={true}>
-              Already enquired
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="call-to-action"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing!.modalId}`}
-            >
-              Request/Enquire
-            </button>
-          )
+            enquired ? (
+              <button type="button" className="call-to-action" disabled={true}>
+                Already enquired
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="call-to-action"
+                data-bs-toggle="modal"
+                data-bs-target={`#${listing!.modalId}`}
+              >
+                Request/Enquire
+              </button>
+            )
         }
       </div>
       <div className={styles.content}>
