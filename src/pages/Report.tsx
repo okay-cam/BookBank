@@ -10,7 +10,7 @@ import {
   getProfileData,
 } from "../backend/readData";
 import { fb_location } from "../config/config";
-import { writeToFirestore } from "../backend/writeData";
+import { uploadImage, writeToFirestore } from "../backend/writeData";
 import { reports_field } from "../config/config";
 
 // !! change code later so it uses config.ts constants
@@ -221,8 +221,20 @@ useEffect(() => {
     console.log("report data:");
     console.log(report);
 
+    // !! need to create image/s for the report
+    try {
+      const reportID = await writeToFirestore(reports_field, fb_location.reports, report);
+      if (reportID) {
+        await uploadImage(fb_location.reports, listingID, file);
+      } else {
+        console.log("Unable to upload image, no listingID");
+      } 
+    } catch (error){
+      console.error("Unable to create listing: ", error);
+    }
+    
     // !! if this returns null, then there was an error
-    await writeToFirestore(reports_field, fb_location.reports, report);
+    
 
     setIsSubmitting(false);
   }

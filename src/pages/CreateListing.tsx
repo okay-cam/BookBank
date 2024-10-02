@@ -63,7 +63,7 @@ const CreateListing: React.FC = () => {
         console.log("Unable to upload image, no listingID");
       }
     } catch (error){
-      console.error("Unable to create listing");
+      console.error("Unable to create listing: ", error);
     }
     
     navigate("/home");
