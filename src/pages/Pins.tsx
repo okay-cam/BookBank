@@ -6,7 +6,7 @@ import { getDocumentsWhereArray, getListings, getWishlist } from "../backend/rea
 import { auth } from "../config/firebase";
 // This page needs to be updated so that the actual listings are passed in instead of test listings
 // The test listings don't have request functionality attached
-import { fb_location, listings_field, listingData } from "../config/config";
+import { fb_location, listings_field, listingData, users_field } from "../config/config";
 
 const Pins = () => {
   const [pins, setPins] = useState<listingData[]>([]); // Copied code for getting listings from Home.tsx
@@ -23,7 +23,7 @@ const Pins = () => {
 
     const fetchAndSetActiveListings = async () => {
       if (auth.currentUser) {
-        const data = await getListings("userID", auth.currentUser.uid);
+        const data = await getListings(users_field.userID, auth.currentUser.uid);
         console.log("Fetched Listings:", data);
         console.log("User ID is ", auth.currentUser.uid);
         setActiveListings(data);
@@ -33,7 +33,7 @@ const Pins = () => {
     fetchAndSetActiveListings();
 
     const fetchWishlist = async () => {
-      const wishlistListings = await getWishlist();
+      const wishlistListings = await getWishlist(auth.currentUser!.uid);
       setWishlist(wishlistListings);
     };
 
