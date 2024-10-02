@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toggleWishlisting, isWishlisted } from "../backend/wishlist";
+import { toggleWishlist } from "../backend/wishlist";
 
 interface WishlistButtonProps {
   courseCode: string;
