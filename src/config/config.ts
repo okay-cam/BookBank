@@ -9,7 +9,6 @@ const IMAGE_URL = "imageUrl"
 // points to where collection is located on database
 export class fb_location {
     static listings = "listings";
-    static pins = "pins";
     static users = "users";
     static wishlist = "wishlist";
 }
@@ -77,6 +76,14 @@ export interface ProfileData{
     imageUrl?: string | undefined;
     university?: string;
     userID?: string;
-    wishlist?: string[]
+    wishlist?: string[];
 }
 // export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
+
+export class wishlists_field {
+    static users = "users";
+}
+
+export interface wishlistData {
+    users: string[];
+}
