@@ -15,7 +15,7 @@ const Pins = () => {
 
   useEffect(() => {
     const fetchPins = async () => {
-      const updatedListings = await getDocumentsWhereArray(fb_location.listings, listings_field.enquired, auth.currentUser!.uid);
+      const updatedListings = await getDocumentsWhereArray(fb_location.listings, listings_field.pinned, auth.currentUser!.uid);
       setPins(updatedListings);
     };
 
