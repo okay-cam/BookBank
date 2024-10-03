@@ -11,7 +11,6 @@ router.post('/send-email', async (req, res) => {
         return res.status(400).json({ success: false, message: 'Email, subject, and message are required.' });
     }
 
-    // Using personal email for now, since our test accounts aren't our own emails
     const mailOptions = {
         from: 'BookBank <bookbank@zohomail.com.au>',
         to: email,  // Recipient email
