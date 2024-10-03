@@ -354,7 +354,7 @@ useEffect(() => {
       message: formattedEnquiryMessage,
     };
 
-    console.log("enquiry email data: ", emailData);
+    console.log("report email data: ", emailData);
 
     try {
       const response = await sendEmail(emailData);

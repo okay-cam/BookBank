@@ -49,7 +49,8 @@ export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces typ
 // field names for users documents
 export class reports_field {
     static issue = "issue";
-    static reportedProfileInfo = "reportedProfileInfo";
     static submitterInfo = "submitterInfo";
+    static reportedProfileInfo = "reportedProfileInfo";
+    static reportedListingInfo = "reportedListingInfo";
 }
 export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces type.ts
