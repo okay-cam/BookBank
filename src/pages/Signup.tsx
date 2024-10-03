@@ -69,7 +69,7 @@ const Signup = () => {
         const currentUser: User = userCredential.user
         
         const newProfile: ProfileData = {
-          userID: userID,
+          userId: userID,
           username: name.trim(),
           // No profile picture initially
           profilePic: null,
@@ -195,10 +195,10 @@ const Signup = () => {
         />
         <br />
         <br />
-        {errorMessage && (
+      </form>
+      {errorMessage && (
           <p className="error-msg">{errorMessage}</p>
         )}
-      </form>
       
       <br />
       <br />
