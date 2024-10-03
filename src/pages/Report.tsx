@@ -9,9 +9,13 @@ import {
   getListings,
   getProfileData,
 } from "../backend/readData";
-import { fb_location } from "../config/config";
+import { fb_location, reports_field } from "../config/config";
 import { uploadImage, writeToFirestore } from "../backend/writeData";
-import { reports_field } from "../config/config";
+import { sendEmail, EmailData } from "../backend/emailService";
+
+// this is just used for copying the image. it could be moved to backend
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+const storage = getStorage();
 
 // !! change code later so it uses config.ts constants
 
@@ -50,6 +54,7 @@ const Report: React.FC = () => {
   }
   
   interface ReportedListingInfo {
+    listingID: string
     title: string;
     authors: string;
     courseCode: string;
@@ -79,11 +84,11 @@ const Report: React.FC = () => {
     }));
   };
 
-  const handleListingData = (data: Listing) => {
+  const handleListingData = (listingID: string, data: Listing) => {
     const { title, authors, courseCode, imageUrl = '', description } = data;
     setReport((prevReport) => ({
       ...prevReport,
-      reportedListingInfo: { title, authors, courseCode, imageUrl, description },
+      reportedListingInfo: { listingID, title, authors, courseCode, imageUrl, description },
     }));
   };
 
@@ -102,6 +107,7 @@ const Report: React.FC = () => {
 
 // Load all data on mount
 useEffect(() => {
+  console.log("env process.env.EMAIL_MAIN: ", import.meta.env.VITE_EMAIL_MAIN)
   console.log("report ID: ", id);
   console.log("report type: ", type);
 
@@ -155,7 +161,7 @@ useEffect(() => {
       try {
         const listing = await getListingById(id!);
         if (listing) {
-          handleListingData(listing);
+          handleListingData(id!, listing);
         } else {
           console.error("Listing not found");
           setNotFound(true);
@@ -221,11 +227,45 @@ useEffect(() => {
     console.log("report data:");
     console.log(report);
 
+    // Function to copy image
+    // This should run for the profile picture and for the listing image
+    // !!
+    async function copyImage(oldPath: string, newPath: string) {
+      try {
+        // Step 1: Get the image URL from Firebase Storage (use the old path)
+        const oldImageRef = ref(storage, oldPath);
+        const oldImageUrl = await getDownloadURL(oldImageRef);
+
+        // Step 2: Download the image data using fetch
+        const response = await fetch(oldImageUrl);
+        const blob = await response.blob();
+
+        // Step 3: Upload the image blob to a new location (use the new path)
+        const newImageRef = ref(storage, newPath);
+        await uploadBytes(newImageRef, blob);
+
+        console.log("Image copied successfully to:", newPath);
+      } catch (error) {
+        console.error("Error copying image:", error);
+      }
+    }
+
+    // copy profile picture
+
+    // Example usage: copying image from 'old-folder/image.jpg' to 'new-folder/image-copy.jpg'
+    copyImage(
+      'old-folder/image.jpg',
+      'new-folder/image-copy.jpg'
+    );
+
+    // copy listing picture
+
     // !! need to create image/s for the report
     try {
       const reportID = await writeToFirestore(reports_field, fb_location.reports, report);
       if (reportID) {
-        await uploadImage(fb_location.reports, listingID, file);
+        // need to store the image as part of the report 
+        // await uploadImage(fb_location.reports, reportID, file);
       } else {
         console.log("Unable to upload image, no listingID");
       } 
@@ -238,6 +278,85 @@ useEffect(() => {
 
     setIsSubmitting(false);
   }
+
+  // const [report, setReport] = useState<GeneralReport>({
+  //   issue: '',
+  //   reportedProfileInfo: {
+  //     userID: '',
+  //     username: '',
+  //     email: '',
+  //     imageUrl: '',
+  //   },
+  //   submitterInfo: {
+  //     userID: '',
+  //     username: '',
+  //     email: '',
+  //   },
+  // });
+
+  interface ReportedListingInfo {
+    title: string;
+    authors: string;
+    courseCode: string;
+    imageUrl: string | undefined;
+    description: string;
+  }
+
+  // Create a formatted HTML message for report
+  const formattedEnquiryMessage = `
+  <p><strong>Report Details</strong></p>
+  
+  <br />
+  
+  <p><strong>Issue:</strong>${auth.currentUser?.email}</p>
+  
+  <br />
+
+  <p><strong>Report Submitter:</strong></p>
+  <p>User ID: ${report.submitterInfo.userID}</p>
+  <p>Username: ${report.submitterInfo.username}</p>
+  <p>Email: ${report.submitterInfo.email}</p>
+
+  <br />
+
+  <strong>Reported Profile:</strong>
+  <p>User ID: ${report.reportedProfileInfo.userID}</p>
+  <p>Username: ${report.reportedProfileInfo.username}</p>
+  <p>Email: ${report.reportedProfileInfo.email}</p>
+  <p>Profile Picture: </p>
+  <img src="${report.reportedProfileInfo.imageUrl}" />
+
+  <br />
+
+  ${report.reportedListingInfo && `
+    <p><strong>Reported Listing:</strong></p>
+    <p>Listing ID: ${report.reportedListingInfo.}</p>
+    <p><strong>Listing Title:</strong> ${report.reportedListingInfo.title}</p>
+  `}
+`;
+
+  // Send email to the textbook donor
+  const handleSendReportEmail = async () => {
+    const emailData: EmailData = {
+      email: import.meta.env.VITE_EMAIL_MAIN, // send email to the bookbank gmail
+      subject: `New Report Ticket: '${listing.title}'`,
+      message: formattedEnquiryMessage,
+    };
+
+    console.log("enquiry email data: ", emailData);
+
+    try {
+      const response = await sendEmail(emailData);
+      // setSuccessMessage(response); // Set success message
+      // setMessage(""); // Clear the message field on success
+      console.log("Report email: ", response);
+      return true;
+    } catch (error: any) {
+      // setErrorMessage(error.message || "Failed to send email");
+      console.log("Report email failed: ", error.message);
+      return false;
+    }
+  };
 
   return (
     <main className={styles.gridContainer}>
