@@ -2,6 +2,7 @@
 const USER_ID = "userID";
 const COURSE_CODE = "courseCode";
 const IMAGE_URL = "imageUrl"
+const IMAGE_FILENAME = "imageFilename"
 
 // Firestore Constants
 // Ensure that classes that store fields match 
@@ -23,6 +24,7 @@ export class listings_field {
     static courseCode = COURSE_CODE;
     static description = "description";
     static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
     static enquired = "enquired";
@@ -39,6 +41,7 @@ export class users_field {
     static username = "username";
     static overallRating = "overallRating";
     static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static totalDonations = "totalDonations";
     static totalRatingsRecieved = "totalRatingsRecieved";
     static university = "university";

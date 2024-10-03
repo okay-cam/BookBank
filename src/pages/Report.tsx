@@ -228,6 +228,8 @@ useEffect(() => {
     console.log(report);
 
     // Function to copy image
+    // !! need to store image reference name in listing & profile?
+
     // This should run for the profile picture and for the listing image
     // !!
     // async function copyImage(oldPath: string, newPath: string) {
@@ -316,7 +318,7 @@ useEffect(() => {
   
   <br />
   
-  <p><strong>Issue:</strong>${auth.currentUser?.email}</p>
+  <p><strong>Issue:</strong>${report.issue}</p>
   
   <br />
 

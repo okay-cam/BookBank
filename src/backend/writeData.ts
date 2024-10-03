@@ -29,7 +29,8 @@ export async function uploadImage(collection: string, id: string, image: File) {
 
   try {
     // Upload image to Firebase Storage
-    const imageRef = ref(storage, `${collection}/${id}-${Date.now()}`); // Use storageFolder for more clarity
+    const imageFilename = `${collection}/${id}-${Date.now()}`
+    const imageRef = ref(storage, imageFilename); // Use storageFolder for more clarity
     await uploadBytes(imageRef, image);
 
     // Get the download URL of the uploaded image
@@ -43,39 +44,7 @@ export async function uploadImage(collection: string, id: string, image: File) {
 
     // Update or create a Firestore document with the imageUrl
     const docRef = doc(db, collection, id); // Reference to the Firestore document
-    await setDoc(docRef, { imageUrl }, { merge: true }); // Merge the imageUrl field
-
-    return imageUrl; // Optionally return the imageUrl for further use
-
-  } catch (error) {
-    console.error("Error uploading image or updating document: ", error);
-    return null; // Return null if there's an error
-  }
-}
-
-export async function uploadReportImages(collection: string, id: string, image: File) {
-  // collection is used for storage path and firestore collection
-  // id represents id of the owner of the image listingID or userID
-  // image is passed from filedropdown
-  console.log("Storing new image and updating Firestore document");
-
-  try {
-    // Upload image to Firebase Storage
-    const imageRef = ref(storage, `${collection}/${id}-${Date.now()}`); // Use storageFolder for more clarity
-    await uploadBytes(imageRef, image);
-
-    // Get the download URL of the uploaded image
-    const imageUrl = await getDownloadURL(imageRef);
-    console.log("Image URL: ", imageUrl);
-
-    // Ensure the imageUrl is defined before updating Firestore
-    if (!imageUrl) {
-      throw new Error("Failed to retrieve image URL");
-    }
-
-    // Update or create a Firestore document with the imageUrl
-    const docRef = doc(db, collection, id); // Reference to the Firestore document
-    await setDoc(docRef, { imageUrl }, { merge: true }); // Merge the imageUrl field
+    await setDoc(docRef, { imageUrl, imageFilename }, { merge: true }); // Merge the imageUrl and imageFilename fields
 
     return imageUrl; // Optionally return the imageUrl for further use
 
