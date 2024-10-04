@@ -44,7 +44,7 @@ export async function uploadImage(collection: string, id: string, image: File) {
     // const type = image.type.split('/').pop();
     // imageFilename += '.' + type
     
-    // console.log("FILE NAME? ", imageFilename)
+    console.log("FILE NAME? ", imageFilename)
 
     // Get the download URL of the uploaded image
     const imageUrl = await getDownloadURL(imageRef);

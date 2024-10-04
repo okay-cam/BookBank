@@ -43,7 +43,7 @@ export class users_field {
     static imageUrl = IMAGE_URL;
     static imageFilename = IMAGE_FILENAME;
     static totalDonations = "totalDonations";
-    static totalRatingsRecieved = "totalRatingsRecieved";
+    static totalRatingsReceived = "totalRatingsRecieved";
     static university = "university";
     static userID = USER_ID;
 }

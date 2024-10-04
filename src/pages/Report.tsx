@@ -258,52 +258,35 @@ useEffect(() => {
         console.error("Error copying image:", error);
       }
     }
-
-    // copy profile picture
-
-    // Example usage: copying image from 'old-folder/image.jpg' to 'new-folder/image-copy.jpg'
-    // This won't work, since I have no idea how to retrieve the filename
-    // copyImage(
-    //   'profilePictures/image',
-    //   'new-folder/image-copy'
-    // );
     
-    
-    // Copy profile picture into report folder
-    const pfp_report_url = await copyImage(
+    // Copy images into storage for report directory, add image names & links into database
+
+    const pfpReportUrl = await copyImage(
       report.reportedProfileInfo.imageFilename,
       `reports/${reportID}-profile`
     );
-    if (pfp_report_url) report.reportedProfileInfo.imageUrl = pfp_report_url;
+    if (pfpReportUrl) report.reportedProfileInfo.imageUrl = pfpReportUrl;
     
-    // if (type === 'listing') {
-    //   const pfp_report_url = await copyImage(
-    //     report.reportedListingInfo!.imageFilename,
-    //     `reports/${reportID}-listing`
-    //   );
-    //   if (pfp_report_url) report.reportedProfileInfo.imageUrl = pfp_report_url;
-    // }
-    console.log("REPORT image url: ", report.reportedProfileInfo.imageUrl)
-    
-    // !! copy listing picture
+    console.log("REPORT pfp image url: ", report.reportedProfileInfo.imageUrl)
 
-    // !! need to create image/s for the report
+    if (type === 'listing') {
+      const listingReportUrl = await copyImage(
+        report.reportedListingInfo!.imageFilename,
+        `reports/${reportID}-listing`
+      );
+      if (listingReportUrl) report.reportedListingInfo!.imageUrl = listingReportUrl;
+      
+      console.log("REPORT listing image url: ", report.reportedListingInfo!.imageUrl)
+    }
 
+    // upload report
     try {
       reportID = await writeToFirestore(reports_field, fb_location.reports, report);
-      if (reportID) {
-        // need to store the image as part of the report 
-        await uploadImage(fb_location.reports, reportID, file);
-      } else {
-        console.log("Unable to upload image, no reportID");
-      } 
     } catch (error){
       console.error("Unable to create report: ", error);
     }
     
     // !! if this returns null, then there was an error
-    
-
     handleSendReportEmail(reportID);
 
     setIsSubmitting(false);
