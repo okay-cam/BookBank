@@ -39,7 +39,8 @@ const CreateListing: React.FC = () => {
   const handleDrop = (file: File, preview: string) => {
     setFile(file);
     setPreview(preview);
-    console.log(file)
+    console.log(file);
+    console.log(file.name);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

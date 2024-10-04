@@ -32,6 +32,7 @@ const Report: React.FC = () => {
       username: '',
       email: '',
       imageUrl: '',
+      imageFilename: ''
     },
     submitterInfo: {
       userID: '',
@@ -39,6 +40,8 @@ const Report: React.FC = () => {
       email: '',
     },
   });
+
+  let reportID : string | null = null;
 
   const [notFound, setNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submit loading state
@@ -51,6 +54,7 @@ const Report: React.FC = () => {
     username: string;
     email: string;
     imageUrl: string | null;
+    imageFilename: string;
   }
   
   interface ReportedListingInfo {
@@ -59,6 +63,7 @@ const Report: React.FC = () => {
     authors: string;
     courseCode: string;
     imageUrl: string | undefined;
+    imageFilename: string;
     description: string;
   }
   
@@ -77,18 +82,18 @@ const Report: React.FC = () => {
   }
 
   const handleReportedProfileData = (userID: string, data: ProfileData) => {
-    const { username, email, imageUrl } = data;
+    const { username, email, imageUrl, imageFilename } = data;
     setReport((prevReport) => ({
       ...prevReport,
-      reportedProfileInfo: { userID, username, email, imageUrl },
+      reportedProfileInfo: { userID, username, email, imageUrl, imageFilename },
     }));
   };
 
   const handleListingData = (listingID: string, data: Listing) => {
-    const { title, authors, courseCode, imageUrl = '', description } = data;
+    const { title, authors, courseCode, imageUrl = '', imageFilename, description } = data;
     setReport((prevReport) => ({
       ...prevReport,
-      reportedListingInfo: { listingID, title, authors, courseCode, imageUrl, description },
+      reportedListingInfo: { listingID, title, authors, courseCode, imageUrl, imageFilename, description },
     }));
   };
 
@@ -231,52 +236,69 @@ useEffect(() => {
     // !! need to store image reference name in listing & profile?
 
     // This should run for the profile picture and for the listing image
-    // !!
-    // async function copyImage(oldPath: string, newPath: string) {
-    //   try {
-    //     // Step 1: Get the image URL from Firebase Storage (use the old path)
-    //     const oldImageRef = ref(storage, oldPath);
-    //     const oldImageUrl = await getDownloadURL(oldImageRef);
+    async function copyImage(oldPath: string, newPath: string) {
+      try {
+        // Step 1: Get the image URL from Firebase Storage (use the old path)
+        const oldImageRef = ref(storage, oldPath);
+        const oldImageUrl = await getDownloadURL(oldImageRef);
 
-    //     // Step 2: Download the image data using fetch
-    //     const response = await fetch(oldImageUrl);
-    //     const blob = await response.blob();
+        // Step 2: Download the image data using fetch
+        const response = await fetch(oldImageUrl);
+        const blob = await response.blob();
 
-    //     // Step 3: Upload the image blob to a new location (use the new path)
-    //     const newImageRef = ref(storage, newPath);
-    //     await uploadBytes(newImageRef, blob);
+        // Step 3: Upload the image blob to a new location (use the new path)
+        const newImageRef = ref(storage, newPath);
+        await uploadBytes(newImageRef, blob);
+        
+        console.log("Image copied successfully to:", newPath);
 
-    //     console.log("Image copied successfully to:", newPath);
-    //   } catch (error) {
-    //     console.error("Error copying image:", error);
-    //   }
-    // }
+        const imageUrl = await getDownloadURL(newImageRef);
+        return imageUrl;
+      } catch (error) {
+        console.error("Error copying image:", error);
+      }
+    }
 
     // copy profile picture
 
     // Example usage: copying image from 'old-folder/image.jpg' to 'new-folder/image-copy.jpg'
     // This won't work, since I have no idea how to retrieve the filename
     // copyImage(
-    //   'profilePictures/image.jpg',
-    //   'new-folder/image-copy.jpg'
+    //   'profilePictures/image',
+    //   'new-folder/image-copy'
     // );
-
-    // copy listing picture
+    
+    
+    // Copy profile picture into report folder
+    const pfp_report_url = await copyImage(
+      report.reportedProfileInfo.imageFilename,
+      `reports/${reportID}-profile`
+    );
+    if (pfp_report_url) report.reportedProfileInfo.imageUrl = pfp_report_url;
+    
+    // if (type === 'listing') {
+    //   const pfp_report_url = await copyImage(
+    //     report.reportedListingInfo!.imageFilename,
+    //     `reports/${reportID}-listing`
+    //   );
+    //   if (pfp_report_url) report.reportedProfileInfo.imageUrl = pfp_report_url;
+    // }
+    console.log("REPORT image url: ", report.reportedProfileInfo.imageUrl)
+    
+    // !! copy listing picture
 
     // !! need to create image/s for the report
-
-    let reportID : string | null = null;
 
     try {
       reportID = await writeToFirestore(reports_field, fb_location.reports, report);
       if (reportID) {
         // need to store the image as part of the report 
-        // await uploadImage(fb_location.reports, reportID, file);
+        await uploadImage(fb_location.reports, reportID, file);
       } else {
-        console.log("Unable to upload image, no listingID");
+        console.log("Unable to upload image, no reportID");
       } 
     } catch (error){
-      console.error("Unable to create listing: ", error);
+      console.error("Unable to create report: ", error);
     }
     
     // !! if this returns null, then there was an error

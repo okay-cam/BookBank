@@ -29,9 +29,22 @@ export async function uploadImage(collection: string, id: string, image: File) {
 
   try {
     // Upload image to Firebase Storage
-    const imageFilename = `${collection}/${id}-${Date.now()}`
+    
+    // const imageRef = ref(storage, imageFilename); // Use storageFolder for more clarity
+    // eslint-disable-next-line prefer-const
+    let imageFilename = `${collection}/${id}-${Date.now()}`
     const imageRef = ref(storage, imageFilename); // Use storageFolder for more clarity
+    
     await uploadBytes(imageRef, image);
+    
+    // IF YOU ARE REFORMATING HOW IMAGES ARE NAMED,
+    // YOU ARE IN FOR A RIDE:
+    // image.type returns 'image/jpg'
+    // add .png or .jpg
+    // const type = image.type.split('/').pop();
+    // imageFilename += '.' + type
+    
+    // console.log("FILE NAME? ", imageFilename)
 
     // Get the download URL of the uploaded image
     const imageUrl = await getDownloadURL(imageRef);
