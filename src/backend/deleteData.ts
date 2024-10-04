@@ -1,13 +1,13 @@
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
-import { collection_name } from "../config/config";
+import { fb_location } from "../config/config";
 import { ref, deleteObject } from "firebase/storage";
 import { getImageUrl } from "../backend/readData";
 
 export const deleteImage = async (imageUrl: string) => {
   const imageRef = ref(storage, imageUrl);
 
-  deleteObject(imageRef)
+  await deleteObject(imageRef)
   .then(() => {
     console.log('Image deleted successfully');
   })
@@ -26,9 +26,10 @@ export const deleteListing = async (modalId: string) => {
   console.log("Document starting deletion", listingId);
 
   try {
-    const docRef = doc(db, collection_name.listings, listingId);
+    const docRef = doc(db, fb_location.listings, listingId);
 
-    const imageUrl = await getImageUrl(collection_name.listings, listingId);
+    const imageUrl = await getImageUrl(fb_location.listings, listingId);
+    console.log("Deleting image url: ", imageUrl);
     if (imageUrl) {
       await deleteImage(imageUrl);
     }
@@ -40,4 +41,20 @@ export const deleteListing = async (modalId: string) => {
   }
 };
 
-
+export async function removeFromArray(
+  collection: string, 
+  docId: string, 
+  fieldName: string, 
+  value: string
+): Promise<void> {
+  const docRef = doc(db, collection, docId);
+  
+  try {
+    await updateDoc(docRef, {
+      [fieldName]: arrayRemove(value)
+    });
+    console.log(`Successfully removed value from ${fieldName}`);
+  } catch (error) {
+    console.error(`Error removing value from field: ${fieldName}`, error);
+  }
+}

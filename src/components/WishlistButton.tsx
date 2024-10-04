@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { toggleWishlisting, isWishlisted } from "../backend/wishlist";
+import { auth } from "../config/firebase";
+import { checkArray } from "../backend/readData";
+import { toggleArray } from "../backend/writeData";
+import { fb_location, users_field } from "../config/config";
 
 interface WishlistButtonProps {
   courseCode: string;
@@ -11,7 +14,7 @@ const WishlistButton = (props: WishlistButtonProps) => {
 
   useEffect(() => {
     const checkWishlistStatus = async () => {
-      const wishlisted = await isWishlisted(props.courseCode);
+      const wishlisted = await checkArray(fb_location.users, auth.currentUser!.uid, users_field.wishlist, props.courseCode);
       setIsWishlistedState(wishlisted);
     };
 
@@ -19,7 +22,7 @@ const WishlistButton = (props: WishlistButtonProps) => {
   }, [props.courseCode]);
 
   const handleToggleWishlisting = async () => {
-    await toggleWishlisting(props.courseCode!);
+    await toggleArray(fb_location.users, auth.currentUser!.uid, users_field.wishlist, props.courseCode);
     setIsWishlistedState((prev) => !prev);
   };
 

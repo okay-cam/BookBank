@@ -51,8 +51,8 @@ export function AuthProvider({ children }) {
 
             // Fetch and store profile picture in local storage
             const profileData = await getProfileData(user.uid);
-            if (profileData?.profilePic) {
-                localStorage.setItem('profilePic', profileData.profilePic);
+            if (profileData?.imageUrl) {
+                localStorage.setItem('profilePic', profileData.imageUrl);
             }
 
         }

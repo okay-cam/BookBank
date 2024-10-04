@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
-import { ProfileData as ProfileType } from '../backend/types';
-import { getProfileData } from '../backend/readData';
-import { doc, setDoc } from "firebase/firestore";
-import { db, auth, storage } from '../config/firebase';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ProfileData as ProfileType, fb_location } from '../config/config';
+import { getProfileData, getImageUrl } from '../backend/readData';
+import { auth } from '../config/firebase';
 
 import FileDropzone from "../components/FileDropzone";
+import { writeToFirestore, uploadImage } from "../backend/writeData";
+import { deleteImage } from "../backend/deleteData";
 
 const universities = [
     'Auckland University of Technology (AUT)',
@@ -26,7 +26,6 @@ const EditAccount = () => {
     // store all data including new changes (except for pfp image changes)
     const [newProfileData, setNewProfileData] = useState<ProfileType | null>(null);
 
-
     const [profilePhotoSource, setProfilePhotoSource] = useState<string | null>(null); // Store photo source for the pfp image
     const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);  // Manage file state, uploaded to cloud
     // const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);  // Manage uploaded file's image preview
@@ -34,11 +33,16 @@ const EditAccount = () => {
     useEffect(() => {
         const fetchAndSetProfileData = async () => {
             if (auth.currentUser) {
+
+
                 const data = await getProfileData(auth.currentUser.uid);
                 setOldProfileData(data);
+                console.log(oldProfileData);
                 setNewProfileData(data);
+
+                
                 if (data) {
-                    setProfilePhotoSource(data.profilePic)
+                    setProfilePhotoSource(data.imageUrl)
                 }
             }
         };
@@ -58,25 +62,42 @@ const EditAccount = () => {
         console.log(file)
       };
 
-    const onSubmit = async (e: React.FormEvent) => {
+      const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // TODO: !! handle submits
-
-        let profilePicUrl = profilePhotoSource;
-
-        // if a new profile picture file is uploaded, then upload it to Cloud Storage
+    
+        // Retrieve the current image URL from Firestore, for deleting
+        const oldImageUrl = await getImageUrl(fb_location.users, auth.currentUser!.uid) || null;
+        console.log("Old image url: ", oldImageUrl);
+    
+        let profilePicUrl = oldImageUrl;
+    
+        // Replace profile photo, and delete old if new entered
         if (profilePhotoFile) {
-            console.log("storing new profile picture")
-            const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
-            await uploadBytes(imageRef, profilePhotoFile);
-            profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
-        }
+            console.log("Storing new profile picture");
+    
+            try {
+                // Upload the new image and get the URL
+                profilePicUrl = await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
+    
+                if (!profilePicUrl) {
+                    throw new Error("No Image Url");
+                }
+            } catch (error) {
+                console.error("Error while uploading image: ", error);
+                return; // Exit if image upload fails
+            }
 
-        // this seems overkill but idk man im struggling -Cam
+            try{
+                await deleteImage(oldImageUrl as string);
+                console.log("Successfully deleted image: ", oldImageUrl);
+            } catch (error){
+                console.log("Unable to delete image: ", error);
+            }
+        }
+    
         const updatedProfileData: ProfileType = {
             ...newProfileData,
-            profilePic: profilePicUrl,  // Keep the updated profilePic
+            imageUrl: profilePicUrl || "",  // Ensure profilePicUrl is used correctly here
             username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
@@ -88,18 +109,16 @@ const EditAccount = () => {
             totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
             totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
         };
-        
-        console.log("submitting data:")
-        console.log(updatedProfileData)
+    
+        console.log("Submitting data: ", updatedProfileData);
+    
         // Update Firestore document with new profile data
-        const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
-        await setDoc(userDocRef, updatedProfileData, { merge: true });
-
+        await writeToFirestore(fb_location.users, updatedProfileData, auth.currentUser!.uid);
+    
         // Set the old profile data to the new one after successful submission
         setOldProfileData(updatedProfileData);
-
+    
         alert('Profile updated successfully!');
-
     }
 
     // !! TODO
@@ -127,7 +146,7 @@ const EditAccount = () => {
                 <div>
                     <div className={styles.field}>
                         <label>Display Name:</label>
-                        <input type="text" id="name" value={newProfileData.username} onChange={handleInputChange('name')} />
+                        <input type="text" id="name" value={newProfileData.username} onChange={handleInputChange('username')} />
                     </div>
                     <div className={styles.field}>
                         <label>Location:</label>

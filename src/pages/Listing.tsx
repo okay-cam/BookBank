@@ -15,6 +15,9 @@ import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
 import ImageModal from "../components/ImageModal";
 
+import { fb_location, listings_field } from "../config/config"
+import { toggleArray } from "../backend/writeData";
+
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
@@ -42,15 +45,20 @@ const Listing: React.FC = () => {
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
-      if (foundListing) {
-        const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
-        setListerEmail(listerProfile!.email || null);
-        console.log("lister profile: ", listerProfile);
-        console.log("lister profile email: ", listerProfile?.email);
-      } else {
-        console.log("listing not found");
+      try{
+        if (foundListing) {
+          const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
+          setListerEmail(listerProfile!.email || null);
+          console.log("lister profile: ", listerProfile);
+          console.log("lister profile email: ", listerProfile?.email);
+        } else {
+          console.log("listing not found");
+        }
+        console.log("lister email: ", listerEmail);
+      } catch (error){
+        console.error("Unable to present donor information", error);
       }
-      console.log("lister email: ", listerEmail);
+      
 
       setLoading(false); // Set loading to false after fetching
     };
@@ -68,7 +76,8 @@ const Listing: React.FC = () => {
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.id) {
-        const status = await isPinned(listing.id);
+        const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+        console.log("status: ", status);
         setPinned(status);
       }
     };
@@ -76,9 +85,9 @@ const Listing: React.FC = () => {
     const fetchEnquiredStatus = async () => {
       if (listing?.id) {
         const status = await checkArray(
-          "listings", // name of the collection
+          fb_location.listings, // name of the collection
           listing.id, // listing id
-          "enquired", // field
+          listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );
         setEnquired(status);
@@ -104,9 +113,10 @@ const Listing: React.FC = () => {
   const removeID = `${listing!.modalId}-remove`;
   const handlePinToggle = async () => {
     if (listing) {
-      await togglePinListing(listing);
-      const updatedStatus = await isPinned(listing.id);
-      setPinned(updatedStatus);
+      await toggleArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      console.log("status: ", status);
+      setPinned(status);
     }
   };
 
