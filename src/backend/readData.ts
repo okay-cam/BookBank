@@ -46,6 +46,7 @@ export async function getListingById(id: string): Promise<Listing | null> {
       courseCode: data.courseCode,
       description: data.description,
       imageUrl: data.imageUrl,
+      imageFilename: data.imageFilename,
       userID: data.userID,
       modalId: "modal-" + docSnap.id
     };

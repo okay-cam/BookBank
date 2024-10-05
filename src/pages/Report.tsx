@@ -3,7 +3,7 @@ import { Listing, ProfileData, ReportType } from "../backend/types";
 import styles from "../styles/listing.module.css";
 import BackButton from "../components/BackButton";
 import { Navigate, useParams } from "react-router-dom";
-import { auth } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import {
   getListingById,
   getListings,
@@ -15,6 +15,7 @@ import { sendEmail, EmailData } from "../backend/emailService";
 
 // this is just used for copying the image. it could be moved to backend
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
 const storage = getStorage();
 
 // !! change code later so it uses config.ts constants
@@ -166,6 +167,7 @@ useEffect(() => {
       try {
         const listing = await getListingById(id!);
         if (listing) {
+          console.log("FETCHING LISTING DATA: ", listing)
           handleListingData(id!, listing);
         } else {
           console.error("Listing not found");
@@ -258,7 +260,15 @@ useEffect(() => {
         console.error("Error copying image:", error);
       }
     }
+
+    // Upload report without images
+    try {
+      reportID = await writeToFirestore(reports_field, fb_location.reports, report);
+    } catch (error){
+      console.error("Unable to create report: ", error);
+    }
     
+    // After report is generated,
     // Copy images into storage for report directory, add image names & links into database
 
     const pfpReportUrl = await copyImage(
@@ -279,15 +289,15 @@ useEffect(() => {
       console.log("REPORT listing image url: ", report.reportedListingInfo!.imageUrl)
     }
 
-    // upload report
-    try {
-      reportID = await writeToFirestore(reports_field, fb_location.reports, report);
-    } catch (error){
-      console.error("Unable to create report: ", error);
+    // Modify report with new images
+    if (reportID) {
+      const docRef = doc(db, fb_location.reports, reportID); // Reference to the Firestore document
+      await setDoc(docRef, report); // overwrite report with new images
+
+      // !! if this returns null, then there was an error
+      handleSendReportEmail(reportID);
     }
-    
-    // !! if this returns null, then there was an error
-    handleSendReportEmail(reportID);
+
 
     setIsSubmitting(false);
   }
