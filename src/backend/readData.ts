@@ -1,10 +1,8 @@
-
-import { Listing, ProfileData } from "../backend/types";
 import { useState, useEffect } from "react";
-import { auth } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc, DocumentData } from "firebase/firestore";
-import { db } from "../config/firebase";
-import { fb_location, listings_field, users_field } from "../config/config";
+import {  } from "../config/firebase";
+import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
