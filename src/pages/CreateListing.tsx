@@ -5,8 +5,8 @@ import { auth } from "../config/firebase";
 import BackButton from "../components/BackButton";
 import { useNavigate } from "react-router-dom";
 import { fb_location } from "../config/config";
-import { uploadImage, writeListing, writeToFirestore } from "../backend/writeData";
-import { Listing, listings_field } from "../config/config";
+import { uploadImage, writeToFirestore } from "../backend/writeData";
+import { listingData } from "../config/config";
 
 
 const CreateListing: React.FC = () => {
@@ -14,13 +14,12 @@ const CreateListing: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const [listingData, setListingData] = useState<Listing>({
+  const [listingData, setListingData] = useState<listingData>({
     title: "",
     authors: "",
     courseCode: "",
     description: "",
     userID: auth.currentUser!.uid.toString(), // User can't be null when entering this page
-    enquired: [],
   });
 
   const [file, setFile] = useState<File | null>(null);  // Manage file state
@@ -57,7 +56,7 @@ const CreateListing: React.FC = () => {
 
     // Create document entry
     try{
-      const listingID = await writeToFirestore(listings_field, fb_location.listings, listingData);
+      const listingID = await writeToFirestore(fb_location.listings, listingData);
       if(listingID){
         await uploadImage(fb_location.listings, listingID, file);
       }else{

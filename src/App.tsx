@@ -13,7 +13,7 @@ import Layout from "./Layout";
 import Listing from "./pages/Listing";
 import Error404 from "./pages/Error404";
 import CreateListing from "./pages/CreateListing";
-import Pins from "./pages/Pins";
+import SavedListings from "./pages/SavedListings";
 import Profile from "./pages/Profile";
 import EditAccount from "./pages/EditAccount";
 import Search from "./pages/Search";
@@ -65,7 +65,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/listing/:id" element={<Listing />} />
             <Route path="/create" element={<CreateListing />} />
-            <Route path="/pins" element={<Pins />} />
+            <Route path="/saved" element={<SavedListings />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/edit-account" element={<EditAccount />}/>
             <Route path="/search" element={<Search />}/>

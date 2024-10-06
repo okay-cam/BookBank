@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
-import { Listing } from "../backend/types";
+import { listingData } from "../config/config";
 import { getListings } from "../backend/readData";
 import WishlistButton from "../components/WishlistButton";
 
@@ -16,7 +16,7 @@ const Search = () => {
   const searchQuery = queryParams.get("query");
 
   // State to hold the listings fetched from the database
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<listingData[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
   // Fetch listings when the component mounts

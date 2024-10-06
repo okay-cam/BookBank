@@ -10,7 +10,6 @@ const IMAGE_FILENAME = "imageFilename"
 // points to where collection is located on database
 export class fb_location {
     static listings = "listings";
-    static pins = "pins";
     static users = "users";
     static wishlist = "wishlist";
     static reports = "reports";
@@ -18,8 +17,8 @@ export class fb_location {
 
 
 // field names for listings documents
+// Variable objects must match INTERFACE, eg static authors = "authors" therefor authors: string
 export class listings_field {
-    static id = "listingId";
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
@@ -27,27 +26,72 @@ export class listings_field {
     static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
+    // optional
+    static listingID = "listingID";
+    static imageUrl = IMAGE_URL;
     static enquired = "enquired";
+    static pinned = "pinned";
 }
-export type Listing = Omit<typeof listings_field, 'prototype'>; // replaces type.ts
+
+export interface listingData{   
+    authors: string; 
+    courseCode: string; 
+    description: string; 
+    title: string; 
+    userID: string; 
+    // optional
+    listingID?: string | null;
+    imageUrl?: string | null ; 
+    enquired?: string[] | null; 
+    pinned?: string[] | null;
+}
+// export type Listing = Omit<typeof ListingsField, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
 
 // field names for users documents
 export class users_field {
-    static degree = "degree";
     static email = "email";
     static joinDate = "joinDate";
     static lastLoggedIn = "lastLoggedIn";
-    static location = "location";
     static username = "username";
     static overallRating = "overallRating";
+    static totalDonations = "totalDonations";
+    static totalRatingsReceived = "totalRatingsReceived";
+    // optional
+    static degree = "degree";
+    static location = "location";
     static imageUrl = IMAGE_URL;
     static imageFilename = IMAGE_FILENAME;
-    static totalDonations = "totalDonations";
-    static totalRatingsReceived = "totalRatingsRecieved";
     static university = "university";
     static userID = USER_ID;
+    static wishlist = "wishlist";
 }
-export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts
+
+export interface ProfileData{
+    email: string;
+    joinDate: string;
+    lastLoggedIn: string;
+    username: string;
+    overallRating: number;
+    totalDonations: number;
+    totalRatingsReceived: number;
+    
+    // optional 
+    degree?: string;
+    location?: string;
+    imageUrl?: string | undefined;
+    university?: string;
+    userID?: string;
+    wishlist?: string[];
+}
+// export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
+
+export class wishlists_field {
+    static users = "users";
+}
+
+export interface wishlistData {
+    users: string[];
+}
 
 // field names for users documents
 export class reports_field {

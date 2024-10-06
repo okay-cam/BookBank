@@ -5,11 +5,17 @@ import { Listing as ListingType, ProfileData as ProfileType } from "../config/co
 import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
+import ImageModal from "../components/ImageModal";
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>(); // Extract id from the route parameters.
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
   const [activeListings, setActiveListings] = useState<ListingType[]>([]);
+  const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+
+  const handleImageClick = () => {
+    setIsImageModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchAndSetProfileData = async () => {
@@ -34,6 +40,12 @@ const Profile: React.FC = () => {
 
   return (
     <main className={styles.gridContainer}>
+      {isImageModalOpen && (
+        <ImageModal
+          imageUrl={profileData?.imageUrl || defaultImage}
+          onClose={() => setIsImageModalOpen(false)}
+        />
+      )}
       <div className={styles.aside}>
         <img
           src={profileData?.imageUrl || defaultImage}

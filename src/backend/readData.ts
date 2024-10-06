@@ -1,10 +1,8 @@
-
-import { Listing, ProfileData } from "../backend/types";
 import { useState, useEffect } from "react";
-import { auth } from "../config/firebase";
-import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
-import { db } from "../config/firebase";
-import { fb_location, listings_field, users_field } from "../config/config";
+import { auth, db } from "../config/firebase";
+import { collection, query, where, getDocs, getDoc, doc, DocumentData } from "firebase/firestore";
+import {  } from "../config/firebase";
+import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
@@ -132,121 +130,11 @@ export function checkProfileOwner(profileID : string | undefined): boolean {
   return false;
 }
 
-export async function getPins(): Promise<Listing[]> {
-  const userID = auth.currentUser!.uid;
-  const pinsRef = collection(db, fb_location.pins);
-  const listingsRef = collection(db, fb_location.listings);
-  const pinsQuery = query(pinsRef, where(users_field.userID, "==", userID));
-
-  // get pinned collection for userID
-  try {
-    const querySnapshot = await getDocs(pinsQuery);
-
-    if (querySnapshot.empty) {
-      console.log("No matching documents found.");
-      return [];
-    } else {
-      const pinnedListings: Listing[] = [];
-
-      // iterate through pinned listing collection and use id's to create listing[]
-      for (const docSnap of querySnapshot.docs) {
-        const data = docSnap.data();
-        const listingId = data.listingId;
-
-        if (listingId) {
-          try {
-            const listingDocRef = doc(listingsRef, listingId);
-            const listingDoc = await getDoc(listingDocRef);
-
-            if (listingDoc.exists()) {
-              const listingData = listingDoc.data() as Listing;
-              pinnedListings.push({
-                ...listingData,
-                id: listingDoc.id,
-                modalId: "modal-" + listingDoc.id,
-              });
-            } else {
-              console.log(`Listing with ID ${listingId} not found.`);
-            }
-          } catch (error) {
-            console.error(`Error fetching listing with ID ${listingId}:`, error);
-          }
-        }
-      }
-
-      console.log("Pinned listings found:", pinnedListings);
-      return pinnedListings;
-    }
-  } catch (error) {
-    console.error("Error getting pinned listings: ", error);
-    return [];
-  }
-}
-
-export async function getWishlist(): Promise<Listing[]> {
-  const userID = auth.currentUser!.uid;
-  const wishlistRef = collection(db, fb_location.wishlist);
-  const listingsRef = collection(db, fb_location.listings);
-
-  // Create a query to get all wishlist entries for the current user
-  const wishlistQuery = query(wishlistRef, where(users_field.userID, "==", userID));
-
-  try {
-    const wishlistSnapshot = await getDocs(wishlistQuery);
-
-    if (wishlistSnapshot.empty) {
-      console.log("No wishlist entries found.");
-      return [];
-    }
-
-    // Collect all course codes from the wishlist
-    const courseCodes: string[] = [];
-    wishlistSnapshot.docs.forEach(docSnap => {
-      const data = docSnap.data();
-      if (data.courseCode) {
-        courseCodes.push(data.courseCode);
-      }
-    });
-
-    if (courseCodes.length === 0) {
-      console.log("No course codes found in wishlist.");
-      return [];
-    }
-
-    // Create a query to get all listings that match the course codes
-    const listingsQuery = query(listingsRef, where(listings_field.courseCode, "in", courseCodes));
-    const listingsSnapshot = await getDocs(listingsQuery);
-
-    if (listingsSnapshot.empty) {
-      console.log("No matching listings found.");
-      return [];
-    }
-
-    // Collect and return all matching listings
-    const wishlistListings: Listing[] = [];
-    listingsSnapshot.docs.forEach(docSnap => {
-      const data = docSnap.data() as Listing;
-      wishlistListings.push({
-        ...data,
-        id: docSnap.id,
-        modalId: "modal-" + docSnap.id,
-      });
-    });
-
-    console.log("Wishlist listings found:", wishlistListings);
-    return wishlistListings;
-
-  } catch (error) {
-    console.error("Error getting wishlist listings: ", error);
-    return [];
-  }
-}
-
-export async function checkArray(
-  collection: string,
-  docId: string,
-  fieldName: string,
-  userId: string
+export async function checkArray( // returns boolean if user in array or not
+  collection: string, 
+  docId: string, 
+  fieldName: string, // array name
+  value: string // what should be in array
 ): Promise<boolean> {
   const docRef = doc(db, collection, docId);
   const docSnap = await getDoc(docRef);
@@ -256,28 +144,112 @@ export async function checkArray(
     const arrayField = data[fieldName] as string[] | undefined;
 
     if (Array.isArray(arrayField)) {
-      if (arrayField.includes(userId)) {
-        console.log(`UserID (${userId}) found in ${collection}: ${docId}, field: ${fieldName}`);
+      if (arrayField.includes(value)) {
+        console.log(`UserID (${value}) found in ${collection}: ${docId}, field: ${fieldName}`);
         return true;
       }
     }
   }
   
-  console.log(`UserID (${userId}) not found in ${collection}: ${docId}, field: ${fieldName}`);
+  console.log(`UserID (${value}) not found in ${collection}: ${docId}, field: ${fieldName}`);
   return false;
 }
 
-export async function getImageUrl(collection: string, docId: string) {
+// TERRIBLE NAME: SHOULD BE RENAMED!!!!!!
+export async function getDocumentsWhereArray(
+  collectionName: string,
+  fieldName: string, // array name
+  userID: string // check if user is in the array
+): Promise<any[]> {
+  console.log(`Starting to get documents from collection: ${collectionName}, where field: ${fieldName} contains userID: ${userID}`);
+
+  try {
+    // Construct the query
+    const q = query(collection(db, collectionName), where(fieldName, "array-contains", userID));
+    
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+    
+    console.log(`Query executed, number of documents found: ${querySnapshot.size}`);
+
+    // Map the results to an array of documents
+    const documents = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    console.log(`Documents retrieved: ${JSON.stringify(documents)}`);
+
+    return documents;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+// Reads array and then returns all documents from a collection where a field matche
+export async function getWishlist(userID: string) {
+  try {
+    // 1. Get the user's profile document from the 'users' collection
+    const usersRef = collection(db, fb_location.users); // 'users' collection
+    const userQuery = query(usersRef, where(users_field.userID, '==', userID));
+    const userSnapshot = await getDocs(userQuery);
+    
+    if (userSnapshot.empty) {
+      console.log("No user profile found for the given userId.");
+      return [];
+    }
+
+    const userProfile = userSnapshot.docs[0].data(); // Assuming userId is unique, get the first result
+
+    // 2. Extract the wishlist array from the user's profile
+    const wishlist: string[] = userProfile.wishlist || [];
+    
+    if (wishlist.length === 0) {
+      console.log("User's wishlist is empty.");
+      return [];
+    }
+
+    // 3. Query the 'listings' collection for matching courseCode using 'in' operator
+    const listingsRef = collection(db, fb_location.listings); // 'listings' collection
+    const listingsQuery = query(listingsRef, where(listings_field.courseCode, 'in', wishlist));
+
+    const listingsSnapshot = await getDocs(listingsQuery);
+
+    if (listingsSnapshot.empty) {
+      console.log("No matching listings found.");
+      return [];
+    }
+
+    // 4. Map over the snapshot to extract document data
+    const matchedListings = listingsSnapshot.docs.map((doc: DocumentData) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return matchedListings;
+
+  } catch (error) {
+    console.error("Error fetching listings: ", error);
+    throw error;
+  }
+}
+
+export async function getImageUrl(collection: string, docId: string): Promise<string | null> {
   const docRef = doc(db, collection, docId);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     const listingData = docSnap.data();
-    if (listingData[listings_field.imageUrl]) {
-      console.log(listingData[listings_field.imageUrl]);
-      return listingData[listings_field.imageUrl];
+    // Check if the imageUrl field exists in document
+    if (listingData && listingData[listings_field.imageUrl]) {
+      console.log(listingData[listings_field.imageUrl]); 
+      return listingData[listings_field.imageUrl] as string; 
     } else {
-      return null;
+      return null; // Return null if the imageUrl field is missing
     }
+  } else {
+    console.log("Document does not exist!"); 
+    return null; 
   }
 }

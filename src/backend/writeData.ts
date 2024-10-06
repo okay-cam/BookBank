@@ -1,6 +1,9 @@
-import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection } from "firebase/firestore"; 
+import { doc, updateDoc, arrayUnion, setDoc, addDoc, collection, getDoc } from "firebase/firestore"; 
 import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { checkArray } from "./readData";
+import { removeFromArray } from "./deleteData";
+import { fb_location, users_field } from "../config/config";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
@@ -15,12 +18,11 @@ export async function appendArray(
     await updateDoc(docRef, {
       [fieldName]: arrayUnion(value)
     });
-    console.log(`Successfully appended value to ${fieldName}`);
+    console.log("Successfully appended value to ", fieldName);
   } catch (error) {
     console.error("Error appending to field: ", error);
   }
 }
-
 export async function uploadImage(collection: string, id: string, image: File) {
   // collection is used for storage path and firestore collection
   // id represents id of the owner of the image listingID or userID
@@ -50,7 +52,6 @@ export async function uploadImage(collection: string, id: string, image: File) {
     const imageUrl = await getDownloadURL(imageRef);
     console.log("Image URL: ", imageUrl);
 
-    // Ensure the imageUrl is defined before updating Firestore
     if (!imageUrl) {
       throw new Error("Failed to retrieve image URL");
     }
@@ -59,16 +60,15 @@ export async function uploadImage(collection: string, id: string, image: File) {
     const docRef = doc(db, collection, id); // Reference to the Firestore document
     await setDoc(docRef, { imageUrl, imageFilename }, { merge: true }); // Merge the imageUrl and imageFilename fields
 
-    return imageUrl; // Optionally return the imageUrl for further use
+    return imageUrl; // Return imageUrl in case needed
 
   } catch (error) {
     console.error("Error uploading image or updating document: ", error);
-    return null; // Return null if there's an error
+    return null; 
   }
 }
 
 export async function writeToFirestore<T extends Record<string, any>>(
-  fieldsClass: T, // Class that holds the field names
   collectionName: string, // Firestore collection name
   data: Partial<Record<keyof T, any>>, // Data to write, keyed by the class field names
   id?: string // Optional id for updating a document
@@ -84,14 +84,8 @@ export async function writeToFirestore<T extends Record<string, any>>(
       docRef = await addDoc(collection(db, collectionName), {});
     }
 
-    // Map the input data to the Firestore document based on field names in the provided class
-    const firestoreData = Object.keys(data).reduce((result, key) => {
-      result[fieldsClass[key as keyof T]] = data[key as keyof T];
-      return result;
-    }, {} as Record<string, any>);
-
     // Write the document data to Firestore with merge option
-    await setDoc(docRef, firestoreData, { merge: true });
+    await setDoc(docRef, data, { merge: true });
 
     console.log(`Document successfully written/updated in collection ${collectionName}!`);
     return docRef.id; // Return the document ID
@@ -101,4 +95,35 @@ export async function writeToFirestore<T extends Record<string, any>>(
     return null;
   }
 }
-  
+
+// The Avatar of functions. Combining the effects of Read / Write / Delete, it will bring balance to the database
+export async function toggleArray(
+  collection: string, 
+  docId: string, 
+  fieldName: string, 
+  value: string
+): Promise<void> {
+  try {
+    const exists = await checkArray(collection, docId, fieldName, value);
+
+    if (exists) {
+      // If value exists in the array, remove it
+      console.log(`Value exists in ${fieldName}, removing...`);
+      await removeFromArray(collection, docId, fieldName, value);
+    } else {
+      // If value does not exist, append it
+      console.log(`Value does not exist in ${fieldName}, appending...`);
+      await appendArray(collection, docId, fieldName, value);
+    }
+  } catch (error) {
+    console.error(`Error toggling array value: ${error}`);
+  }
+}
+
+export async function writeToWishlist(id: string, value: string){
+  // add to users profile with id as document and field in array
+  await appendArray(fb_location.users, id, users_field.wishlist, value);
+
+  // add to wishlist collection with value as document and id in array
+  await appendArray(fb_location.wishlist, value, users_field.wishlist, id);
+}
