@@ -17,10 +17,8 @@ import { togglePinListing, isPinned } from "../backend/pinning";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
-import { collection_name, listings_field } from "../config/config";
+import { fb_location, collection_name, listings_field } from "../config/config";
 import ImageModal from "../components/ImageModal";
-
-import { fb_location, listings_field } from "../config/config"
 import { toggleArray } from "../backend/writeData";
 
 const Listing: React.FC = () => {
