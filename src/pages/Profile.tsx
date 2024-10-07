@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
 
     fetchAndSetProfileData();
     // getPins();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
@@ -37,7 +37,7 @@ const Profile: React.FC = () => {
     };
 
     fetchAndSetActiveListings();
-  }, []);
+  }, [userId]);
 
   return (
     <main className={styles.gridContainer}>
