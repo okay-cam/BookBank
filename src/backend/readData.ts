@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "../config/firebase";
-import { collection, query, where, getDocs, getDoc, doc, DocumentData } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, DocumentData, orderBy } from "firebase/firestore";
 import {  } from "../config/firebase";
 import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
 
@@ -42,9 +42,12 @@ export async function getListings(field?: string, value?: string): Promise<Listi
     q = query(listingsRef); // Return all listings if no parameters are provided
   }
 
+  // SORT QUERY BY DATE
+  q = query(q, orderBy(listings_field.date, 'desc'));
+
   const querySnapshot = await getDocs(q);
   const listings: Listing[] = [];
-
+  
   querySnapshot.forEach((doc) => {
     const data = doc.data() as Listing;
     const listing: Listing = {

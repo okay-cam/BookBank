@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { fb_location } from "../config/config";
 import { uploadImage, writeToFirestore } from "../backend/writeData";
 import { listingData } from "../config/config";
+import { Timestamp } from "firebase/firestore";
 
 
 const CreateListing: React.FC = () => {
@@ -20,6 +21,7 @@ const CreateListing: React.FC = () => {
     courseCode: "",
     description: "",
     userID: auth.currentUser!.uid.toString(), // User can't be null when entering this page
+    date: Timestamp.now()
   });
 
   const [file, setFile] = useState<File | null>(null);  // Manage file state
