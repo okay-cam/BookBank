@@ -3,7 +3,7 @@ import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
 import { getProfileData } from "../backend/readData";
 import { getListings } from "../backend/readData";
-import { listingData as ListingType, ProfileData as ProfileType } from "../config/config";
+import { listingData as ListingType, ProfileData as ProfileType, listings_field } from "../config/config";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { useParams } from "react-router-dom";
 import ImageModal from "../components/ImageModal";
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
-      const data = await getListings("userID", userId);
+      const data = await getListings(listings_field.userID, userId);
       console.log("Fetched Listings:", data);
       console.log("User ID is ", userId);
       setActiveListings(data);
