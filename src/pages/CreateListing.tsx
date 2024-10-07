@@ -13,7 +13,15 @@ import { Timestamp } from "firebase/firestore";
 const CreateListing: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
   const [errorMessage, setErrorMessage] = useState("");
+  const [charCount, setCharCount] = useState({ title: 0, authors: 0, description: 0, courseCode: 0 });
   const navigate = useNavigate();
+
+  const maxLengths = {
+    title: 100,
+    authors: 100,
+    description: 400,
+    courseCode: 30
+  };
 
   const [listingData, setListingData] = useState<listingData>({
     title: "",
@@ -27,14 +35,30 @@ const CreateListing: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);  // Manage file state
   const [preview, setPreview] = useState<string | null>(null);  // Manage uploaded file's image preview
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setListingData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setListingData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    // Update character count
+    setCharCount((prev) => ({ ...prev, [name]: value.length }));
+
+    if (value.length <= maxLengths[name as keyof typeof maxLengths]) {
+      setListingData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    } else {
+      setErrorMessage(`The ${name} exceeds the maximum character limit of ${maxLengths[name as keyof typeof maxLengths]}.`);
+    }
   };
 
   const handleDrop = (file: File, preview: string) => {
@@ -108,9 +132,11 @@ const CreateListing: React.FC = () => {
               name="title"
               value={listingData.title}
               onChange={handleChange}
+              maxLength={maxLengths.title}
               className="half-width"
               required
             />
+            <small>{charCount.title}/{maxLengths.title}</small>
             <br />
             <br />
 
@@ -122,8 +148,10 @@ const CreateListing: React.FC = () => {
               name="authors"
               value={listingData.authors}
               onChange={handleChange}
+              maxLength={maxLengths.authors}
               required
             />
+            <small>{charCount.authors}/{maxLengths.authors}</small>
             <br />
             <br />
 
@@ -134,8 +162,10 @@ const CreateListing: React.FC = () => {
               id="courseCode"
               name="courseCode"
               value={listingData.courseCode}
+              maxLength={maxLengths.courseCode}
               onChange={handleChange}
             />
+            <small>{charCount.courseCode}/{maxLengths.courseCode}</small>
             <br />
             <br />
 
@@ -146,10 +176,12 @@ const CreateListing: React.FC = () => {
               name="description"
               value={listingData.description}
               rows={3}
-              className="half-width"
+              className="w-100"
               onChange={handleChange}
+              maxLength={maxLengths.description}
               required
             />
+            <small>{charCount.description}/{maxLengths.description}</small>
             <br />
             <br />
 
