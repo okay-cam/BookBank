@@ -71,9 +71,9 @@ const Navbar = () => {
           </form>
 
           <div className={styles.navLinks}>
-            <Link to="/home" className={styles.navButton}>Home</Link>
-            <Link to="/saved" className={styles.navButton}>Saved listings</Link>
-            <Link to="/create" className={styles.navButton}>Create a listing</Link>
+            <Link to="/home" className={styles.navButton}>🏠 Home</Link>
+            <Link to="/saved" className={styles.navButton}>⭐ Saved listings</Link>
+            <Link to="/create" className={styles.navButton}>📙 Create a listing</Link>
             <div className={styles.profileDropdown}>
               <img src={profilePictureSource || defaultImage} alt="Profile" className={styles.profilePic} onClick={() => setDropdownOpen(!dropdownOpen)}></img>
             </div>
