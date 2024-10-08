@@ -126,7 +126,7 @@ const Listing: React.FC = () => {
     if (listing) {
       try {
         // Can't get this function working
-        await writeToFirestore(fb_location.listings, listing);
+        await writeToFirestore(fb_location.listings, listing, listing.id);
       } catch (error) {
         console.error("Unable to create listing");
       }
