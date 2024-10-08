@@ -14,6 +14,7 @@ import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
 import ImageModal from "../components/ImageModal";
+import { writeToFirestore } from "../backend/writeData";
 
 import { fb_location, listings_field } from "../config/config"
 import { toggleArray } from "../backend/writeData";
@@ -26,6 +27,7 @@ const Listing: React.FC = () => {
   const [pinned, setPinned] = useState<boolean>(false);
   const [enquired, setEnquired] = useState<boolean>(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
@@ -45,7 +47,7 @@ const Listing: React.FC = () => {
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
-      try{
+      try {
         if (foundListing) {
           const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
           setListerEmail(listerProfile!.email || null);
@@ -55,10 +57,10 @@ const Listing: React.FC = () => {
           console.log("listing not found");
         }
         console.log("lister email: ", listerEmail);
-      } catch (error){
+      } catch (error) {
         console.error("Unable to present donor information", error);
       }
-      
+
 
       setLoading(false); // Set loading to false after fetching
     };
@@ -120,6 +122,22 @@ const Listing: React.FC = () => {
     }
   };
 
+  const handleUpdateListing = async () => {
+    if (listing) {
+      try {
+        // Can't get this function working
+        await writeToFirestore(fb_location.listings, listing);
+      } catch (error) {
+        console.error("Unable to create listing");
+      }
+      setIsEditMode(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+  };
+
   return (
     <main className={styles.gridContainer}>
       {listing && listerEmail && (
@@ -151,9 +169,23 @@ const Listing: React.FC = () => {
         />
         <br />
         <br />
-        {
-          // check if user is the listing owner
-          isListingOwner ? (
+        {isListingOwner && (
+          <div className={styles.editSection}>
+            {!isEditMode && (
+              <button type="button" onClick={() => setIsEditMode(!isEditMode)} className={styles.editButton}>
+                Edit Listing
+              </button>
+            )}
+            {isEditMode && (
+              <>
+                <button type="button" onClick={handleUpdateListing} className={styles.editButton}>
+                  Save Changes
+                </button>
+                <button type="button" onClick={handleCancelEdit} className={styles.editButton}>
+                  Cancel
+                </button>
+              </>
+            )}
             <button
               type="button"
               className="danger"
@@ -163,8 +195,11 @@ const Listing: React.FC = () => {
             >
               Remove listing
             </button>
-          ) : // check if user has enquired previously
-            enquired ? (
+          </div>
+        )}
+        {!isListingOwner && (
+          <div>
+            {enquired ? (
               <button type="button" className="call-to-action" disabled={true}>
                 Already enquired
               </button>
@@ -177,22 +212,65 @@ const Listing: React.FC = () => {
               >
                 Request/Enquire
               </button>
-            )
-        }
+            )}
+          </div>
+        )}
       </div>
       <div className={styles.content}>
         <button type="button" className="corner-btn" onClick={handlePinToggle}>
           {pinned ? "Unpin this listing" : "Pin this listing"}
         </button>
         <br />
-        <h1>{listing!.title}</h1>
-        <label>{listing!.authors}</label>
-        <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
-        <p>{listing!.description}</p>
+        {isEditMode ? (
+          <>
+            <label>Title:</label>
+            <input
+              type="text"
+              value={listing!.title}
+              onChange={(e) => setListing({ ...listing!, title: e.target.value })}
+              placeholder="Title"
+              className={styles.inputField}
+              required
+            />
+            <label>Authors:</label>
+            <input
+              type="text"
+              value={listing!.authors}
+              onChange={(e) => setListing({ ...listing!, authors: e.target.value })}
+              placeholder="Authors"
+              className={styles.inputField}
+              required
+            />
+            <label>Course Code:</label>
+            <input
+              type="text"
+              value={listing!.courseCode}
+              onChange={(e) => setListing({ ...listing!, courseCode: e.target.value })}
+              placeholder="Course Code"
+              className={styles.inputField}
+              required
+            />
+            <label>Description:</label>
+            <textarea
+              value={listing!.description}
+              onChange={(e) => setListing({ ...listing!, description: e.target.value })}
+              placeholder="Description"
+              className={`${styles.inputField} ${styles.textArea}`}
+              required
+            />
+          </>
+        ) : (
+          <>
+            <h1>{listing!.title}</h1>
+            <label>{listing!.authors}</label>
+            <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
+            <p>{listing!.description}</p>
+          </>
+        )}
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
       </div>
-    </main>
+    </main >
   );
 };
 
