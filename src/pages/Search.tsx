@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import styles from "../styles/home.module.css";
 import CardContainer from "../components/CardContainer";
-import { Listing } from "../backend/types";
+import { listingData, listings_field } from "../config/config";
 import { getListings } from "../backend/readData";
 import WishlistButton from "../components/WishlistButton";
-
 import { useLocation } from "react-router-dom";
 
 const Search = () => {
@@ -16,7 +15,7 @@ const Search = () => {
   const searchQuery = queryParams.get("query");
 
   // State to hold the listings fetched from the database
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<listingData[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
   // Fetch listings when the component mounts
@@ -32,11 +31,11 @@ const Search = () => {
         console.log("Search query: '" + searchQuery + "' ")
 
         // First fetch listings based on course code
-        let updatedListings = await getListings("courseCode", searchQuery);
+        let updatedListings = await getListings(listings_field.courseCode, searchQuery);
 
         if (updatedListings.length <= 0) {
           // Fetch listings based on listing titles instead
-          updatedListings = await getListings("title", searchQuery);
+          updatedListings = await getListings(listings_field.title, searchQuery);
         }
 
         setLoadingListings(false);

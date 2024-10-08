@@ -25,6 +25,11 @@ label {
     font-weight: bold;
 }
 
+small {
+    color: #737373;
+    font-size: 12px;
+}
+
 button, .button {
     border-radius: 5px;
     background-color:#efefefff;

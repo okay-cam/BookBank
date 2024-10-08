@@ -1,24 +1,13 @@
 import { auth, db } from "../config/firebase";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
-} from "firebase/firestore";
-import { collection_name, listings_field, users_field } from "../config/config";
+import { collection, addDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
+import { fb_location, listings_field, users_field } from "../config/config";
 import { showModal } from "./modal";
 
 export async function toggleWishlisting(code: string) {
-  const wishlistRef = collection(db, collection_name.wishlist);
+  const wishlistRef = collection(db, fb_location.wishlist);
   const userId = auth.currentUser!.uid;
 
-  const q = query(
-    wishlistRef,
-    where(users_field.userId, "==", userId),
-    where(listings_field.courseCode, "==", code)
-  );
+  const q = query(wishlistRef, where(users_field.userID, "==", userId), where(listings_field.courseCode, "==", code));
 
   try {
     const querySnapshot = await getDocs(q);
@@ -42,7 +31,7 @@ export async function toggleWishlisting(code: string) {
 }
 
 export const isWishlisted = async (code: string): Promise<boolean> => {
-  const wishlistRef = collection(db, collection_name.wishlist);
+  const wishlistRef = collection(db, fb_location.wishlist);
   const userId = auth.currentUser!.uid;
 
   const q = query(

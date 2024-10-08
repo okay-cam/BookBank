@@ -1,43 +1,93 @@
+import { Timestamp } from "firebase/firestore";
 
 // variables used in multiple listings
-const USER_ID = "userId";
+const USER_ID = "userID";
 const COURSE_CODE = "courseCode";
+const IMAGE_URL = "imageUrl"
 
 // Firestore Constants
+// Ensure that classes that store fields match 
 
 // points to where collection is located on database
-export class collection_name {
+export class fb_location {
     static listings = "listings";
-    static pins = "pins";
     static users = "users";
     static wishlist = "wishlist";
 }
 
 
 // field names for listings documents
+// Variable objects must match INTERFACE, eg static authors = "authors" therefor authors: string
 export class listings_field {
-    static id = "listingId";
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
-    static imageUrl = "imageUrl";
     static title = "title";
-    static userId = USER_ID;
+    static userID = USER_ID;
+    static date = "date";
+    // optional
+    static listingID = "listingID";
+    static imageUrl = IMAGE_URL;
     static enquired = "enquired";
+    static pinned = "pinned";
 }
+
+export interface listingData{   
+    authors: string; 
+    courseCode: string; 
+    description: string; 
+    title: string; 
+    userID: string; 
+    date: Timestamp;
+    // optional
+    listingID?: string | null;
+    imageUrl?: string | null ; 
+    enquired?: string[] | null; 
+    pinned?: string[] | null;
+}
+// export type Listing = Omit<typeof ListingsField, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
 
 // field names for users documents
 export class users_field {
-    static degree = "degree";
     static email = "email";
     static joinDate = "joinDate";
     static lastLoggedIn = "lastLoggedIn";
-    static location = "location";
     static username = "username";
     static overallRating = "overallRating";
-    static profilePic = "profilePic";
     static totalDonations = "totalDonations";
-    static totalRatingsRecieved = "totalRatingsRecieved";
+    static totalRatingsReceived = "totalRatingsReceived";
+    // optional
+    static degree = "degree";
+    static location = "location";
+    static imageUrl = IMAGE_URL;
     static university = "university";
-    static userId = USER_ID;
+    static userID = USER_ID;
+    static wishlist = "wishlist";
+}
+
+export interface ProfileData{
+    email: string;
+    joinDate: string;
+    lastLoggedIn: string;
+    username: string;
+    overallRating: number;
+    totalDonations: number;
+    totalRatingsReceived: number;
+    
+    // optional 
+    degree?: string;
+    location?: string;
+    imageUrl?: string | undefined;
+    university?: string;
+    userID?: string;
+    wishlist?: string[];
+}
+// export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
+
+export class wishlists_field {
+    static users = "users";
+}
+
+export interface wishlistData {
+    users: string[];
 }

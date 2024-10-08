@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { ProfileData as ProfileType } from "../backend/types";
 import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
-import { Listing as ListingType } from "../backend/types";
+import { listingData as ListingType, ProfileData as ProfileType, listings_field } from "../config/config";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
+import ImageModal from "../components/ImageModal";
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>(); // Extract id from the route parameters.
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
   const [activeListings, setActiveListings] = useState<ListingType[]>([]);
+  const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+
+  const handleImageClick = () => {
+    setIsImageModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchAndSetProfileData = async () => {
@@ -20,21 +25,27 @@ const Profile: React.FC = () => {
 
     fetchAndSetProfileData();
     // getPins();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
-      const data = await getListings("userID", userId);
+      const data = await getListings(listings_field.userID, userId);
       console.log("Fetched Listings:", data);
       console.log("User ID is ", userId);
       setActiveListings(data);
     };
 
     fetchAndSetActiveListings();
-  }, []);
+  }, [userId]);
 
   return (
     <main className={styles.gridContainer}>
+      {isImageModalOpen && (
+        <ImageModal
+          imageUrl={profileData?.imageUrl || defaultImage}
+          onClose={() => setIsImageModalOpen(false)}
+        />
+      )}
       <div className={styles.aside}>
         <img
           src={profileData?.profilePic || defaultImage}

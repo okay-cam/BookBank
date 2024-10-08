@@ -3,7 +3,7 @@ import { sendEmail, EmailData } from "../backend/emailService";
 import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
 import { Listing } from "../backend/types";
-import { collection_name, listings_field } from "../config/config";
+import { fb_location, listings_field } from "../config/config";
 import { hideModal } from "../backend/modal";
 
 interface ModalDetails {
@@ -46,7 +46,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Enquiry email sent!");
+      console.log("Enquiry email: ", response);
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || "Failed to send email");
@@ -81,7 +81,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
       const response = await sendEmail(emailData);
       setSuccessMessage(response); // Set success message
       setMessage(""); // Clear the message field on success
-      console.log("Receipt email sent! Data: ", emailData);
+      console.log("Receipt email: ", response);
+      console.log("Receipt Data: ", emailData);
       return true;
     } catch (error: any) {
       setErrorMessage(error.message || "Failed to send email");
@@ -105,8 +106,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
 
     // add user id to the enquired field
     await appendArray(
-      collection_name.listings, // name of the collection
-      listing.id, // listing id
+      fb_location.listings, // name of the collection
+      listings_field.listingID, // listing id
       listings_field.enquired, // field
       auth.currentUser!.uid // id of the user that enquired
     );

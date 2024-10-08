@@ -19,6 +19,10 @@ import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
 import { collection_name, listings_field } from "../config/config";
 import { showModal } from "../backend/modal";
+import ImageModal from "../components/ImageModal";
+
+import { fb_location, listings_field } from "../config/config"
+import { toggleArray } from "../backend/writeData";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -27,6 +31,11 @@ const Listing: React.FC = () => {
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
   const [enquired, setEnquired] = useState<boolean>(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+
+  const handleImageClick = () => {
+    setIsImageModalOpen(true);
+  };
 
   // instant update for when a user enquires a listing
   function setEnquiredVariables() {
@@ -40,15 +49,20 @@ const Listing: React.FC = () => {
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
-      if (foundListing) {
-        const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
-        setListerEmail(listerProfile!.email || null);
-        console.log("lister profile: ", listerProfile);
-        console.log("lister profile email: ", listerProfile?.email);
-      } else {
-        console.log("listing not found");
+      try{
+        if (foundListing) {
+          const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
+          setListerEmail(listerProfile!.email || null);
+          console.log("lister profile: ", listerProfile);
+          console.log("lister profile email: ", listerProfile?.email);
+        } else {
+          console.log("listing not found");
+        }
+        console.log("lister email: ", listerEmail);
+      } catch (error){
+        console.error("Unable to present donor information", error);
       }
-      console.log("lister email: ", listerEmail);
+      
 
       setLoading(false); // Set loading to false after fetching
     };
@@ -66,7 +80,8 @@ const Listing: React.FC = () => {
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.id) {
-        const status = await isPinned(listing.id);
+        const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+        console.log("status: ", status);
         setPinned(status);
       }
     };
@@ -74,9 +89,9 @@ const Listing: React.FC = () => {
     const fetchEnquiredStatus = async () => {
       if (listing?.id) {
         const status = await checkArray(
-          "listings", // name of the collection
+          fb_location.listings, // name of the collection
           listing.id, // listing id
-          "enquired", // field
+          listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );
         setEnquired(status);
@@ -102,9 +117,10 @@ const Listing: React.FC = () => {
   const removeID = `${listing!.modalId}-remove`;
   const handlePinToggle = async () => {
     if (listing) {
-      await togglePinListing(listing);
-      const updatedStatus = await isPinned(listing.id);
-      setPinned(updatedStatus);
+      await toggleArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      console.log("status: ", status);
+      setPinned(status);
     }
   };
 
@@ -118,6 +134,12 @@ const Listing: React.FC = () => {
         />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeID} />
+      {isImageModalOpen && (
+        <ImageModal
+          imageUrl={listing!.imageUrl || defaultImagePath}
+          onClose={() => setIsImageModalOpen(false)}
+        />
+      )}
       <div className={styles.aside}>
         <BackButton />
         <img
@@ -127,7 +149,9 @@ const Listing: React.FC = () => {
             maxWidth: "100%",
             maxHeight: "300px",
             marginTop: "10px",
+            cursor: 'pointer',
           }}
+          onClick={handleImageClick}
         />
         <br />
         <br />
