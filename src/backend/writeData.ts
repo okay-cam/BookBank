@@ -10,7 +10,8 @@ export async function appendArray(
   value: string
 ): Promise<void> {
   const docRef = doc(db, collection, docId);
-  
+  console.log("Adding "+value+" to "+fieldName+" in "+collection+" for id "+docId);
+
   try {
     await updateDoc(docRef, {
       [fieldName]: arrayUnion(value)

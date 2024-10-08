@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sendEmail, EmailData } from "../backend/emailService";
 import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
 import { Listing } from "../backend/types";
 import { collection_name, listings_field } from "../config/config";
+import { hideModal } from "../backend/modal";
 
 interface ModalDetails {
   listing: Listing;
@@ -100,17 +101,31 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
     setIsSubmitting(true);
 
     await handleSendEnquiryEmail(); // Send the email
-    await handleSendReceiptEmail(); // Send receipt if email goes through successfully
+    // await handleSendReceiptEmail(); // Send receipt if email goes through successfully
 
     // add user id to the enquired field
     await appendArray(
       collection_name.listings, // name of the collection
-      listings_field.id, // listing id
+      listing.id, // listing id
       listings_field.enquired, // field
       auth.currentUser!.uid // id of the user that enquired
     );
     setEnquiredVariables(); // set listing as enquired and pinned
+    hideModal(listing.modalId);
   };
+
+  useEffect(() => {
+    const modalElement = document.getElementById(listing.modalId);
+    const bootstrapModal = new window.bootstrap.Modal(modalElement);
+
+    if (isSubmitting) {
+      bootstrapModal._config.backdrop = "static"; // Make backdrop static during submission
+      bootstrapModal._config.keyboard = false; // Disable keyboard dismiss
+    } else {
+      bootstrapModal._config.backdrop = true; // Restore default backdrop
+      bootstrapModal._config.keyboard = true; // Restore keyboard dismiss
+    }
+  }, [isSubmitting, listing.modalId]);
 
   return (
     <div
@@ -119,6 +134,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
       tabIndex={-1}
       aria-labelledby={`${listing.modalId}Label`}
       aria-hidden="true"
+      {...(isSubmitting && { "data-bs-backdrop": "static" })} // prevent clicking outside when submitting
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
@@ -129,7 +145,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
             <button
               type="button"
               className="btn-close"
-              data-bs-dismiss="modal"
+              // data-bs-dismiss="modal"
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
               aria-label="Close"
             ></button>
           </div>
@@ -150,7 +167,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
             <button
               type="button"
               className="btn btn-secondary"
-              data-bs-dismiss="modal"
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               Cancel
             </button>
@@ -158,8 +175,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
               type="button"
               className="call-to-action"
               onClick={handleSubmit}
-              data-bs-dismiss="modal"
               disabled={isSubmitting}
+              // {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               {isSubmitting ? "Sending..." : "Send"}
             </button>

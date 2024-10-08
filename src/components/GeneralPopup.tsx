@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 interface ModalDetails {
   modalId: string;
@@ -18,6 +18,11 @@ IMPORT GENERAL POPUP
 MAKE SURE MODALID IS UNIQUE
 */
 const GeneralPopup: React.FC<ModalDetails> = ({ header, message, modalId }) => {
+  useEffect(() => {
+    // This will only run when the modal is initialised
+    console.log("General popup initialized with id: " + modalId);
+  }, [modalId]);
+
   return (
     <div
       className="modal fade"
@@ -40,7 +45,9 @@ const GeneralPopup: React.FC<ModalDetails> = ({ header, message, modalId }) => {
             ></button>
           </div>
           <div className="modal-body">
-            <p>{message}</p>
+            <center>
+              <p>{message}</p>
+            </center>
           </div>
           <div className="modal-footer">
             <button type="button" className="" data-bs-dismiss="modal">

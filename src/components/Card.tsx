@@ -35,7 +35,7 @@ const Card = ({ listing }: CardData) => {
       if (listing?.id) {
         const status = await checkArray(
           collection_name.listings, // name of the collection
-          listings_field.id, // listing id
+          listing.id, // listing id
           listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );

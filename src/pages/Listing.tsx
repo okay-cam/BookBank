@@ -18,6 +18,7 @@ import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
 import { collection_name, listings_field } from "../config/config";
+import { showModal } from "../backend/modal";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -145,14 +146,15 @@ const Listing: React.FC = () => {
           ) : // check if user has enquired previously
           enquired ? (
             <button type="button" className="call-to-action" disabled={true}>
-              Already enquired
+              Enquiry sent
             </button>
           ) : (
             <button
               type="button"
               className="call-to-action"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing!.modalId}`}
+              // data-bs-toggle="modal"
+              // data-bs-target={`#${listing!.modalId}`}
+              onClick={() => showModal(listing!.modalId)}
             >
               Request/Enquire
             </button>
@@ -166,26 +168,24 @@ const Listing: React.FC = () => {
         <br />
         <h1>{listing!.title}</h1>
         <label>{listing!.authors}</label>
-        <h3>
-          {listing!.courseCode}
-          <WishlistButton
-            className={styles.wishlistButton}
-            courseCode={listing!.courseCode}
-          />
-        </h3>
+        <br />
+        <h3>{listing!.courseCode}</h3>
+        <WishlistButton
+          className={styles.wishlistButton}
+          courseCode={listing!.courseCode}
+        />
         <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
-        
+
         <br />
 
         {/* only report other people's listings */}
-        { !isListingOwner && (
+        {!isListingOwner && (
           <Link to={`/report/listing/${listing!.id}`} className="no-underline">
-          <button>🚩 Report this listing</button>
-        </Link>
+            <button>🚩 Report this listing</button>
+          </Link>
         )}
-
       </div>
     </main>
   );

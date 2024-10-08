@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { deleteListing } from "../backend/deleteData";
 import { useNavigate } from "react-router-dom";
+import GeneralPopup from "./GeneralPopup";
+import { showModal } from "../backend/modal";
 
 interface ModalDetails {
   modalId: string;
@@ -10,6 +12,7 @@ interface ModalDetails {
 const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
   const navigate = useNavigate();
   const [isDeleting, setDeleting] = useState<boolean>(false);
+  const confirmID = `${modalId}-confirm-remove`;
 
   // Handle delete action
   async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
@@ -21,6 +24,7 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
       await deleteListing(modalId);
       setDeleting(false);
       navigate("/home"); // navigate back to home
+      showModal(confirmID);
     } catch (error) {
       console.error("Error during deletion:", error);
     }
@@ -34,6 +38,11 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
       aria-labelledby={`${modalId}Label`}
       aria-hidden="true"
     >
+      <GeneralPopup
+        modalId={confirmID}
+        header="Listing deleted!"
+        message={`Your listing for ${title} has been successfully deleted.`}
+      />
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
@@ -65,8 +74,8 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
               type="button"
               className="danger"
               onClick={handleDelete}
-              data-bs-dismiss="modal"
               disabled={isDeleting}
+              data-bs-dismiss="modal"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </button>
