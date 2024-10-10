@@ -19,9 +19,9 @@ export const deleteImage = async (imageUrl: string) => {
 
 // Function to delete a document by its ID
 export const deleteListing = async (modalId: string) => {
-  // CURRENT MODAL ID FORMAT: "modal-DOCUMENT_ID-remove"
+  // CURRENT MODAL ID FORMAT: "id-remove-modal"
   const separatedId = modalId.split("-"); // Split the string by hyphens
-  const listingId = separatedId[1]; // Extract the second part (middle text)
+  const listingId = separatedId[0]; // Extract the first part
 
   console.log("Document starting deletion", listingId);
 

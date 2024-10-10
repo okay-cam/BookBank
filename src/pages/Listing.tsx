@@ -14,9 +14,7 @@ import WishlistButton from "../components/WishlistButton";
 import { showModal } from "../backend/modal";
 import ImageModal from "../components/ImageModal";
 import { listingData } from "../config/config";
-
 import { fb_location, listings_field } from "../config/config";
-import { toggleArray } from "../backend/writeData";
 import GeneralPopup from "../components/GeneralPopup";
 import { isPinned, togglePinListing } from "../backend/pinning";
 

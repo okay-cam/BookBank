@@ -10,9 +10,10 @@ interface ModalDetails {
 }
 
 const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
+  // modalID should be id-remove-modal`;
   const navigate = useNavigate();
   const [isDeleting, setDeleting] = useState<boolean>(false);
-  const confirmID = `${modalId}-confirm-remove`;
+  const confirmID = `${modalId}-confirm`; // id-remove-modal-confirm
 
   // Handle delete action
   async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
