@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { Listing as ListingType, ProfileData as ProfileType } from "../config/config";
+import { listingData as ListingType, ProfileData as ProfileType, listings_field } from "../config/config";
 import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
@@ -25,18 +25,18 @@ const Profile: React.FC = () => {
 
     fetchAndSetProfileData();
     // getPins();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
-      const data = await getListings("userID", userId);
+      const data = await getListings(listings_field.userID, userId);
       console.log("Fetched Listings:", data);
       console.log("User ID is ", userId);
       setActiveListings(data);
     };
 
     fetchAndSetActiveListings();
-  }, []);
+  }, [userId]);
 
   return (
     <main className={styles.gridContainer}>

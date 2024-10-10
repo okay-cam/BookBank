@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 // variables used in multiple listings
 const USER_ID = "userID";
 const COURSE_CODE = "courseCode";
@@ -26,6 +28,7 @@ export class listings_field {
     static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
+    static date = "date";
     // optional
     static listingID = "listingID";
     static enquired = "enquired";
@@ -38,6 +41,7 @@ export interface listingData{
     description: string; 
     title: string; 
     userID: string; 
+    date: Timestamp;
     // optional
     listingID?: string | null;
     imageUrl?: string | null ; 

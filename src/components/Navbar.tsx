@@ -2,20 +2,21 @@ import "../styles/general.css";
 import styles from "../styles/navbar.module.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom'
 
 // used to get profile picture
 import { getProfileData } from "../backend/readData";
 import { auth } from '../config/firebase';
 
 // used for signing out - may be moved later
-import { useNavigate } from 'react-router-dom'
 import { doSignOut } from '../config/auth'
 import { useAuth } from '../contexts/auth_context'
 import defaultImage from "../assets/default-image-path.jpg";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
   const { userLoggedIn } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,6 +54,11 @@ const Navbar = () => {
     fetchAndSetProfileData();
   }, []);
 
+  // Close the profile dropdown when the route changes
+  useEffect(() => {
+    setDropdownOpen(false); // Close the dropdown whenever the route changes
+  }, [location]); // Triggered whenever the location (route) changes
+
   return (
     <div className={styles.navbar}>
       {userLoggedIn ? ( // If the user is logged in, we should show the full navbar
@@ -71,9 +77,9 @@ const Navbar = () => {
           </form>
 
           <div className={styles.navLinks}>
-            <Link to="/home" className={styles.navButton}>Home</Link>
-            <Link to="/saved" className={styles.navButton}>Saved listings</Link>
-            <Link to="/create" className={styles.navButton}>Create a listing</Link>
+            <Link to="/home" className={styles.navButton}>🏠 Home</Link>
+            <Link to="/saved" className={styles.navButton}>⭐ Saved listings</Link>
+            <Link to="/create" className={styles.navButton}>📙 Create a listing</Link>
             <div className={styles.profileDropdown}>
               <img src={profilePictureSource || defaultImage} alt="Profile" className={styles.profilePic} onClick={() => setDropdownOpen(!dropdownOpen)}></img>
             </div>
