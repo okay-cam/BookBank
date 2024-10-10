@@ -5,6 +5,8 @@ dotenv.config(); // Load environment variables again
 
 import nodemailer from 'nodemailer';
 
+console.log("email in env: ", process.env.EMAIL_USER);
+
 // configure host, port, and auth data for the email transporter
 
 const transporter = nodemailer.createTransport({

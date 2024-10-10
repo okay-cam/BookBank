@@ -17,6 +17,7 @@ import SavedListings from "./pages/SavedListings";
 import Profile from "./pages/Profile";
 import EditAccount from "./pages/EditAccount";
 import Search from "./pages/Search";
+import Report from "./pages/Report";
 
 import { AuthProvider } from "./contexts/auth_context";
 import { ForcePages } from "./components/AccessPreventer"
@@ -68,6 +69,7 @@ const App = () => {
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/edit-account" element={<EditAccount />}/>
             <Route path="/search" element={<Search />}/>
+            <Route path="/report/:type/:id" element={<Report />}/>
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
