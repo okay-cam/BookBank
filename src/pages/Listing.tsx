@@ -77,12 +77,7 @@ const Listing: React.FC = () => {
   useEffect(() => {
     const fetchPinnedStatus = async () => {
       if (listing?.listingID) {
-        const status = await checkArray(
-          fb_location.listings,
-          listing.listingID,
-          listings_field.pinned,
-          auth.currentUser!.uid
-        );
+        const status = await isPinned(listing.listingID);
         console.log("status: ", status);
         setPinned(status);
       }

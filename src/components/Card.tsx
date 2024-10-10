@@ -50,11 +50,6 @@ const Card = ({ listing }: CardData) => {
 
   return (
     <>
-      {/* <EnquiryPopup title={listing.title} modalId={listing.modalId} />
-      <DeleteListingPopup
-        title={listing.title}
-        modalId={removeID}
-      /> */}
       <Link
         to={`/listing/${listing.listingID}`}
         className={`card no-underline ${styles.card}`}
@@ -83,9 +78,6 @@ const Card = ({ listing }: CardData) => {
             <button
               type="button"
               className="danger"
-              // data-bs-toggle="modal"
-              // data-bs-target={`#${removeID}`}
-              // onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
             >
               Remove
             </button>
