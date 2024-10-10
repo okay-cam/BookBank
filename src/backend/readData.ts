@@ -176,7 +176,7 @@ export async function getDocumentsWhereArray(
 
     // Map the results to an array of documents
     const documents = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      listingID: doc.id,
       ...doc.data(),
     }));
 
@@ -225,7 +225,7 @@ export async function getWishlist(userID: string) {
 
     // 4. Map over the snapshot to extract document data
     const matchedListings = listingsSnapshot.docs.map((doc: DocumentData) => ({
-      id: doc.id,
+      listingID: doc.id,
       ...doc.data(),
     }));
 
