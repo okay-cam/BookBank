@@ -36,7 +36,7 @@ export const isWishlisted = async (code: string): Promise<boolean> => {
 
   const q = query(
     wishlistRef,
-    where(users_field.userId, "==", userId),
+    where(users_field.userID, "==", userId),
     where(listings_field.courseCode, "==", code)
   );
 

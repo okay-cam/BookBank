@@ -31,21 +31,21 @@ export const useListings = (field?: string, value?: string) => {
 };
 
 export async function getListingById(id: string): Promise<Listing | null> {
-  const listingRef = doc(db, collection_name.listings, id); // Get reference to the specific document by ID
+  const listingRef = doc(db, fb_location.listings, id); // Get reference to the specific document by ID
 
   const docSnap = await getDoc(listingRef); // Fetch the document
 
   if (docSnap.exists()) {
     const data = docSnap.data() as Listing; // Extract data from the document
     const listing: Listing = {
-      id: docSnap.id,
+      listingID: docSnap.id,
       title: data.title,
       authors: data.authors,
       courseCode: data.courseCode,
       description: data.description,
       imageUrl: data.imageUrl,
       userID: data.userID,
-      modalId: "modal-" + docSnap.id
+      date: data.date
     };
     return listing; // Return the listing
   } else {
@@ -75,14 +75,14 @@ export async function getListings(field?: string, value?: string): Promise<Listi
   querySnapshot.forEach((doc) => {
     const data = doc.data() as Listing;
     const listing: Listing = {
-      id: doc.id,
+      listingID: doc.id,
       title: data.title,
       authors: data.authors,
       courseCode: data.courseCode,
       description: data.description,
       imageUrl: data.imageUrl,
       userID: data.userID,
-      modalId: "modal-" + doc.id
+      date: data.date
     };
     listings.push(listing);
   });
@@ -147,13 +147,13 @@ export async function checkArray( // returns boolean if user in array or not
 
     if (Array.isArray(arrayField)) {
       if (arrayField.includes(value)) {
-        console.log(`UserID (${value}) found in ${collection}: ${docId}, field: ${fieldName}`);
+        console.log(`Value (${value}) found in ${collection}: ${docId}, field: ${fieldName}`);
         return true;
       }
     }
   }
   
-  console.log(`UserID (${value}) not found in ${collection}: ${docId}, field: ${fieldName}`);
+  console.log(`Value (${value}) not found in ${collection}: ${docId}, field: ${fieldName}`);
   return false;
 }
 

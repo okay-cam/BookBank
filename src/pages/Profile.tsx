@@ -48,7 +48,7 @@ const Profile: React.FC = () => {
       )}
       <div className={styles.aside}>
         <img
-          src={profileData?.profilePic || defaultImage}
+          src={profileData?.imageUrl || defaultImage}
           className={styles.profilePic}
           alt="Profile"
         />

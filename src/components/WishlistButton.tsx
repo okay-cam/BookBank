@@ -16,7 +16,12 @@ const WishlistButton = ({ courseCode, className }: WishlistButtonProps) => {
 
   useEffect(() => {
     const checkWishlistStatus = async () => {
-      const wishlisted = await checkArray(fb_location.users, auth.currentUser!.uid, users_field.wishlist, props.courseCode);
+      const wishlisted = await checkArray(
+        fb_location.users,
+        auth.currentUser!.uid,
+        users_field.wishlist,
+        courseCode
+      );
       setIsWishlistedState(wishlisted);
     };
 
@@ -24,7 +29,12 @@ const WishlistButton = ({ courseCode, className }: WishlistButtonProps) => {
   }, [courseCode]);
 
   const handleToggleWishlisting = async () => {
-    await toggleArray(fb_location.users, auth.currentUser!.uid, users_field.wishlist, props.courseCode);
+    await toggleArray(
+      fb_location.users,
+      auth.currentUser!.uid,
+      users_field.wishlist,
+      courseCode
+    );
     setIsWishlistedState((prev) => !prev);
   };
 
@@ -33,12 +43,12 @@ const WishlistButton = ({ courseCode, className }: WishlistButtonProps) => {
       <GeneralPopup
         modalId="wishlist-success"
         header="Course wishlisted!"
-        message={`You will now receive notifications for ${courseCode} textbooks.`}
+        message={`You will now receive notifications for ${courseCode} textbooks if they become available.`}
       />
       <GeneralPopup
         modalId="unwishlist-success"
         header="Course unwishlisted"
-        message={`You will no longer receive notifications for ${courseCode} textbooks.`}
+        message={`You will no longer receive notifications for ${courseCode} textbooks if they become available.`}
       />
       <button
         className={`${className}`}
