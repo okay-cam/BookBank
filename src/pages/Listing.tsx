@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 import {
   getListingById,
@@ -17,16 +16,14 @@ import { togglePinListing, isPinned } from "../backend/pinning";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
-import { fb_location, collection_name, listings_field } from "../config/config";
+import { fb_location, listings_field, listingData } from "../config/config";
 import ImageModal from "../components/ImageModal";
 import { writeToFirestore } from "../backend/writeData";
-
-import { fb_location, listings_field } from "../config/config"
 import { toggleArray } from "../backend/writeData";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
-  const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
+  const [listing, setListing] = useState<listingData | null>(null); // State to hold the specific listing
   const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
@@ -80,18 +77,18 @@ const Listing: React.FC = () => {
   // check if user has pinned or enquired
   useEffect(() => {
     const fetchPinnedStatus = async () => {
-      if (listing?.id) {
-        const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      if (listing?.listingID) {
+        const status = await checkArray(fb_location.listings, listing.listingID, listings_field.pinned, auth.currentUser!.uid);
         console.log("status: ", status);
         setPinned(status);
       }
     };
 
     const fetchEnquiredStatus = async () => {
-      if (listing?.id) {
+      if (listing?.listingID) {
         const status = await checkArray(
           fb_location.listings, // name of the collection
-          listing.id, // listing id
+          listing.listingID, // listing id
           listings_field.enquired, // field
           auth.currentUser!.uid // id of the user that enquired
         );
@@ -115,11 +112,12 @@ const Listing: React.FC = () => {
 
   // check if this is the current users listing
   const isListingOwner = listing ? checkListingOwner(listing) : false;
-  const removeID = `${listing!.modalId}-remove`;
+  const enquiryModalID = `${listing!}-enquiry-modal`;
+  const removeModalID = `${listing!}-remove-modal`;
   const handlePinToggle = async () => {
     if (listing) {
-      await toggleArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
-      const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+      await toggleArray(fb_location.listings, listing.listingID || "", listings_field.pinned, auth.currentUser!.uid);
+      const status = await checkArray(fb_location.listings, listing.listingID || "", listings_field.pinned, auth.currentUser!.uid);
       console.log("status: ", status);
       setPinned(status);
     }
@@ -129,7 +127,7 @@ const Listing: React.FC = () => {
     if (listing) {
       try {
         // Can't get this function working
-        await writeToFirestore(fb_location.listings, listing, listing.id);
+        await writeToFirestore(fb_location.listings, listing, listing.listingID || "");
       } catch (error) {
         console.error("Unable to create listing");
       }
@@ -150,7 +148,7 @@ const Listing: React.FC = () => {
           setEnquiredVariables={setEnquiredVariables}
         />
       )}
-      <DeleteListingPopup title={listing!.title} modalId={removeID} />
+      <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
       {isImageModalOpen && (
         <ImageModal
           imageUrl={listing!.imageUrl || defaultImagePath}
@@ -193,8 +191,8 @@ const Listing: React.FC = () => {
               type="button"
               className="danger"
               data-bs-toggle="modal"
-              data-bs-target={`#${removeID}`}
-              onClick={() => console.log("Delete listing popup ID: ", removeID)}
+              data-bs-target={`#${removeModalID}`}
+              onClick={() => console.log("Delete listing popup ID: ", removeModalID)}
             >
               Remove listing
             </button>
@@ -211,7 +209,7 @@ const Listing: React.FC = () => {
                 type="button"
                 className="call-to-action"
                 data-bs-toggle="modal"
-                data-bs-target={`#${listing!.modalId}`}
+                data-bs-target={`#${enquiryModalID}`}
               >
                 Request/Enquire
               </button>
@@ -277,7 +275,7 @@ const Listing: React.FC = () => {
 
         {/* only report other people's listings */}
         { !isListingOwner && (
-          <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+          <Link to={`/report/listing/${listing!.listingID}`} className="no-underline">
           <button>🚩 Report this listing</button>
         </Link>
         )}
