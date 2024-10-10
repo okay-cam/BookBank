@@ -22,7 +22,7 @@ function FileDropzone({ className, onDrop }: { className: string; onDrop: (file:
     }
     
     const uploadedFile = acceptedFiles[0] as FileWithPreview;
-
+    
     if (uploadedFile.size > maxSize) {
       alert("File is too large. Maximum size allowed is 5 MB.");
       return;

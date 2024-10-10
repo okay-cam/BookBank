@@ -4,6 +4,7 @@ import { Timestamp } from "firebase/firestore";
 const USER_ID = "userID";
 const COURSE_CODE = "courseCode";
 const IMAGE_URL = "imageUrl"
+const IMAGE_FILENAME = "imageFilename"
 
 // Firestore Constants
 // Ensure that classes that store fields match 
@@ -13,6 +14,7 @@ export class fb_location {
     static listings = "listings";
     static users = "users";
     static wishlist = "wishlist";
+    static reports = "reports";
 }
 
 
@@ -22,12 +24,13 @@ export class listings_field {
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
+    static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
     static date = "date";
     // optional
     static listingID = "listingID";
-    static imageUrl = IMAGE_URL;
     static enquired = "enquired";
     static pinned = "pinned";
 }
@@ -60,6 +63,7 @@ export class users_field {
     static degree = "degree";
     static location = "location";
     static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static university = "university";
     static userID = USER_ID;
     static wishlist = "wishlist";
@@ -77,7 +81,8 @@ export interface ProfileData{
     // optional 
     degree?: string;
     location?: string;
-    imageUrl?: string | undefined;
+    imageUrl?: string | null; // allow null for easier handling
+    imageFilename?: string | null; // allow null for easier handling
     university?: string;
     userID?: string;
     wishlist?: string[];
@@ -91,3 +96,13 @@ export class wishlists_field {
 export interface wishlistData {
     users: string[];
 }
+
+// field names for users documents
+export class reports_field {
+    static issue = "issue";
+    static submitterInfo = "submitterInfo";
+    static reportedProfileInfo = "reportedProfileInfo";
+    static reportedListingInfo = "reportedListingInfo";
+}
+
+export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces type.ts

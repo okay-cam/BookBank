@@ -36,7 +36,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
   // Send email to the textbook donor
   const handleSendEnquiryEmail = async () => {
     const emailData: EmailData = {
-      email: email, // send email to the testbook owner's email !! this is going to the wrong email?
+      email: email, // send email to the testbook owner's email
       subject: `New request for your textbook '${listing.title}'`,
       message: formattedEnquiryMessage,
     };
@@ -102,8 +102,9 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
     setSuccessMessage(""); // Clear any previous success
     setIsSubmitting(true);
 
-    // await handleSendEnquiryEmail(); // Send the email
-    await handleSendReceiptEmail(); // Send receipt if email goes through successfully
+    if (await handleSendEnquiryEmail()) { // Send the email 
+      await handleSendReceiptEmail(); // Send receipt if email goes through successfully
+    } 
 
     // add user id to the enquired field
     await appendArray(

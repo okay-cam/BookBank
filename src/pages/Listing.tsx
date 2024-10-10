@@ -11,13 +11,13 @@ import DeleteListingPopup from "../components/DeleteListingPopup";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
+import { fb_location, collection_name, listings_field } from "../config/config";
 import { showModal } from "../backend/modal";
 import ImageModal from "../components/ImageModal";
+import { toggleArray } from "../backend/writeData";
 import { listingData } from "../config/config";
-import { fb_location, listings_field } from "../config/config";
 import GeneralPopup from "../components/GeneralPopup";
 import { isPinned, togglePinListing } from "../backend/pinning";
-
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
   const [listing, setListing] = useState<listingData | null>(null); // State to hold the specific listing

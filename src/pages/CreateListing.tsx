@@ -103,8 +103,8 @@ const CreateListing: React.FC = () => {
       } else {
         console.log("Unable to upload image, no listingID");
       }
-    } catch (error) {
-      console.error("Unable to create listing");
+    } catch (error){
+      console.error("Unable to create listing: ", error);
     }
   };
 
