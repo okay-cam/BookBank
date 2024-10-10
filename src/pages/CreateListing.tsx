@@ -9,18 +9,22 @@ import { uploadImage, writeToFirestore } from "../backend/writeData";
 import { listingData } from "../config/config";
 import { Timestamp } from "firebase/firestore";
 
-
 const CreateListing: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
   const [errorMessage, setErrorMessage] = useState("");
-  const [charCount, setCharCount] = useState({ title: 0, authors: 0, description: 0, courseCode: 0 });
+  const [charCount, setCharCount] = useState({
+    title: 0,
+    authors: 0,
+    description: 0,
+    courseCode: 0,
+  });
   const navigate = useNavigate();
 
   const maxLengths = {
     title: 100,
     authors: 100,
     description: 400,
-    courseCode: 30
+    courseCode: 30,
   };
 
   const [listingData, setListingData] = useState<listingData>({
@@ -29,11 +33,11 @@ const CreateListing: React.FC = () => {
     courseCode: "",
     description: "",
     userID: auth.currentUser!.uid.toString(), // User can't be null when entering this page
-    date: Timestamp.now()
+    date: Timestamp.now(),
   });
 
-  const [file, setFile] = useState<File | null>(null);  // Manage file state
-  const [preview, setPreview] = useState<string | null>(null);  // Manage uploaded file's image preview
+  const [file, setFile] = useState<File | null>(null); // Manage file state
+  const [preview, setPreview] = useState<string | null>(null); // Manage uploaded file's image preview
 
   // const handleChange = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,7 +49,9 @@ const CreateListing: React.FC = () => {
   //   }));
   // };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
 
     // Update character count
@@ -57,14 +63,18 @@ const CreateListing: React.FC = () => {
         [name]: value,
       }));
     } else {
-      setErrorMessage(`The ${name} exceeds the maximum character limit of ${maxLengths[name as keyof typeof maxLengths]}.`);
+      setErrorMessage(
+        `The ${name} exceeds the maximum character limit of ${
+          maxLengths[name as keyof typeof maxLengths]
+        }.`
+      );
     }
   };
 
   const handleDrop = (file: File, preview: string) => {
     setFile(file);
     setPreview(preview);
-    console.log(file)
+    console.log(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,20 +90,22 @@ const CreateListing: React.FC = () => {
     setIsSubmitting(true);
 
     // Create document entry
-    try{
-      const listingID = await writeToFirestore(fb_location.listings, listingData);
-      if(listingID){
+    try {
+      const listingID = await writeToFirestore(
+        fb_location.listings,
+        listingData
+      );
+      if (listingID) {
         await uploadImage(fb_location.listings, listingID, file);
-      }else{
+        // Reset the loading state
+        setIsSubmitting(false);
+        navigate(`/listing/${listingID}`);
+      } else {
         console.log("Unable to upload image, no listingID");
       }
-    } catch (error){
+    } catch (error) {
       console.error("Unable to create listing");
     }
-    
-    navigate("/home");
-    // Reset the loading state
-    setIsSubmitting(false);
   };
 
   return (
@@ -104,16 +116,17 @@ const CreateListing: React.FC = () => {
           <BackButton />
 
           {/* the preview of the listing */}
-          { file && preview && (
+          {file && preview && (
             <div>
-              
-              <img src={preview}
-              alt="Uploaded image of your listing"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "300px",
-                marginTop: "10px",
-              }}/>
+              <img
+                src={preview}
+                alt="Uploaded image of your listing"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "300px",
+                  marginTop: "10px",
+                }}
+              />
             </div>
           )}
 
@@ -136,7 +149,9 @@ const CreateListing: React.FC = () => {
               className="half-width"
               required
             />
-            <small>{charCount.title}/{maxLengths.title}</small>
+            <small>
+              {charCount.title}/{maxLengths.title}
+            </small>
             <br />
             <br />
 
@@ -151,7 +166,9 @@ const CreateListing: React.FC = () => {
               maxLength={maxLengths.authors}
               required
             />
-            <small>{charCount.authors}/{maxLengths.authors}</small>
+            <small>
+              {charCount.authors}/{maxLengths.authors}
+            </small>
             <br />
             <br />
 
@@ -165,7 +182,9 @@ const CreateListing: React.FC = () => {
               maxLength={maxLengths.courseCode}
               onChange={handleChange}
             />
-            <small>{charCount.courseCode}/{maxLengths.courseCode}</small>
+            <small>
+              {charCount.courseCode}/{maxLengths.courseCode}
+            </small>
             <br />
             <br />
 
@@ -181,7 +200,9 @@ const CreateListing: React.FC = () => {
               maxLength={maxLengths.description}
               required
             />
-            <small>{charCount.description}/{maxLengths.description}</small>
+            <small>
+              {charCount.description}/{maxLengths.description}
+            </small>
             <br />
             <br />
 
