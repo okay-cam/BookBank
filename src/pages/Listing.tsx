@@ -3,10 +3,7 @@ import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import {
-  getListingById,
-  getProfileData,
-} from "../backend/readData";
+import { getListingById, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
@@ -20,6 +17,8 @@ import { listingData } from "../config/config";
 
 import { fb_location, listings_field } from "../config/config";
 import { toggleArray } from "../backend/writeData";
+import GeneralPopup from "../components/GeneralPopup";
+import { isPinned, togglePinListing } from "../backend/pinning";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
@@ -121,18 +120,8 @@ const Listing: React.FC = () => {
   const isListingOwner = listing ? checkListingOwner(listing) : false;
   const handlePinToggle = async () => {
     if (listing?.listingID) {
-      await toggleArray(
-        fb_location.listings,
-        listing.listingID,
-        listings_field.pinned,
-        auth.currentUser!.uid
-      );
-      const status = await checkArray(
-        fb_location.listings,
-        listing.listingID,
-        listings_field.pinned,
-        auth.currentUser!.uid
-      );
+      await togglePinListing(listing);
+      const status = await isPinned(listing.listingID);
       console.log("status: ", status);
       setPinned(status);
     }
@@ -149,6 +138,20 @@ const Listing: React.FC = () => {
         />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
+      <GeneralPopup
+        modalId="pin-success"
+        header="Listing pinned!"
+        message={`You can now view this listing for "${
+          listing!.title
+        }" in your saved listings page.`}
+      />
+      <GeneralPopup
+        modalId="unpin-success"
+        header="Listing unpinned"
+        message={`This listing for "${
+          listing!.title
+        }" has been removed from your saved listings page.`}
+      />
       {isImageModalOpen && (
         <ImageModal
           imageUrl={listing!.imageUrl || defaultImagePath}
@@ -221,7 +224,10 @@ const Listing: React.FC = () => {
 
         {/* only report other people's listings */}
         {!isListingOwner && (
-          <Link to={`/report/listing/${listing!.listingID}`} className="no-underline">
+          <Link
+            to={`/report/listing/${listing!.listingID}`}
+            className="no-underline"
+          >
             <button>🚩 Report this listing</button>
           </Link>
         )}

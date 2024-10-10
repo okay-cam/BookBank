@@ -3,7 +3,7 @@ import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { checkArray } from "./readData";
 import { removeFromArray } from "./deleteData";
-import { fb_location, users_field } from "../config/config";
+import { fb_location, listings_field, users_field } from "../config/config";
 import { showModal } from "./modal";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
@@ -100,6 +100,8 @@ export async function toggleArray(
       await removeFromArray(collection, docId, fieldName, value);
       if (fieldName == fb_location.wishlist) {
         showModal("unwishlist-success");
+      } else if (fieldName == listings_field.pinned) {
+        showModal("unpin-success");
       }
     } else {
       // If value does not exist, append it
@@ -107,9 +109,11 @@ export async function toggleArray(
       await appendArray(collection, docId, fieldName, value);
       if (fieldName == fb_location.wishlist) {
         showModal("wishlist-success");
+      } else if (fieldName == listings_field.pinned) {
+        showModal("pin-success");
       }
     }
-    
+
   } catch (error) {
     console.error(`Error toggling array value: ${error}`);
   }
