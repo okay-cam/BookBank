@@ -64,7 +64,8 @@ const CreateListing: React.FC = () => {
   const handleDrop = (file: File, preview: string) => {
     setFile(file);
     setPreview(preview);
-    console.log(file)
+    console.log(file);
+    console.log(file.name);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,7 +89,7 @@ const CreateListing: React.FC = () => {
         console.log("Unable to upload image, no listingID");
       }
     } catch (error){
-      console.error("Unable to create listing");
+      console.error("Unable to create listing: ", error);
     }
     
     navigate("/home");

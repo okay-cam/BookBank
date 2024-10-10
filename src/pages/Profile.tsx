@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { getProfileData } from "../backend/readData";
-import { getListings } from "../backend/readData";
 import { listingData as ListingType, ProfileData as ProfileType, listings_field } from "../config/config";
+import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
 import PinsCardContainer from "../components/PinsCardContainer";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ImageModal from "../components/ImageModal";
 
 const Profile: React.FC = () => {
@@ -48,13 +47,19 @@ const Profile: React.FC = () => {
         />
       )}
       <div className={styles.aside}>
-        <img src={profileData?.imageUrl || defaultImage} className={styles.profilePic} alt="Profile" />
+        <img
+          src={profileData?.imageUrl || defaultImage}
+          className={styles.profilePic}
+          alt="Profile"
+        />
         <br />
         {profileData ? (
           <div>
             <h1>
               <center>
-                {profileData.username ? profileData.username : "Name Unavailable"}
+                {profileData.username
+                  ? profileData.username
+                  : "Name Unavailable"}
               </center>
             </h1>
             <div className={styles.profileData}>
@@ -104,6 +109,17 @@ const Profile: React.FC = () => {
         <br />
         <h1>Reviews</h1>
         <p>No reviews yet.</p>
+
+        <br />
+
+        {/* only report other people's profiles */}
+        { !checkProfileOwner(userId) && (
+          <Link to={`/report/user/${userId}`} className="no-underline">
+            <button>🚩 Report this user</button>
+          </Link>
+        )}
+        
+
       </div>
     </main>
   );

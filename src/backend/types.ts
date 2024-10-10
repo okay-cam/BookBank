@@ -41,3 +41,9 @@
 //     enquired?: string[] | null;
 //   }
 
+  // export interface ReportType {
+  //   issue: string;
+  //   reportedProfileInfo: Map<string, unknown>;
+  //   reportedListingInfo?: Map<string, unknown>;
+  //   submitterInfo: Map<string, unknown>;
+  // }

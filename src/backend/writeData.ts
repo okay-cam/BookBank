@@ -31,8 +31,22 @@ export async function uploadImage(collection: string, id: string, image: File) {
 
   try {
     // Upload image to Firebase Storage
-    const imageRef = ref(storage, `${collection}/${id}-${Date.now()}`); // Use storageFolder for more clarity
+    
+    // const imageRef = ref(storage, imageFilename); // Use storageFolder for more clarity
+    // eslint-disable-next-line prefer-const
+    let imageFilename = `${collection}/${id}-${Date.now()}`
+    const imageRef = ref(storage, imageFilename); // Use storageFolder for more clarity
+    
     await uploadBytes(imageRef, image);
+    
+    // IF YOU ARE REFORMATING HOW IMAGES ARE NAMED,
+    // YOU ARE IN FOR A RIDE:
+    // image.type returns 'image/jpg'
+    // add .png or .jpg
+    // const type = image.type.split('/').pop();
+    // imageFilename += '.' + type
+    
+    console.log("FILE NAME? ", imageFilename)
 
     // Get the download URL of the uploaded image
     const imageUrl = await getDownloadURL(imageRef);
@@ -44,7 +58,7 @@ export async function uploadImage(collection: string, id: string, image: File) {
 
     // Update or create a Firestore document with the imageUrl
     const docRef = doc(db, collection, id); // Reference to the Firestore document
-    await setDoc(docRef, { imageUrl }, { merge: true }); // Merge the imageUrl field
+    await setDoc(docRef, { imageUrl, imageFilename }, { merge: true }); // Merge the imageUrl and imageFilename fields
 
     return imageUrl; // Return imageUrl in case needed
 

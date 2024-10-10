@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
 import defaultImage from '../assets/default-image-path.jpg';
-import { ProfileData as ProfileType, fb_location } from '../config/config';
+import { fb_location, ProfileData as ProfileType } from '../config/config';
 import { getProfileData, getImageUrl } from '../backend/readData';
-import { auth } from '../config/firebase';
+import { doc, setDoc } from "firebase/firestore";
+import { db, auth, storage } from '../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import FileDropzone from "../components/FileDropzone";
 import { writeToFirestore, uploadImage } from "../backend/writeData";
@@ -97,7 +99,9 @@ const EditAccount = () => {
     
         const updatedProfileData: ProfileType = {
             ...newProfileData,
-            imageUrl: profilePicUrl || "",  // Ensure profilePicUrl is used correctly here
+            // image url and filename is updated by the 'uploadImage' function
+            // imageUrl: profilePicUrl || newProfileData?.imageUrl || null,  // Keep the updated profilePic
+            // imageFilename: newProfileData?.imageFilename || null,  // Keep the updated profilePic
             username: newProfileData?.username || "",  // Ensure name is always a string
             email: newProfileData?.email || "",  // Ensure email is always a string
             university: newProfileData?.university || "",  // Default to empty string
@@ -109,12 +113,23 @@ const EditAccount = () => {
             totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
             totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
         };
-    
-        console.log("Submitting data: ", updatedProfileData);
-    
+        
+        // let profilePicUrl = profilePhotoSource;
+
+        console.log("submitting other data (not images):")
         // Update Firestore document with new profile data
-        await writeToFirestore(fb_location.users, updatedProfileData, auth.currentUser!.uid);
-    
+        const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
+        await setDoc(userDocRef, updatedProfileData, { merge: true });
+
+        // if a new profile picture file is uploaded, then upload it to Cloud Storage
+        if (profilePhotoFile) {
+            console.log("storing new profile picture")
+            // const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
+            // await uploadBytes(imageRef, profilePhotoFile);
+            // profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
+            await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
+        }
+
         // Set the old profile data to the new one after successful submission
         setOldProfileData(updatedProfileData);
     

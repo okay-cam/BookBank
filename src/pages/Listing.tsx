@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
-import { Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import { getListings, getProfileData } from "../backend/readData";
+import {
+  getListingById,
+  getListings,
+  getProfileData,
+} from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
@@ -13,9 +17,8 @@ import { togglePinListing, isPinned } from "../backend/pinning";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
+import { fb_location, collection_name, listings_field } from "../config/config";
 import ImageModal from "../components/ImageModal";
-
-import { fb_location, listings_field } from "../config/config"
 import { toggleArray } from "../backend/writeData";
 
 const Listing: React.FC = () => {
@@ -39,9 +42,7 @@ const Listing: React.FC = () => {
 
   useEffect(() => {
     const fetchListing = async () => {
-      const listings = await getListings(); // Fetch all listings
-      const foundListing = listings.find((l) => l.id === id); // Find the listing by id
-
+      const foundListing = await getListingById(id!);
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
@@ -187,10 +188,26 @@ const Listing: React.FC = () => {
         <br />
         <h1>{listing!.title}</h1>
         <label>{listing!.authors}</label>
-        <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
+        <h3>
+          {listing!.courseCode}
+          <WishlistButton
+            className={styles.wishlistButton}
+            courseCode={listing!.courseCode}
+          />
+        </h3>
         <p>{listing!.description}</p>
         <h1>Donor information</h1>
         <DonorInfo donorId={listing!.userID} />
+        
+        <br />
+
+        {/* only report other people's listings */}
+        { !isListingOwner && (
+          <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+          <button>🚩 Report this listing</button>
+        </Link>
+        )}
+
       </div>
     </main>
   );
