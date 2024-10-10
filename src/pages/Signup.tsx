@@ -70,7 +70,8 @@ const Signup = () => {
           userID: userID,
           username: username.trim(),
           // No profile picture initially
-          // imageUrl: null,  // not sure why null, better to assign as optional.
+          imageUrl: null,  // set to null to allow for easier image handling
+          imageFilename: null,  // set to null to allow for easier image handling
           // location: null,
           // university: null,
           // degree: null,

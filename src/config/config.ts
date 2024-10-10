@@ -28,7 +28,6 @@ export class listings_field {
     static userID = USER_ID;
     // optional
     static listingID = "listingID";
-    static imageUrl = IMAGE_URL;
     static enquired = "enquired";
     static pinned = "pinned";
 }
@@ -78,7 +77,8 @@ export interface ProfileData{
     // optional 
     degree?: string;
     location?: string;
-    imageUrl?: string | undefined;
+    imageUrl?: string | null; // allow null for easier handling
+    imageFilename?: string | null; // allow null for easier handling
     university?: string;
     userID?: string;
     wishlist?: string[];
@@ -100,4 +100,5 @@ export class reports_field {
     static reportedProfileInfo = "reportedProfileInfo";
     static reportedListingInfo = "reportedListingInfo";
 }
+
 export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces type.ts

@@ -32,8 +32,8 @@ const Report: React.FC = () => {
       userID: '',
       username: '',
       email: '',
-      imageUrl: '',
-      imageFilename: ''
+      // imageUrl: '',
+      // imageFilename: ''
     },
     submitterInfo: {
       userID: '',
@@ -54,8 +54,8 @@ const Report: React.FC = () => {
     userID: string;
     username: string;
     email: string;
-    imageUrl: string | null;
-    imageFilename: string;
+    imageUrl?: string | null;
+    imageFilename?: string;
   }
   
   interface ReportedListingInfo {
@@ -63,9 +63,9 @@ const Report: React.FC = () => {
     title: string;
     authors: string;
     courseCode: string;
-    imageUrl: string | undefined;
-    imageFilename: string;
     description: string;
+    imageUrl?: string;
+    imageFilename?: string; // old listings may not have filenames
   }
   
   interface SubmitterInfo {
@@ -84,6 +84,7 @@ const Report: React.FC = () => {
 
   const handleReportedProfileData = (userID: string, data: ProfileData) => {
     const { username, email, imageUrl, imageFilename } = data;
+    
     setReport((prevReport) => ({
       ...prevReport,
       reportedProfileInfo: { userID, username, email, imageUrl, imageFilename },
@@ -203,6 +204,7 @@ useEffect(() => {
     } finally {
       // After all tasks, set loading to false
       setLoading(false);
+      console.log("data: ", report)
     }
   };
 
@@ -263,36 +265,43 @@ useEffect(() => {
 
     // Upload report without images
     try {
-      reportID = await writeToFirestore(reports_field, fb_location.reports, report);
+      // reportID = await writeToFirestore(reports_field, fb_location.reports, report);
+      reportID = await writeToFirestore(fb_location.reports, report);
     } catch (error){
       console.error("Unable to create report: ", error);
     }
     
     // After report is generated,
     // Copy images into storage for report directory, add image names & links into database
+    // Only copy images into storage if there are images to copy!
 
-    const pfpReportUrl = await copyImage(
-      report.reportedProfileInfo.imageFilename,
-      `reports/${reportID}-profile`
-    );
-    if (pfpReportUrl) report.reportedProfileInfo.imageUrl = pfpReportUrl;
-    
-    console.log("REPORT pfp image url: ", report.reportedProfileInfo.imageUrl)
+    if (report.reportedProfileInfo.imageFilename) {
+      const pfpReportUrl = await copyImage(
+        report.reportedProfileInfo.imageFilename,
+        `reports/${reportID}-profile`
+      );
+      if (pfpReportUrl) report.reportedProfileInfo.imageUrl = pfpReportUrl;
+      console.log("REPORT pfp image url: ", report.reportedProfileInfo.imageUrl)
+    }
 
-    if (type === 'listing') {
+    if (type === 'listing' && report.reportedListingInfo?.imageFilename) {
       const listingReportUrl = await copyImage(
         report.reportedListingInfo!.imageFilename,
         `reports/${reportID}-listing`
       );
       if (listingReportUrl) report.reportedListingInfo!.imageUrl = listingReportUrl;
-      
       console.log("REPORT listing image url: ", report.reportedListingInfo!.imageUrl)
+    }
+
+    // Warning messages for outdated data
+    if (type === 'listing' && !report.reportedListingInfo?.imageFilename) {
+      console.error("ERROR, this listing may have been made in a branch that doesn't use the most recent changes from Cameron's Report branch, so it is missing image filename data.")
     }
 
     // Modify report with new images
     if (reportID) {
       const docRef = doc(db, fb_location.reports, reportID); // Reference to the Firestore document
-      await setDoc(docRef, report); // overwrite report with new images
+      await setDoc(docRef, report); // overwrite report, potentially with new images
 
       // !! if this returns null, then there was an error
       handleSendReportEmail(reportID);
@@ -317,13 +326,13 @@ useEffect(() => {
   //   },
   // });
 
-  interface ReportedListingInfo {
-    title: string;
-    authors: string;
-    courseCode: string;
-    imageUrl: string | undefined;
-    description: string;
-  }
+  // interface ReportedListingInfo {
+  //   title: string;
+  //   authors: string;
+  //   courseCode: string;
+  //   description: string;
+  //   imageUrl?: string;
+  // }
 
   // Create a formatted HTML message for report
   //!! doesnt contain profile picture <img src="${report.reportedProfileInfo.imageUrl}" />
@@ -400,8 +409,9 @@ useEffect(() => {
             <div>
               <h1>Reported Listing Info</h1>
               <p>{report.reportedListingInfo?.title}</p>
-              <img
-                src={report.reportedListingInfo?.imageUrl}
+              {report.reportedListingInfo!.imageUrl && (
+                <img
+                src={report.reportedListingInfo!.imageUrl}
                 alt="Listing image"
                 style={{
                   maxWidth: "100%",
@@ -409,12 +419,29 @@ useEffect(() => {
                   marginTop: "-10px",
                 }}
               />
+              )}
             </div>
           )}
 
           <br />
           <h1>Reported User Info</h1>
           <p>Name: {report.reportedProfileInfo?.username}</p>
+
+          {(type === 'user') && (report.reportedProfileInfo?.imageUrl) && (
+            <div>
+              {report.reportedListingInfo!.imageUrl && (
+                <img
+                src={report.reportedListingInfo!.imageUrl}
+                alt="User profile image"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "300px",
+                  marginTop: "-10px",
+                }}
+              />
+              )}
+            </div>
+          )}
           </>
         )}
         
