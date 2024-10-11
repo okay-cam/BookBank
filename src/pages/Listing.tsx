@@ -29,6 +29,14 @@ const Listing: React.FC = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [originalListing, setOriginalListing] = useState<ListingType | null>(null);
+  const [charCount, setCharCount] = useState({ title: 0, authors: 0, description: 0, courseCode: 0 });
+
+  const maxLengths = {
+    title: 100,
+    authors: 100,
+    description: 400,
+    courseCode: 30
+  };
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
@@ -52,6 +60,14 @@ const Listing: React.FC = () => {
           setListerEmail(listerProfile!.email || null);
           console.log("lister profile: ", listerProfile);
           console.log("lister profile email: ", listerProfile?.email);
+
+          setCharCount({
+            title: foundListing.title?.length || 0,
+            authors: foundListing.authors?.length || 0,
+            description: foundListing.description?.length || 0,
+            courseCode: foundListing.courseCode?.length || 0
+          });
+
         } else {
           console.log("listing not found");
         }
@@ -100,6 +116,22 @@ const Listing: React.FC = () => {
       fetchEnquiredStatus();
     }
   }, []);
+
+  const handleEdit = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+
+    // Update character count
+    setCharCount((prev) => ({ ...prev, [name]: value.length }));
+
+    if (value.length <= maxLengths[name as keyof typeof maxLengths]) {
+      setListing((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    } else {
+      console.error(`The ${name} exceeds the maximum character limit of ${maxLengths[name as keyof typeof maxLengths]}.`);
+    }
+  };
 
   if (!loading && !listing) {
     return <Navigate to="/404" />;
@@ -226,41 +258,65 @@ const Listing: React.FC = () => {
         <br />
         {isEditMode ? (
           <>
+            <h1>Edit listing</h1>
+            <br />
+
             <label>Title:</label>
+            <br />
+
             <input
               type="text"
+              name="title"
               value={listing!.title}
-              onChange={(e) => setListing({ ...listing!, title: e.target.value })}
+              onChange={handleEdit}
+              maxLength={maxLengths.title}
               placeholder="Title"
-              className={styles.inputField}
               required
             />
+            <small>{charCount.title}/{maxLengths.title}</small>
+            <br />
+            <br />
+            
             <label>Authors:</label>
             <input
               type="text"
+              name="authors"
               value={listing!.authors}
-              onChange={(e) => setListing({ ...listing!, authors: e.target.value })}
+              onChange={handleEdit}
+              maxLength={maxLengths.authors}
               placeholder="Authors"
-              className={styles.inputField}
               required
             />
+            <small>{charCount.authors}/{maxLengths.authors}</small>
+            <br />
+            <br />
+
             <label>Course Code:</label>
             <input
               type="text"
+              name="courseCode"
               value={listing!.courseCode}
-              onChange={(e) => setListing({ ...listing!, courseCode: e.target.value })}
+              onChange={handleEdit}
+              maxLength={maxLengths.courseCode}
               placeholder="Course Code"
-              className={styles.inputField}
               required
             />
+            <small>{charCount.courseCode}/{maxLengths.courseCode}</small>
+            <br />
+            <br />
+
             <label>Description:</label>
             <textarea
+              name="description"
               value={listing!.description}
-              onChange={(e) => setListing({ ...listing!, description: e.target.value })}
+              onChange={handleEdit}
+              maxLength={maxLengths.description}
               placeholder="Description"
-              className={`${styles.inputField} ${styles.textArea}`}
+              className="w-100"
+              rows={3}
               required
             />
+            <small>{charCount.description}/{maxLengths.description}</small>
           </>
         ) : (
           <>
@@ -268,19 +324,21 @@ const Listing: React.FC = () => {
             <label>{listing!.authors}</label>
             <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
             <p>{listing!.description}</p>
+
+            <h1>Donor information</h1>
+            <DonorInfo donorId={listing!.userID} />
+
+            <br />
+
+            {/* only report other people's listings */}
+            {!isListingOwner && (
+              <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+                <button>🚩 Report this listing</button>
+              </Link>
+            )}
           </>
         )}
-        <h1>Donor information</h1>
-        <DonorInfo donorId={listing!.userID} />
-
-        <br />
-
-        {/* only report other people's listings */}
-        {!isListingOwner && (
-          <Link to={`/report/listing/${listing!.id}`} className="no-underline">
-            <button>🚩 Report this listing</button>
-          </Link>
-        )}
+        
 
       </div>
     </main>
