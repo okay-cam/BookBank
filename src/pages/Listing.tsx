@@ -99,7 +99,7 @@ const Listing: React.FC = () => {
       fetchPinnedStatus();
       fetchEnquiredStatus();
     }
-  }, [listing]);
+  }, []);
 
   if (!loading && !listing) {
     return <Navigate to="/404" />;
@@ -126,7 +126,7 @@ const Listing: React.FC = () => {
       try {
         await writeToFirestore(fb_location.listings, listing, listing.id);
       } catch (error) {
-        console.error("Unable to create listing");
+        console.error("Unable to update listing: ", error);
       }
       setIsEditMode(false);
     }
