@@ -94,45 +94,48 @@ const EditAccount = () => {
         if (!profilePicUrl) {
           throw new Error("No Image Url");
         }
-    
-        const updatedProfileData: ProfileType = {
-            ...newProfileData,
-            // image url and filename is updated by the 'uploadImage' function
-            // imageUrl: profilePicUrl || newProfileData?.imageUrl || null,  // Keep the updated profilePic
-            // imageFilename: newProfileData?.imageFilename || null,  // Keep the updated profilePic
-            username: newProfileData?.username || "",  // Ensure name is always a string
-            email: newProfileData?.email || "",  // Ensure email is always a string
-            university: newProfileData?.university || "",  // Default to empty string
-            degree: newProfileData?.degree || "",  // Default to empty string
-            location: newProfileData?.location || "",  // Default to empty string
-            overallRating: newProfileData?.overallRating || 0,  // Default to 0
-            joinDate: newProfileData?.joinDate || "",  // Default to empty string
-            lastLoggedIn: newProfileData?.lastLoggedIn || "",  // Default to empty string
-            totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
-            totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
-        };
-        
-        // let profilePicUrl = profilePhotoSource;
-
-        console.log("submitting other data (not images):")
-        // Update Firestore document with new profile data
-        const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
-        await setDoc(userDocRef, updatedProfileData, { merge: true });
-
-        // if a new profile picture file is uploaded, then upload it to Cloud Storage
-        if (profilePhotoFile) {
-            console.log("storing new profile picture")
-            // const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
-            // await uploadBytes(imageRef, profilePhotoFile);
-            // profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
-            await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
-        }
-
-        // Set the old profile data to the new one after successful submission
-        setOldProfileData(updatedProfileData);
-    
-        alert('Profile updated successfully!');
+      } catch (error) {
+        console.error("Error while uploading image: ", error)
+      }
     }
+    
+    const updatedProfileData: ProfileType = {
+      ...newProfileData,
+      // image url and filename is updated by the 'uploadImage' function
+      // imageUrl: profilePicUrl || newProfileData?.imageUrl || null,  // Keep the updated profilePic
+      // imageFilename: newProfileData?.imageFilename || null,  // Keep the updated profilePic
+      username: newProfileData?.username || "",  // Ensure name is always a string
+      email: newProfileData?.email || "",  // Ensure email is always a string
+      university: newProfileData?.university || "",  // Default to empty string
+      degree: newProfileData?.degree || "",  // Default to empty string
+      location: newProfileData?.location || "",  // Default to empty string
+      overallRating: newProfileData?.overallRating || 0,  // Default to 0
+      joinDate: newProfileData?.joinDate || "",  // Default to empty string
+      lastLoggedIn: newProfileData?.lastLoggedIn || "",  // Default to empty string
+      totalDonations: newProfileData?.totalDonations || 0,  // Default to 0
+      totalRatingsReceived: newProfileData?.totalRatingsReceived || 0,  // Default to 0
+    };
+      
+    // let profilePicUrl = profilePhotoSource;
+
+    console.log("submitting other data (not images):")
+    // Update Firestore document with new profile data
+    const userDocRef = doc(db, 'users', auth.currentUser?.uid as string);
+    await setDoc(userDocRef, updatedProfileData, { merge: true });
+
+    // if a new profile picture file is uploaded, then upload it to Cloud Storage
+    if (profilePhotoFile) {
+        console.log("storing new profile picture")
+        // const imageRef = ref(storage, `profilePictures/${auth.currentUser?.uid}-${Date.now()}`);
+        // await uploadBytes(imageRef, profilePhotoFile);
+        // profilePicUrl = await getDownloadURL(imageRef); // Get the URL of the uploaded image
+        await uploadImage(fb_location.users, auth.currentUser!.uid, profilePhotoFile);
+    }
+
+    // Set the old profile data to the new one after successful submission
+    setOldProfileData(updatedProfileData);
+
+    alert('Profile updated successfully!');
 
     console.log("Submitting data: ", updatedProfileData);
 
