@@ -136,6 +136,7 @@ const CreateListing: React.FC = () => {
         {/* content on right panel */}
         <div className={styles.content}>
           <h1>Create listing</h1>
+          <br />
           <form onSubmit={handleSubmit}>
             <label htmlFor="title">Textbook title:</label>
             <br />
