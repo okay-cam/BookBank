@@ -97,6 +97,13 @@ const EditAccount = () => {
       } catch (error) {
         console.error("Error while uploading image: ", error)
       }
+
+      try{
+        await deleteImage(oldImageUrl as string);
+        console.log("Successfully deleted image: ", oldImageUrl);
+      } catch (error){
+          console.log("Unable to delete image: ", error);
+      }
     }
     
     const updatedProfileData: ProfileType = {
