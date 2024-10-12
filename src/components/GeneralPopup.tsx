@@ -18,11 +18,6 @@ IMPORT GENERAL POPUP
 MAKE SURE MODALID IS UNIQUE
 */
 const GeneralPopup: React.FC<ModalDetails> = ({ header, message, modalId }) => {
-  useEffect(() => {
-    // This will only run when the modal is initialised
-    console.log("General popup initialized with id: " + modalId);
-  }, [modalId]);
-
   return (
     <div
       className="modal fade"

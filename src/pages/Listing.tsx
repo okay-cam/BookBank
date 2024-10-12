@@ -3,10 +3,7 @@ import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import {
-  getListingById,
-  getProfileData,
-} from "../backend/readData";
+import { getListingById, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
@@ -19,7 +16,12 @@ import { showModal } from "../backend/modal";
 import ImageModal from "../components/ImageModal";
 import { listingData } from "../config/config";
 import GeneralPopup from "../components/GeneralPopup";
-import { isPinned, togglePinListing } from "../backend/pinning";
+import {
+  hasEnquired,
+  isPinned,
+  setEnquiredArray,
+  togglePinListing,
+} from "../backend/readableFunctions";
 import { toggleArray, writeToFirestore } from "../backend/writeData";
 
 const Listing: React.FC = () => {
@@ -31,14 +33,21 @@ const Listing: React.FC = () => {
   const [enquired, setEnquired] = useState<boolean>(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [originalListing, setOriginalListing] = useState<listingData | null>(null);
-  const [charCount, setCharCount] = useState({ title: 0, authors: 0, description: 0, courseCode: 0 });
+  const [originalListing, setOriginalListing] = useState<listingData | null>(
+    null
+  );
+  const [charCount, setCharCount] = useState({
+    title: 0,
+    authors: 0,
+    description: 0,
+    courseCode: 0,
+  });
 
   const maxLengths = {
     title: 100,
     authors: 100,
     description: 400,
-    courseCode: 30
+    courseCode: 30,
   };
 
   // modal IDs
@@ -49,8 +58,16 @@ const Listing: React.FC = () => {
     setIsImageModalOpen(true);
   };
 
-  // instant update for when a user enquires a listing
-  function setEnquiredVariables() {
+  // update pinned and enquired to true for when a user enquires a listing
+  async function setEnquiredVariables() {
+    const listingID = listing!.listingID!;
+    const pinnedStatus = await isPinned(listingID);
+    if (!pinnedStatus) {
+      togglePinListing(listingID);
+    }
+    setEnquiredArray(listingID);
+
+    // set local useStates
     setEnquired(true); // disable the button so they can't enquire several times
     setPinned(true); // automatically pin the listing for quick reference
   }
@@ -72,9 +89,8 @@ const Listing: React.FC = () => {
             title: foundListing.title?.length || 0,
             authors: foundListing.authors?.length || 0,
             description: foundListing.description?.length || 0,
-            courseCode: foundListing.courseCode?.length || 0
+            courseCode: foundListing.courseCode?.length || 0,
           });
-
         } else {
           console.log("listing not found");
         }
@@ -99,30 +115,27 @@ const Listing: React.FC = () => {
     const fetchPinnedStatus = async () => {
       if (listing?.listingID) {
         const status = await isPinned(listing.listingID);
-        console.log("status: ", status);
+        console.log("pinned status is: ", status);
         setPinned(status);
       }
     };
 
     const fetchEnquiredStatus = async () => {
       if (listing?.listingID) {
-        const status = await checkArray(
-          fb_location.listings, // name of the collection
-          listing.listingID, // listing id
-          listings_field.enquired, // field
-          auth.currentUser!.uid // id of the user that enquired
-        );
+        const status = await hasEnquired(listing.listingID);
+        console.log("enquired status is: " + status);
         setEnquired(status);
       }
     };
-
     if (listing) {
       fetchPinnedStatus();
       fetchEnquiredStatus();
     }
-  }, []);
+  }, [listing]);
 
-  const handleEdit = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleEdit = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
 
     // Update character count
@@ -134,7 +147,11 @@ const Listing: React.FC = () => {
         [name]: value,
       }));
     } else {
-      console.error(`The ${name} exceeds the maximum character limit of ${maxLengths[name as keyof typeof maxLengths]}.`);
+      console.error(
+        `The ${name} exceeds the maximum character limit of ${
+          maxLengths[name as keyof typeof maxLengths]
+        }.`
+      );
     }
   };
 
@@ -150,7 +167,7 @@ const Listing: React.FC = () => {
   const isListingOwner = listing ? checkListingOwner(listing) : false;
   const handlePinToggle = async () => {
     if (listing?.listingID) {
-      await togglePinListing(listing);
+      await togglePinListing(listing.listingID);
       const status = await isPinned(listing.listingID);
       console.log("status: ", status);
       setPinned(status);
@@ -160,7 +177,11 @@ const Listing: React.FC = () => {
   const handleUpdateListing = async () => {
     if (listing) {
       try {
-        await writeToFirestore(fb_location.listings, listing, listing.listingID || "");
+        await writeToFirestore(
+          fb_location.listings,
+          listing,
+          listing.listingID || ""
+        );
       } catch (error) {
         console.error("Unable to update listing: ", error);
       }
@@ -171,7 +192,7 @@ const Listing: React.FC = () => {
   const handleEditMode = () => {
     setOriginalListing(listing);
     setIsEditMode(true);
-  }
+  };
 
   const handleCancelEdit = () => {
     setListing(originalListing);
@@ -229,16 +250,28 @@ const Listing: React.FC = () => {
           isListingOwner ? (
             <div className={styles.editSection}>
               {!isEditMode && (
-                <button type="button" onClick={handleEditMode} className={styles.editButton}>
+                <button
+                  type="button"
+                  onClick={handleEditMode}
+                  className={styles.editButton}
+                >
                   Edit Listing
                 </button>
               )}
               {isEditMode && (
                 <>
-                  <button type="button" onClick={handleUpdateListing} className={styles.editButton}>
+                  <button
+                    type="button"
+                    onClick={handleUpdateListing}
+                    className={styles.editButton}
+                  >
                     Save Changes
                   </button>
-                  <button type="button" onClick={handleCancelEdit} className={styles.editButton}>
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className={styles.editButton}
+                  >
                     Cancel
                   </button>
                 </>
@@ -248,7 +281,9 @@ const Listing: React.FC = () => {
                 className="danger"
                 data-bs-toggle="modal"
                 data-bs-target={`#${removeModalID}`}
-                onClick={() => console.log("Delete listing popup ID: ", removeModalID)}
+                onClick={() =>
+                  console.log("Delete listing popup ID: ", removeModalID)
+                }
               >
                 Remove listing
               </button>
@@ -291,10 +326,12 @@ const Listing: React.FC = () => {
               placeholder="Title"
               required
             />
-            <small>{charCount.title}/{maxLengths.title}</small>
+            <small>
+              {charCount.title}/{maxLengths.title}
+            </small>
             <br />
             <br />
-            
+
             <label>Authors:</label>
             <input
               type="text"
@@ -305,7 +342,9 @@ const Listing: React.FC = () => {
               placeholder="Authors"
               required
             />
-            <small>{charCount.authors}/{maxLengths.authors}</small>
+            <small>
+              {charCount.authors}/{maxLengths.authors}
+            </small>
             <br />
             <br />
 
@@ -319,7 +358,9 @@ const Listing: React.FC = () => {
               placeholder="Course Code"
               required
             />
-            <small>{charCount.courseCode}/{maxLengths.courseCode}</small>
+            <small>
+              {charCount.courseCode}/{maxLengths.courseCode}
+            </small>
             <br />
             <br />
 
@@ -334,13 +375,20 @@ const Listing: React.FC = () => {
               rows={3}
               required
             />
-            <small>{charCount.description}/{maxLengths.description}</small>
+            <small>
+              {charCount.description}/{maxLengths.description}
+            </small>
           </>
         ) : (
           <>
             <h1>{listing!.title}</h1>
             <label>{listing!.authors}</label>
-            <h3>{listing!.courseCode}<WishlistButton className={styles.wishlistButton} courseCode={listing!.courseCode} /></h3>
+            <br />
+            <h3>{listing!.courseCode}</h3>
+            <WishlistButton
+              className={styles.wishlistButton}
+              courseCode={listing!.courseCode}
+            />
             <p>{listing!.description}</p>
 
             <h1>Donor information</h1>
@@ -350,14 +398,15 @@ const Listing: React.FC = () => {
 
             {/* only report other people's listings */}
             {!isListingOwner && (
-              <Link to={`/report/listing/${listing!.listingID}`} className="no-underline">
+              <Link
+                to={`/report/listing/${listing!.listingID}`}
+                className="no-underline"
+              >
                 <button>🚩 Report this listing</button>
               </Link>
             )}
           </>
         )}
-        
-
       </div>
     </main>
   );

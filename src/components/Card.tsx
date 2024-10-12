@@ -5,7 +5,11 @@ import defaultImagePath from "../assets/default-image-path.jpg";
 // import EnquiryPopup from "./EnquiryPopup";
 // import DeleteListingPopup from "./DeleteListingPopup";
 import { checkArray, checkListingOwner } from "../backend/readData";
-import { togglePinListing, isPinned } from "../backend/pinning";
+import {
+  togglePinListing,
+  isPinned,
+  hasEnquired,
+} from "../backend/readableFunctions";
 import { auth } from "../config/firebase";
 import { fb_location, listings_field } from "../config/config";
 import { listingData } from "../config/config";
@@ -32,12 +36,7 @@ const Card = ({ listing }: CardData) => {
 
     const fetchEnquiredStatus = async () => {
       if (listing?.listingID) {
-        const status = await checkArray(
-          fb_location.listings, // name of the collection
-          listing.listingID, // listing id
-          listings_field.enquired, // field
-          auth.currentUser!.uid // id of the user that enquired
-        );
+        const status = await hasEnquired(listing.listingID);
         setEnquired(status);
       }
     };
@@ -64,7 +63,7 @@ const Card = ({ listing }: CardData) => {
             type="button"
             className={`${styles.pinButton} ${pinned ? styles.pinActive : ""}`}
             title="Pin this listing"
-            onClick={() => togglePinListing(listing)}
+            onClick={() => togglePinListing(listing.listingID!)}
           >
             📌
           </button>
@@ -75,10 +74,7 @@ const Card = ({ listing }: CardData) => {
           {/* BUTTON */}
           {/* Popup functionality is disabled and currently the buttons will simply navigate to the card */}
           {isListingOwner ? (
-            <button
-              type="button"
-              className="danger"
-            >
+            <button type="button" className="danger">
               Remove
             </button>
           ) : enquired ? (
@@ -86,10 +82,7 @@ const Card = ({ listing }: CardData) => {
               Enquired
             </button>
           ) : (
-            <button
-              type="button"
-              className="call-to-action"
-            >
+            <button type="button" className="call-to-action">
               Request
             </button>
           )}
