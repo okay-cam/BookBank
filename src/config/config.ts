@@ -43,7 +43,7 @@ export interface listingData{
     userID: string; 
     date: Timestamp;
     // optional
-    listingID?: string | null;
+    listingID?: string;
     imageUrl?: string | null ; 
     enquired?: string[] | null; 
     pinned?: string[] | null;

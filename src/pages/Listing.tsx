@@ -161,7 +161,7 @@ const Listing: React.FC = () => {
   const handleUpdateListing = async () => {
     if (listing) {
       try {
-        await writeToFirestore(fb_location.listings, listing, listing.id);
+        await writeToFirestore(fb_location.listings, listing, listing.listingID);
       } catch (error) {
         console.error("Unable to update listing: ", error);
       }
