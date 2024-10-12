@@ -12,7 +12,7 @@ export const deleteImage = async (imageUrl: string) => {
     console.log('Image deleted successfully');
   })
   .catch((error) => {
-    console.error('Error deleting image:', error);
+    throw Error(`Error deleting image: ${error}`);
   });
 
 };
@@ -37,7 +37,7 @@ export const deleteListing = async (modalId: string) => {
       await deleteDoc(docRef);
       console.log("Document successfully deleted!");
   } catch (error) {
-    console.error("Error deleting document: ", error);
+    throw Error(`Error deleting document: ${error}`);
   }
 };
 

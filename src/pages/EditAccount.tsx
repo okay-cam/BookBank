@@ -91,18 +91,13 @@ const EditAccount = () => {
           profilePhotoFile
         );
 
-        if (!profilePicUrl) {
+        if (profilePicUrl) {
+          await deleteImage(oldImageUrl as string);
+        } else {
           throw new Error("No Image Url");
         }
       } catch (error) {
         console.error("Error while uploading image: ", error)
-      }
-
-      try{
-        await deleteImage(oldImageUrl as string);
-        console.log("Successfully deleted image: ", oldImageUrl);
-      } catch (error){
-          console.log("Unable to delete image: ", error);
       }
     }
     
@@ -142,21 +137,22 @@ const EditAccount = () => {
     // Set the old profile data to the new one after successful submission
     setOldProfileData(updatedProfileData);
 
-    alert('Profile updated successfully!');
+    showModal(confirmModalID);
+    // alert('Profile updated successfully!');
 
-    console.log("Submitting data: ", updatedProfileData);
+    // console.log("Submitting data: ", updatedProfileData);
 
-    // Update Firestore document with new profile data
-    await writeToFirestore(
-      fb_location.users,
-      updatedProfileData,
-      auth.currentUser!.uid
-    );
+    // // Update Firestore document with new profile data
+    // await writeToFirestore(
+    //   fb_location.users,
+    //   updatedProfileData,
+    //   auth.currentUser!.uid
+    // );
 
     // Set the old profile data to the new one after successful submission
     setOldProfileData(updatedProfileData);
     setIsSubmitting(false);
-    showModal(confirmModalID);
+    
   };
 
   // !! TODO
