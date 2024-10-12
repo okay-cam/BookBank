@@ -248,8 +248,8 @@ const Listing: React.FC = () => {
                 type="button"
                 className="danger"
                 data-bs-toggle="modal"
-                data-bs-target={`#${removeID}`}
-                onClick={() => console.log("Delete listing popup ID: ", removeID)}
+                data-bs-target={`#${removeModalID}`}
+                onClick={() => console.log("Delete listing popup ID: ", removeModalID)}
               >
                 Remove listing
               </button>
