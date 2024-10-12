@@ -43,6 +43,7 @@ export interface listingData{
     userID: string; 
     date: Timestamp;
     // optional
+    comments?: Map<string, string> | null;
     listingID?: string | null;
     imageUrl?: string | null ; 
     enquired?: string[] | null; 
@@ -106,3 +107,18 @@ export class reports_field {
 }
 
 export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces type.ts
+
+// field names for comments
+export class comments_fields{
+    static senderUID = "senderUID";
+    static profilePicUrl = "profilePicUrl";
+    static message: "message";
+    static date: "date";
+}
+
+export interface commentsData{
+    senderUID: string;
+    profilePicUrl: string;
+    message: string;
+    date: Timestamp;
+}
