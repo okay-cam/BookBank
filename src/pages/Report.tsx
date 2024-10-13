@@ -429,9 +429,9 @@ useEffect(() => {
 
           {(type === 'user') && (report.reportedProfileInfo?.imageUrl) && (
             <div>
-              {report.reportedListingInfo!.imageUrl && (
+              {report.reportedProfileInfo!.imageUrl && (
                 <img
-                src={report.reportedListingInfo!.imageUrl}
+                src={report.reportedProfileInfo!.imageUrl}
                 alt="User profile image"
                 style={{
                   maxWidth: "100%",
