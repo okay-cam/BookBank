@@ -1,44 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
-import { Listing } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
 // import EnquiryPopup from "./EnquiryPopup";
 // import DeleteListingPopup from "./DeleteListingPopup";
 import { checkArray, checkListingOwner } from "../backend/readData";
-import { togglePinListing, isPinned } from "../backend/pinning";
+import {
+  togglePinListing,
+  isPinned,
+  hasEnquired,
+} from "../backend/readableFunctions";
 import { auth } from "../config/firebase";
 import { fb_location, listings_field } from "../config/config";
+import { listingData } from "../config/config";
 
 interface CardData {
-  listing: Listing;
+  listing: listingData;
 }
 
 // For displaying each listing as a 'Card'
 
 const Card = ({ listing }: CardData) => {
   const isListingOwner = checkListingOwner(listing);
-  const removeID = `${listing.modalId}-remove`;
   const [pinned, setPinned] = useState<boolean>(false);
   const [enquired, setEnquired] = useState<boolean>(false);
 
   // check if user has pinned or enquired
   useEffect(() => {
     const fetchPinnedStatus = async () => {
-      if (listing?.id) {
-        const status = await isPinned(listing.id);
+      if (listing?.listingID) {
+        const status = await isPinned(listing.listingID);
         setPinned(status);
       }
     };
 
     const fetchEnquiredStatus = async () => {
-      if (listing?.id) {
-        const status = await checkArray(
-          fb_location.listings, // name of the collection
-          listings_field.listingID, // listing id
-          listings_field.enquired, // field
-          auth.currentUser!.uid // id of the user that enquired
-        );
+      if (listing?.listingID) {
+        const status = await hasEnquired(listing.listingID);
         setEnquired(status);
       }
     };
@@ -51,13 +49,8 @@ const Card = ({ listing }: CardData) => {
 
   return (
     <>
-      {/* <EnquiryPopup title={listing.title} modalId={listing.modalId} />
-      <DeleteListingPopup
-        title={listing.title}
-        modalId={removeID}
-      /> */}
       <Link
-        to={`/listing/${listing.id}`}
+        to={`/listing/${listing.listingID}`}
         className={`card no-underline ${styles.card}`}
       >
         <div className={styles.imageContainer}>
@@ -70,7 +63,7 @@ const Card = ({ listing }: CardData) => {
             type="button"
             className={`${styles.pinButton} ${pinned ? styles.pinActive : ""}`}
             title="Pin this listing"
-            onClick={() => togglePinListing(listing)}
+            onClick={() => togglePinListing(listing.listingID!)}
           >
             📌
           </button>
@@ -81,13 +74,7 @@ const Card = ({ listing }: CardData) => {
           {/* BUTTON */}
           {/* Popup functionality is disabled and currently the buttons will simply navigate to the card */}
           {isListingOwner ? (
-            <button
-              type="button"
-              className="danger"
-              // data-bs-toggle="modal"
-              // data-bs-target={`#${removeID}`}
-              // onClick={() =>   console.log("Delete listing popup ID: ", removeID)}
-            >
+            <button type="button" className="danger">
               Remove
             </button>
           ) : enquired ? (
@@ -95,12 +82,7 @@ const Card = ({ listing }: CardData) => {
               Enquired
             </button>
           ) : (
-            <button
-              type="button"
-              className="call-to-action"
-              data-bs-toggle="modal"
-              data-bs-target={`#${listing!.modalId}`}
-            >
+            <button type="button" className="call-to-action">
               Request
             </button>
           )}

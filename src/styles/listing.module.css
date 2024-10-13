@@ -1,3 +1,4 @@
+/* grid layout */
 .gridContainer {
     display: grid;
     grid-template-columns: 2fr 3fr;
@@ -20,6 +21,11 @@
     background-color: #efefefff;
     padding: 20px 40px;
     text-align: start;
+}
+
+/* general display */
+h3 {
+    display: inline-block;
 }
 
 /* card styles */
@@ -109,10 +115,12 @@
     color: #737373
 }
 
+/*  wishlist button */
 .wishlistButton,
 .wishlistButton:hover {
     margin-left: 10px;
     font-size: 12px;
+    display: inline-block;
 }
 
 .inputField {

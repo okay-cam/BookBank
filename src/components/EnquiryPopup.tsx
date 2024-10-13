@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sendEmail, EmailData } from "../backend/emailService";
 import { appendArray } from "../backend/writeData";
 import { auth } from "../config/firebase";
-import { Listing } from "../backend/types";
-import { fb_location, listings_field } from "../config/config";
+import { fb_location, listings_field, listingData } from "../config/config";
+import { hideModal } from "../backend/modal";
 
 interface ModalDetails {
-  listing: Listing;
+  listing: listingData;
   email: string;
   setEnquiredVariables: Function; // function in listing.tsx to update enquired and pinned states to true
+  enquiryModalID: string;
 }
 
 const EnquiryPopup: React.FC<ModalDetails> = ({
   listing,
   email,
   setEnquiredVariables,
+  enquiryModalID,
 }) => {
   console.log("Email in enquiry popup is ", email);
   const [message, setMessage] = useState(
@@ -107,20 +109,35 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
     // add user id to the enquired field
     await appendArray(
       fb_location.listings, // name of the collection
-      listings_field.listingID, // listing id
+      listing.listingID || "", // listing id
       listings_field.enquired, // field
       auth.currentUser!.uid // id of the user that enquired
     );
     setEnquiredVariables(); // set listing as enquired and pinned
   };
 
+  // code to toggle static effect on modal but doesnt work
+  // useEffect(() => {
+  //   const modalElement = document.getElementById(enquiryModalID);
+  //   const bootstrapModal = new window.bootstrap.Modal(modalElement);
+
+  //   if (isSubmitting) {
+  //     bootstrapModal._config.backdrop = "static"; // Make backdrop static during submission
+  //     bootstrapModal._config.keyboard = false; // Disable keyboard dismiss
+  //   } else {
+  //     bootstrapModal._config.backdrop = true; // Restore default backdrop
+  //     bootstrapModal._config.keyboard = true; // Restore keyboard dismiss
+  //   }
+  // }, [isSubmitting, enquiryModalID]);
+
   return (
     <div
       className="modal fade"
-      id={listing.modalId} // Use the unique modal ID
+      id={enquiryModalID} // Use the unique modal ID
       tabIndex={-1}
-      aria-labelledby={`${listing.modalId}Label`}
+      aria-labelledby={`${enquiryModalID}Label`}
       aria-hidden="true"
+      {...(isSubmitting && { "data-bs-backdrop": "static" })} // prevent clicking outside when submitting
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
@@ -131,7 +148,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
             <button
               type="button"
               className="btn-close"
-              data-bs-dismiss="modal"
+              // data-bs-dismiss="modal"
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
               aria-label="Close"
             ></button>
           </div>
@@ -152,7 +170,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
             <button
               type="button"
               className="btn btn-secondary"
-              data-bs-dismiss="modal"
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               Cancel
             </button>
@@ -160,8 +178,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
               type="button"
               className="call-to-action"
               onClick={handleSubmit}
-              data-bs-dismiss="modal"
               disabled={isSubmitting}
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               {isSubmitting ? "Sending..." : "Send"}
             </button>
