@@ -14,15 +14,14 @@ const Home = () => {
       <div className={styles.listingsSection}>
         <h1>Current listings</h1>
         <br />
-        {
-          loading ? (
-              <div className="spinner-border text-dark" role="status">
-                <span className="sr-only"></span>
-              </div>
-            ) : (
-              // Pass the listings from state
-              <CardContainer listings={listings} />
-          )}
+        {loading ? (
+          <div className="spinner-border text-dark" role="status">
+            <span className="sr-only"></span>
+          </div>
+        ) : (
+          // Pass the listings from state
+          <CardContainer listings={listings} collectionName="home" />
+        )}
       </div>
     </main>
   );

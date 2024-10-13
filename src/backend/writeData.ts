@@ -3,7 +3,8 @@ import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { checkArray } from "./readData";
 import { removeFromArray } from "./deleteData";
-import { fb_location, users_field } from "../config/config";
+import { fb_location, listings_field, users_field } from "../config/config";
+import { showModal } from "./modal";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
@@ -13,7 +14,8 @@ export async function appendArray(
   value: string
 ): Promise<void> {
   const docRef = doc(db, collection, docId);
-  
+  console.log("Adding "+value+" to "+fieldName+" in "+collection+" for id "+docId);
+
   try {
     await updateDoc(docRef, {
       [fieldName]: arrayUnion(value)
@@ -110,11 +112,22 @@ export async function toggleArray(
       // If value exists in the array, remove it
       console.log(`Value exists in ${fieldName}, removing...`);
       await removeFromArray(collection, docId, fieldName, value);
+      if (fieldName == fb_location.wishlist) {
+        showModal("unwishlist-success");
+      } else if (fieldName == listings_field.pinned) {
+        showModal("unpin-success");
+      }
     } else {
       // If value does not exist, append it
       console.log(`Value does not exist in ${fieldName}, appending...`);
       await appendArray(collection, docId, fieldName, value);
+      if (fieldName == fb_location.wishlist) {
+        showModal("wishlist-success");
+      } else if (fieldName == listings_field.pinned) {
+        showModal("pin-success");
+      }
     }
+
   } catch (error) {
     console.error(`Error toggling array value: ${error}`);
   }

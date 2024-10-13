@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultImage from "../assets/default-image-path.jpg";
-import { listingData as ListingType, ProfileData as ProfileType, listings_field } from "../config/config";
-import { getProfileData, getListings, checkProfileOwner } from "../backend/readData";
+import {
+  getProfileData,
+  getListings,
+  checkProfileOwner,
+} from "../backend/readData";
+import {
+  listingData as ListingType,
+  ProfileData as ProfileType,
+  listings_field,
+} from "../config/config";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
 import ImageModal from "../components/ImageModal";
@@ -101,7 +109,10 @@ const Profile: React.FC = () => {
         {profileData && <h1>{profileData.username}'s Active Listings</h1>}
         <div className={styles.cardContainer}>
           {activeListings.length > 0 ? (
-            <PinsCardContainer listings={activeListings} />
+            <PinsCardContainer
+              listings={activeListings}
+              collectionName="active-listings"
+            />
           ) : (
             <p>No active listings to show.</p>
           )}
@@ -113,13 +124,11 @@ const Profile: React.FC = () => {
         <br />
 
         {/* only report other people's profiles */}
-        { !checkProfileOwner(userId) && (
+        {!checkProfileOwner(userId) && (
           <Link to={`/report/user/${userId}`} className="no-underline">
             <button>🚩 Report this user</button>
           </Link>
         )}
-        
-
       </div>
     </main>
   );
