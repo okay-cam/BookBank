@@ -16,12 +16,15 @@ describe("Login", () => {
   });
 
   // test rendering
-  it("should render the title and buttons", () => {
+  it("should render the title, text fields and login button", () => {
     const heading = screen.getByRole("heading", { name: /bookbank/i }); // a regular expression, i means case insensitive
+    const emailInput = screen.getByRole("textbox", { name: /email/i });
+    const passwordInput = screen.getByLabelText(/password/i);
     const button = screen.getByRole("button", { name: /sign in/i });
 
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent(/bookbank/i);
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
     expect(button).toBeInTheDocument();
     expect(button).toBeEnabled();
     screen.debug(); // render the HTML code in the testing interface
