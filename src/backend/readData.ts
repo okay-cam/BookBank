@@ -256,3 +256,27 @@ export async function getImageUrl(collection: string, docId: string): Promise<st
     return null; 
   }
 }
+
+export async function emailPinnedUsers(listingId: string) {
+  try {
+    const docRef = doc(db, fb_location.listings, listingId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      const pinnedUsers = data[listings_field.pinned];
+      if (Array.isArray(pinnedUsers)) {
+        for (let user of pinnedUsers) {
+          console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
+        }
+      } else {
+        console.log(`Document ${listingId} does not contain a valid array field "${listings_field.pinned}"`);
+      }
+    } else {
+      console.log(`Document with ID ${listingId} does not exist.`);
+    }
+  } catch (error) {
+    console.error("Error getting pinned users:", error);
+  }
+}

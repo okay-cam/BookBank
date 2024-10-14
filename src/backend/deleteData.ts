@@ -2,7 +2,7 @@ import { doc, deleteDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
 import { fb_location } from "../config/config";
 import { ref, deleteObject } from "firebase/storage";
-import { getImageUrl } from "../backend/readData";
+import { getImageUrl, emailPinnedUsers } from "../backend/readData";
 
 export const deleteImage = async (imageUrl: string) => {
   const imageRef = ref(storage, imageUrl);
@@ -23,6 +23,9 @@ export const deleteListing = async (modalId: string) => {
   const separatedId = modalId.split("-"); // Split the string by hyphens
   const listingId = separatedId[0]; // Extract the first part
 
+  // email pinned users FUNCTION NEEDS TO BE UPDATED
+  await emailPinnedUsers(listingId);
+
   console.log("Document starting deletion", listingId);
 
   try {
@@ -39,6 +42,9 @@ export const deleteListing = async (modalId: string) => {
   } catch (error) {
     throw Error(`Error deleting document: ${error}`);
   }
+
+  
+  
 };
 
 export async function removeFromArray(
@@ -58,3 +64,4 @@ export async function removeFromArray(
     console.error(`Error removing value from field: ${fieldName}`, error);
   }
 }
+
