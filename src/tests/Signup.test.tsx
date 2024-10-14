@@ -1,21 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
-import Navbar from "../../components/Navbar";
+import Signup from "../pages/Signup";
 
 describe("Navbar", () => {
   beforeEach(() => {
     render(
       <BrowserRouter>
-        <Navbar />
+        <Signup />
       </BrowserRouter>
     );
-    
+
     // Choose 3 minimum:
     // TODO: Test that the elements render correctly
-    // TODO: Test that the dropdown pops up when the pfp is clicked
-    // TODO: Test that the searchbar updates when typed in
-    // TODO: Test that elements aren't visible when user isn't sign in
-
+    // TODO: Test that the fields update on user input
+    // TODO: Test that an error message shows up when passwords don't match
   });
 });

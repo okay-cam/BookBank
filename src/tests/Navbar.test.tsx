@@ -1,20 +1,20 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
-import CreateListing from "../../pages/CreateListing";
+import Navbar from "../components/Navbar";
 
 describe("Navbar", () => {
   beforeEach(() => {
     render(
       <BrowserRouter>
-        <CreateListing />
+        <Navbar />
       </BrowserRouter>
     );
 
     // Choose 3 minimum:
     // TODO: Test that the elements render correctly
-    // TODO: Test that the character limit works
-    // TODO: Test that the create button is disabled when clicked
-    // TODO: Test that an error message shows up when no image is provided
+    // TODO: Test that the dropdown pops up when the pfp is clicked
+    // TODO: Test that the searchbar updates when typed in
+    // TODO: Test that elements aren't visible when user isn't sign in
   });
 });
