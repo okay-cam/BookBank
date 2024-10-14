@@ -24,13 +24,13 @@ export class listings_field {
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
-    static imageUrl = IMAGE_URL;
-    static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
     static date = "date";
     // optional
     static listingID = "listingID";
+    static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static enquired = "enquired";
     static pinned = "pinned";
 }
@@ -44,7 +44,8 @@ export interface listingData{
     date: Timestamp;
     // optional
     listingID?: string | null;
-    imageUrl?: string | null ; 
+    imageUrl?: string | null ;
+    imageFilename?: string | null; 
     enquired?: string[] | null; 
     pinned?: string[] | null;
 }
