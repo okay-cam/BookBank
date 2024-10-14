@@ -90,13 +90,14 @@ export interface ProfileData{
 }
 // export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
 
-export class wishlists_field {
+// Likely merge artifact --- commented just in case
+/* export class wishlists_field {
     static users = "users";
 }
 
 export interface wishlistData {
     users: string[];
-}
+} */
 
 // field names for users documents
 export class reports_field {
