@@ -3,6 +3,7 @@ import { auth, db } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc, DocumentData, orderBy } from "firebase/firestore";
 import {  } from "../config/firebase";
 import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
+import { EmailData, sendEmail } from "./emailService";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
@@ -276,9 +277,19 @@ export async function emailPinnedUsers(listingId: string) {
     }
 
     // !! instead of a for loop, just send 1 email with many recipients if possible?
-    for (const user of pinnedUsers) {
-      console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
-    }
+    // for (const user of pinnedUsers) {
+    //   console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
+    // }
+
+    const emailData: EmailData = {
+      email: `${import.meta.env.VITE_EMAIL_MAIN} <BookBank-Users>`, // this email must have at least one recipient
+      subject: `Pinned listing is removed`,
+      message: `placeholder text`,
+      bcc: 'email1@test.au, placeholder@placeholder.pl'
+    };
+    
+    await sendEmail(emailData);
+
 
   } catch (error) {
     console.error("Error getting pinned users:", error);

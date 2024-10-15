@@ -6,53 +6,6 @@ export interface EmailData {
     bcc?: string;
 }
 
-
-// export const prepareSendingEmail = async (toEmail : string, subjectText : string, formattedMessage : string, bccString? : string) => {
-//     const emailData: EmailData = {
-//       email: toEmail, // send email to the testbook owner's email
-//       subject: subjectText,
-//       message: formattedMessage,
-//     };
-
-//     if (bccString) {
-//         emailData.bcc = bccString; // Assign bccString if it exists
-//     }  
-
-//     console.log("email data: ", emailData);
-
-//     try {
-//       await sendEmail(emailData);
-//       return true;
-//     } catch (error: any) {
-//     throw new Error(`Email failed: ${error.message}`);
-//       return false;
-//     }
-//   };
-
-// export const prepareSendingEmail = async (toEmail : string, subjectText : string, formattedMessage : string, bccString? : string) => {
-//     const emailData: EmailData = {
-//       email: toEmail, // send email to the testbook owner's email
-//       subject: subjectText,
-//       message: formattedMessage,
-//     };
-
-//     if (bccString) {
-//         emailData.bcc = bccString; // Assign bccString if it exists
-//     }  
-
-//     console.log("email data: ", emailData);
-
-//     try {
-//       await sendEmail(emailData);
-//       return true;
-//     } catch (error: any) {
-//     throw new Error(`Email failed: ${error.message}`);
-//       return false;
-//     }
-//   };
-
-  
-
 export const sendEmail = async (emailData: EmailData): Promise<string> => {
 
     // prevent emails if disabled in the .env
