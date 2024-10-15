@@ -66,7 +66,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
   const handleSendReceiptEmail = async () => {
     const requesterEmail = auth.currentUser!.email;
     if (!requesterEmail) {
-      console.error("Can't send receipt since requester email doesn't exist.");
+      console.error("Problem with email. Can't send receipt since requester email doesn't exist.");
       return false;
     }
 

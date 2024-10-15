@@ -237,7 +237,7 @@ useEffect(() => {
     console.log(report);
 
     // Function to copy image
-    // !! need to store image reference name in listing & profile?
+    // store image reference name in listing & profile
 
     // This should run for the profile picture and for the listing image
     async function copyImage(oldPath: string, newPath: string) {
@@ -311,32 +311,6 @@ useEffect(() => {
     setIsSubmitting(false);
   }
 
-  // const [report, setReport] = useState<GeneralReport>({
-  //   issue: '',
-  //   reportedProfileInfo: {
-  //     userID: '',
-  //     username: '',
-  //     email: '',
-  //     imageUrl: '',
-  //   },
-  //   submitterInfo: {
-  //     userID: '',
-  //     username: '',
-  //     email: '',
-  //   },
-  // });
-
-  // interface ReportedListingInfo {
-  //   title: string;
-  //   authors: string;
-  //   courseCode: string;
-  //   description: string;
-  //   imageUrl?: string;
-  // }
-
-  // Create a formatted HTML message for report
-  //!! doesnt contain profile picture <img src="${report.reportedProfileInfo.imageUrl}" />
-  //!! doesnt contain listing picture ... ${report.reportedListingInfo.imageUrl}
   const formattedEnquiryMessage = `
   <p><strong>Report Details</strong></p>
   
@@ -380,22 +354,23 @@ useEffect(() => {
 
   // Send email to the textbook donor
   const handleSendReportEmail = async (reportID : string | null) => {
+
+    // !! CHANGING THIS FOR TESTING
+
     const emailData: EmailData = {
       email: import.meta.env.VITE_EMAIL_MAIN, // send email to the bookbank gmail
       subject: `New Report Ticket: '${reportID}'`,
       message: formattedEnquiryMessage,
+      bcc: 'camoarrow4586@gmail.com, arrowninja4586@gmail.com'
     };
 
     console.log("report email data: ", emailData);
 
     try {
       const response = await sendEmail(emailData);
-      // setSuccessMessage(response); // Set success message
-      // setMessage(""); // Clear the message field on success
       console.log("Report email: ", response);
       return true;
     } catch (error: any) {
-      // setErrorMessage(error.message || "Failed to send email");
       console.log("Report email failed: ", error.message);
       return false;
     }
