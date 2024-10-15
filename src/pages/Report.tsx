@@ -407,7 +407,7 @@ useEffect(() => {
           <>
           {(type === 'listing')  && (
             <div>
-              <h1>Reported Listing Info</h1>
+              <h1>Reported Listing</h1>
               <p>{report.reportedListingInfo?.title}</p>
               {report.reportedListingInfo!.imageUrl && (
                 <img
@@ -424,14 +424,14 @@ useEffect(() => {
           )}
 
           <br />
-          <h1>Reported User Info</h1>
+          <h1>Reported User</h1>
           <p>Name: {report.reportedProfileInfo?.username}</p>
 
           {(type === 'user') && (report.reportedProfileInfo?.imageUrl) && (
             <div>
-              {report.reportedListingInfo!.imageUrl && (
+              {report.reportedProfileInfo!.imageUrl && (
                 <img
-                src={report.reportedListingInfo!.imageUrl}
+                src={report.reportedProfileInfo!.imageUrl}
                 alt="User profile image"
                 style={{
                   maxWidth: "100%",

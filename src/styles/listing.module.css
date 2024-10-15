@@ -152,7 +152,7 @@ h3 {
     transition: background-color 0.3s;
     display: block;
     font-weight: bold;
-    width: 45%;
+    width: 50%;
 }
 
 .editButton:hover {

@@ -278,7 +278,7 @@ const Listing: React.FC = () => {
               )}
               <button
                 type="button"
-                className="danger"
+                className="danger w-50"
                 data-bs-toggle="modal"
                 data-bs-target={`#${removeModalID}`}
                 onClick={() =>
@@ -290,13 +290,13 @@ const Listing: React.FC = () => {
             </div>
           ) : // check if user has enquired previously
           enquired ? (
-            <button type="button" className="call-to-action" disabled={true}>
+            <button type="button" className="call-to-action w-50" disabled={true}>
               Enquiry sent
             </button>
           ) : (
             <button
               type="button"
-              className="call-to-action"
+              className="call-to-action w-50"
               onClick={() => showModal(enquiryModalID)}
             >
               Request/Enquire
