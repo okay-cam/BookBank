@@ -268,18 +268,22 @@ export async function emailPinnedUsers(listingId: string) {
       return
     }
 
+    // get pinned user ids
     const data = docSnap.data();
     const pinnedUsers = data[listings_field.pinned];
-
+    
+    
+    // get emails from pinned users
     if (!Array.isArray(pinnedUsers)) {
       console.log(`Document ${listingId} does not contain a valid array field "${listings_field.pinned}"`)
       return
     }
+    
+    const emails = await getEmailsFromUserIDs(pinnedUsers);
+    console.log("Sending emails to", emails);
 
-    // !! instead of a for loop, just send 1 email with many recipients if possible?
-    // for (const user of pinnedUsers) {
-    //   console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
-    // }
+    
+    
 
     const emailData: EmailData = {
       email: `${import.meta.env.VITE_EMAIL_MAIN} <BookBank-Users>`, // this email must have at least one recipient
@@ -294,4 +298,26 @@ export async function emailPinnedUsers(listingId: string) {
   } catch (error) {
     console.error("Error getting pinned users:", error);
   }
+}
+
+async function getEmailsFromUserIDs(userIDs: string[]): Promise<(string | undefined)[]> {
+  const emailPromises = userIDs.map(async (userID) => {
+    const userDocRef = doc(db, fb_location.users, userID); 
+    try {
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data() as ProfileData; 
+        return userData.email; 
+      } else {
+        console.log(`No document found for userID: ${userID}`);
+        return undefined;
+      }
+    } catch (error) {
+      console.error(`Error fetching document for userID: ${userID}`, error);
+      return undefined;
+    }
+  });
+  const emails = await Promise.all(emailPromises);
+  return emails;
 }
