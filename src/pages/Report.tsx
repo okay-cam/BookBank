@@ -357,7 +357,12 @@ useEffect(() => {
   <p>User ID: ${report.reportedProfileInfo.userID}</p>
   <p>Username: ${report.reportedProfileInfo.username}</p>
   <p>Email: ${report.reportedProfileInfo.email}</p>
-  <p>Profile Picture: [insert later...] </p>
+  ${report.reportedProfileInfo.imageUrl &&
+    `
+    <p>Profile Picture:</p>
+    <img src=${report.reportedProfileInfo.imageUrl}> alt="Profile" />
+    `
+  }
 
   <br />
 
@@ -368,7 +373,8 @@ useEffect(() => {
     <p>Description: ${report.reportedListingInfo.description}</p>
     <p>Authors: ${report.reportedListingInfo.authors}</p>
     <p>Course Code: ${report.reportedListingInfo.courseCode}</p>
-    <p>Listing image: [insert later...]</p>
+    <p>Listing image:</p>
+    <img src=${report.reportedListingInfo.imageUrl}> alt="Listing" />
   `}
 `;
 

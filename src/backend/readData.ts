@@ -262,20 +262,24 @@ export async function emailPinnedUsers(listingId: string) {
     const docRef = doc(db, fb_location.listings, listingId);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-
-      const pinnedUsers = data[listings_field.pinned];
-      if (Array.isArray(pinnedUsers)) {
-        for (let user of pinnedUsers) {
-          console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
-        }
-      } else {
-        console.log(`Document ${listingId} does not contain a valid array field "${listings_field.pinned}"`);
-      }
-    } else {
+    if (!docSnap.exists()) {
       console.log(`Document with ID ${listingId} does not exist.`);
+      return
     }
+
+    const data = docSnap.data();
+    const pinnedUsers = data[listings_field.pinned];
+
+    if (!Array.isArray(pinnedUsers)) {
+      console.log(`Document ${listingId} does not contain a valid array field "${listings_field.pinned}"`)
+      return
+    }
+
+    // !! instead of a for loop, just send 1 email with many recipients if possible?
+    for (const user of pinnedUsers) {
+      console.log("EMAIL USER: ", user) // REPLACE ME WITH EMAIL FORMATTING
+    }
+
   } catch (error) {
     console.error("Error getting pinned users:", error);
   }
