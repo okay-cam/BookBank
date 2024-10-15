@@ -334,7 +334,7 @@ useEffect(() => {
   ${report.reportedProfileInfo.imageUrl &&
     `
     <p>Profile Picture:</p>
-    <img src=${report.reportedProfileInfo.imageUrl}> alt="Profile" />
+    <img src="${report.reportedProfileInfo.imageUrl}" alt="Profile" style="max-height: 200px; width: auto;" />
     `
   }
 
@@ -348,20 +348,17 @@ useEffect(() => {
     <p>Authors: ${report.reportedListingInfo.authors}</p>
     <p>Course Code: ${report.reportedListingInfo.courseCode}</p>
     <p>Listing image:</p>
-    <img src=${report.reportedListingInfo.imageUrl}> alt="Listing" />
+    <img src="${report.reportedListingInfo.imageUrl}" alt="Listing" style="max-height: 200px; width: auto;" />
   `}
 `;
 
   // Send email to the textbook donor
   const handleSendReportEmail = async (reportID : string | null) => {
 
-    // !! CHANGING THIS FOR TESTING
-
     const emailData: EmailData = {
       email: import.meta.env.VITE_EMAIL_MAIN, // send email to the bookbank gmail
       subject: `New Report Ticket: '${reportID}'`,
-      message: formattedEnquiryMessage,
-      bcc: 'camoarrow4586@gmail.com, arrowninja4586@gmail.com'
+      message: formattedEnquiryMessage
     };
 
     console.log("report email data: ", emailData);
