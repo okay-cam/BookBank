@@ -30,24 +30,25 @@ describe("Login", () => {
     screen.debug(); // render the HTML code in the testing interface
   });
 
-  it("should update the email input field value on change", async () => {
-    // Fetch the input field by its role (input with type="email")
+  it("should update the input field values on change", async () => {
+    // Fetch the input fields
     const emailInput = screen.getByRole("textbox", { name: /email/i });
+    const passwordInput = screen.getByLabelText(/password/i); // passwords cant be fetched by role
     const user = userEvent.setup();
 
     // Simulate a user typing into the input field
-    // userEvent.keyboard(emailInput, { target: { value: "test@example.com" } });
-    await user.click(emailInput);
-    await user.keyboard("test@email.com");
+    await user.type(emailInput, "test@example.com");
+    await user.type(passwordInput, "password");
 
     // Assert that the input field's value has been updated
-    expect(emailInput).toHaveValue("test@email.com");
+    expect(emailInput).toHaveValue("test@example.com");
+    expect(passwordInput).toHaveValue("password");
   });
 
   it("should disable the sign in button after form submission", async () => {
     // Get the input fields and the submit button
     const emailInput = screen.getByRole("textbox", { name: /email/i });
-    const passwordInput = screen.getByLabelText(/password/i); // You could also use the label for this
+    const passwordInput = screen.getByLabelText(/password/i);
     const signInButton = screen.getByRole("button", { name: /sign in/i });
 
     // Simulate user typing into input fields
@@ -61,4 +62,24 @@ describe("Login", () => {
     // Assert that the button is disabled after submission
     expect(signInButton).toBeDisabled();
   });
+
+  // it("should show an error message when incorrect login details are entered", async () => {
+  //   // Get the input fields and the submit button
+  //   const emailInput = screen.getByRole("textbox", { name: /email/i });
+  //   const passwordInput = screen.getByLabelText(/password/i); // You could also use the label for this
+  //   const signInButton = screen.getByRole("button", { name: /sign in/i });
+
+  //   // Simulate user typing into input fields
+  //   const user = userEvent.setup();
+  //   await user.type(emailInput, "test@example.com");
+  //   await user.type(passwordInput, "password");
+
+  //   // Submit the form by clicking the sign-in button
+  //   await user.click(signInButton);
+  //   const errorMsg = screen.getByRole("p", { name: /invalid/i });
+
+  //   // Assert that the button is disabled after submission
+  //   expect(signInButton).toBeDisabled();
+  //   expect(errorMsg).toBeInTheDocument();
+  // });
 });
