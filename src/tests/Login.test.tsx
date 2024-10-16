@@ -62,24 +62,4 @@ describe("Login", () => {
     // Assert that the button is disabled after submission
     expect(signInButton).toBeDisabled();
   });
-
-  // it("should show an error message when incorrect login details are entered", async () => {
-  //   // Get the input fields and the submit button
-  //   const emailInput = screen.getByRole("textbox", { name: /email/i });
-  //   const passwordInput = screen.getByLabelText(/password/i); // You could also use the label for this
-  //   const signInButton = screen.getByRole("button", { name: /sign in/i });
-
-  //   // Simulate user typing into input fields
-  //   const user = userEvent.setup();
-  //   await user.type(emailInput, "test@example.com");
-  //   await user.type(passwordInput, "password");
-
-  //   // Submit the form by clicking the sign-in button
-  //   await user.click(signInButton);
-  //   const errorMsg = screen.getByRole("p", { name: /invalid/i });
-
-  //   // Assert that the button is disabled after submission
-  //   expect(signInButton).toBeDisabled();
-  //   expect(errorMsg).toBeInTheDocument();
-  // });
 });
