@@ -5,7 +5,8 @@
     grid-template-areas: "aside content";
 }
 
-.aside, .content {
+.aside,
+.content {
     height: 100vh;
     padding: 20px;
 }
@@ -51,4 +52,47 @@
 
 .cardContainer {
     max-width: calc(100vw - 320px);
+}
+
+.commentSection {
+    margin-top: 20px;
+}
+
+.commentInput {
+    flex-grow: 1;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    margin-right: 10px;
+    line-height: 1.5;
+}
+
+.submitButton {
+    padding: 10px 10px;
+    background-color: #2690a0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submitButton:hover {
+    background-color: #1b6f84;
+    color: white;
+    border: none;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.commentInputContainer {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
 }
