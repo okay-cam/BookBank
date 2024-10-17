@@ -61,6 +61,7 @@ export class users_field {
     static totalDonations = "totalDonations";
     static totalRatingsReceived = "totalRatingsReceived";
     // optional
+    static comments = "comments";
     static degree = "degree";
     static location = "location";
     static imageUrl = IMAGE_URL;
@@ -80,6 +81,7 @@ export interface ProfileData{
     totalRatingsReceived: number;
     
     // optional 
+    comments?: commentsData[];
     degree?: string;
     location?: string;
     imageUrl?: string | null; // allow null for easier handling
@@ -111,6 +113,7 @@ export type ReportsData = Omit<typeof reports_field, 'prototype'>; // replaces t
 // field names for comments
 export class comments_fields{
     static senderUID = "senderUID";
+    static senderName = "senderName";
     static profilePicUrl = "profilePicUrl";
     static message: "message";
     static date: "date";
@@ -118,6 +121,7 @@ export class comments_fields{
 
 export interface commentsData{
     senderUID: string;
+    senderName: string;
     profilePicUrl: string;
     message: string;
     date: Timestamp;
