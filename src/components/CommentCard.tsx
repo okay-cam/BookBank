@@ -12,7 +12,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
         <div className={styles.commentCard}>
             <img src={comment.profilePicUrl || defaultImage} alt="Profile picture" className={styles.avatar} />
             <div className={styles.commentContent}>
-                <p><b>{comment.senderUID}</b></p>
+                <p><b>{comment.senderName}</b></p>
                 <p>{comment.message}</p>
                 <p className={styles.date}>{new Date(comment.date.seconds * 1000).toLocaleString()}</p>
             </div>
