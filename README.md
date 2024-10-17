@@ -5,6 +5,11 @@ Our goal is to ensure that students get the textbooks that they need, and no tex
 
 ## Installation
 
+### Prerequisites
+Make sure you have the following installed:
+- **Git**: You can download it from [here](https://git-scm.com/).
+- **Node.js and npm**: You can download both from [here](https://nodejs.org/).
+
 ### Clone the repo
 Run `git clone https://github.com/okay-cam/BookBank` in your terminal to retrieve the project.
 
