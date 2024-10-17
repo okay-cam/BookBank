@@ -3,7 +3,7 @@ import { db, storage } from "../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { checkArray } from "./readData";
 import { removeFromArray } from "./deleteData";
-import { fb_location, users_field, commentsData } from "../config/config";
+import { fb_location, users_field } from "../config/config";
 
 // Creates/Appends to a string[] of a document, current use is to represent a state that users have the listing. i.e if pinned[] contains userId then that user has the listing pinned
 export async function appendArray(
