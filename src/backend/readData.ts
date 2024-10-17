@@ -269,8 +269,8 @@ export async function emailPinnedUsers(listingId: string) {
     }
 
     // get pinned user ids
-    const data = docSnap.data();
-    const pinnedUsers = data[listings_field.pinned];
+    const listingData = docSnap.data();
+    const pinnedUsers = listingData[listings_field.pinned];
     
     
     // get emails from pinned users
@@ -281,13 +281,18 @@ export async function emailPinnedUsers(listingId: string) {
     
     const emailArray = await getEmailsFromUserIDs(pinnedUsers);
     console.log("Sending emails to", emailArray);
-
     const emailString = emailArray.join(', ');
+
+    const formattedMessage = `
+  <p><strong>Pinned Listing Notification</strong></p>
+  <p>The pinned listing <strong>'${listingData[listings_field.title]}'</strong> has been removed.</p>
+  <p>This means that the textbook has been successfully donated or the lister has chosen to take it down.</p>
+`;
 
     const emailData: EmailData = {
       email: `${import.meta.env.VITE_EMAIL_MAIN} <BookBank-Users>`, // this email must have at least one recipient
-      subject: `Pinned listing is removed`,
-      message: `placeholder text`,
+      subject: `Pinned listing '${listingData[listings_field.title]}' has been removed`,
+      message: formattedMessage,
       bcc: emailString || undefined
     };
 
