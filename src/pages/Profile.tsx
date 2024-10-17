@@ -52,6 +52,10 @@ const Profile: React.FC = () => {
 
   // Fetch profile data for the displayed user
   useEffect(() => {
+
+    // Reset comments state when visiting a new profile
+    setComments([]);
+    
     const fetchAndSetProfileData = async () => {
       const data = await getProfileData(userId!);
       setProfileData(data);
