@@ -279,19 +279,18 @@ export async function emailPinnedUsers(listingId: string) {
       return
     }
     
-    const emails = await getEmailsFromUserIDs(pinnedUsers);
-    console.log("Sending emails to", emails);
+    const emailArray = await getEmailsFromUserIDs(pinnedUsers);
+    console.log("Sending emails to", emailArray);
 
-    
-    
+    const emailString = emailArray.join(', ');
 
     const emailData: EmailData = {
       email: `${import.meta.env.VITE_EMAIL_MAIN} <BookBank-Users>`, // this email must have at least one recipient
       subject: `Pinned listing is removed`,
       message: `placeholder text`,
-      bcc: 'email1@test.au, placeholder@placeholder.pl'
+      bcc: emailString || undefined
     };
-    
+
     await sendEmail(emailData);
 
 
@@ -319,5 +318,8 @@ async function getEmailsFromUserIDs(userIDs: string[]): Promise<(string | undefi
     }
   });
   const emails = await Promise.all(emailPromises);
-  return emails;
+
+  // Filter out undefined values
+  const validEmails = emails.filter((email): email is string => email !== undefined);
+  return validEmails;
 }
