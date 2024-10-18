@@ -35,7 +35,7 @@ const Profile: React.FC = () => {
     const comment: commentsData = {
       senderUID: auth.currentUser!.uid,
       senderName: currentUserData!.username,
-      profilePicUrl: currentUserData!.imageUrl || defaultImage,
+      profilePicUrl: currentUserData!.imageUrl || null,
       message: newComment,
       date: Timestamp.fromMillis(Date.now()),
     };
