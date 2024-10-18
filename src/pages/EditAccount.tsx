@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/account.module.css';
-import defaultImage from '../assets/default-image-path.jpg';
+import defaultProfileImage from '../assets/default-profile-path.jpg';
 import { fb_location, ProfileData as ProfileType } from '../config/config';
 import { getProfileData, getImageUrl } from '../backend/readData';
 import { doc, setDoc } from "firebase/firestore";
@@ -177,12 +177,14 @@ const EditAccount = () => {
               src={profilePhotoSource}
               className={styles.profilePic}
               alt="Profile"
+              draggable={false}
             />
           ) : (
             <img
-              src={defaultImage}
+              src={defaultProfileImage}
               className={styles.profilePic}
               alt="Profile"
+              draggable={false}
             />
           )}
           {/* <input type="file" id="profilePhoto" /> */}

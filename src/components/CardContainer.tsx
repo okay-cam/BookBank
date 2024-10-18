@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "./Card";
-import defaultImage from "../assets/default-image-path.jpg";
 import styles from "../styles/listing.module.css";
 import { listingData } from "../config/config";
 

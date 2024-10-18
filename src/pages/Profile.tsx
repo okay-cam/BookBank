@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
-import defaultImage from "../assets/default-image-path.jpg";
+import defaultProfilePicture from "../assets/default-profile-path.jpg";
 import {
   getProfileData,
   getListings,
@@ -50,13 +50,13 @@ const Profile: React.FC = () => {
     <main className={styles.gridContainer}>
       {isImageModalOpen && (
         <ImageModal
-          imageUrl={profileData?.imageUrl || defaultImage}
+          imageUrl={profileData?.imageUrl || defaultProfilePicture}
           onClose={() => setIsImageModalOpen(false)}
         />
       )}
       <div className={styles.aside}>
         <img
-          src={profileData?.imageUrl || defaultImage}
+          src={profileData?.imageUrl || defaultProfilePicture}
           className={styles.profilePic}
           alt="Profile"
         />
