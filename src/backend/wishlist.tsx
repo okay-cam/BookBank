@@ -1,6 +1,7 @@
 import { auth, db } from "../config/firebase";
 import { collection, addDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
 import { fb_location, listings_field, users_field } from "../config/config";
+import { showModal } from "./modal";
 
 export async function toggleWishlisting(code: string) {
   const wishlistRef = collection(db, fb_location.wishlist);
@@ -17,12 +18,12 @@ export async function toggleWishlisting(code: string) {
         courseCode: code,
       });
       console.log(`Wishlisted course code ${code}`);
-      alert('Course code wishlisted successfully!');
+      showModal("wishlist-success");
     } else {
       const docRef = querySnapshot.docs[0].ref;
       await deleteDoc(docRef);
       console.log(`Unwishlisted course code ${code}`);
-      alert("Course code unwishlisted successfully");
+      showModal("unwishlist-success");
     }
   } catch (error) {
     console.error("Error wishlisting course code", error);
@@ -33,7 +34,11 @@ export const isWishlisted = async (code: string): Promise<boolean> => {
   const wishlistRef = collection(db, fb_location.wishlist);
   const userId = auth.currentUser!.uid;
 
-  const q = query(wishlistRef, where(users_field.userID, "==", userId), where(listings_field.courseCode, "==", code));
+  const q = query(
+    wishlistRef,
+    where(users_field.userID, "==", userId),
+    where(listings_field.courseCode, "==", code)
+  );
 
   try {
     const querySnapshot = await getDocs(q);

@@ -24,13 +24,13 @@ export class listings_field {
     static authors = "authors";
     static courseCode = COURSE_CODE;
     static description = "description";
-    static imageUrl = IMAGE_URL;
-    static imageFilename = IMAGE_FILENAME;
     static title = "title";
     static userID = USER_ID;
     static date = "date";
     // optional
     static listingID = "listingID";
+    static imageUrl = IMAGE_URL;
+    static imageFilename = IMAGE_FILENAME;
     static enquired = "enquired";
     static pinned = "pinned";
 }
@@ -45,7 +45,8 @@ export interface listingData{
     // optional
     comments?: Map<string, string> | null;
     listingID?: string | null;
-    imageUrl?: string | null ; 
+    imageUrl?: string | null ;
+    imageFilename?: string | null; 
     enquired?: string[] | null; 
     pinned?: string[] | null;
 }
@@ -90,13 +91,14 @@ export interface ProfileData{
 }
 // export type ProfileData = Omit<typeof users_field, 'prototype'>; // replaces type.ts, currently not in use as does not allow you to define variables as anything other than string
 
-export class wishlists_field {
+// Likely merge artifact --- commented just in case
+/* export class wishlists_field {
     static users = "users";
 }
 
 export interface wishlistData {
     users: string[];
-}
+} */
 
 // field names for users documents
 export class reports_field {

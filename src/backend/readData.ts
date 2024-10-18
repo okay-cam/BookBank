@@ -38,7 +38,7 @@ export async function getListingById(id: string): Promise<Listing | null> {
   if (docSnap.exists()) {
     const data = docSnap.data() as Listing; // Extract data from the document
     const listing: Listing = {
-      id: docSnap.id,
+      listingID: docSnap.id,
       title: data.title,
       authors: data.authors,
       courseCode: data.courseCode,
@@ -46,7 +46,7 @@ export async function getListingById(id: string): Promise<Listing | null> {
       imageUrl: data.imageUrl,
       imageFilename: data.imageFilename,
       userID: data.userID,
-      modalId: "modal-" + docSnap.id
+      date: data.date
     };
     return listing; // Return the listing
   } else {
@@ -76,14 +76,14 @@ export async function getListings(field?: string, value?: string): Promise<Listi
   querySnapshot.forEach((doc) => {
     const data = doc.data() as Listing;
     const listing: Listing = {
-      id: doc.id,
+      listingID: doc.id,
       title: data.title,
       authors: data.authors,
       courseCode: data.courseCode,
       description: data.description,
       imageUrl: data.imageUrl,
       userID: data.userID,
-      modalId: "modal-" + doc.id
+      date: data.date
     };
     listings.push(listing);
   });
@@ -148,13 +148,13 @@ export async function checkArray( // returns boolean if user in array or not
 
     if (Array.isArray(arrayField)) {
       if (arrayField.includes(value)) {
-        console.log(`UserID (${value}) found in ${collection}: ${docId}, field: ${fieldName}`);
+        console.log(`Value (${value}) found in ${collection}: ${docId}, field: ${fieldName}`);
         return true;
       }
     }
   }
   
-  console.log(`UserID (${value}) not found in ${collection}: ${docId}, field: ${fieldName}`);
+  console.log(`Value (${value}) not found in ${collection}: ${docId}, field: ${fieldName}`);
   return false;
 }
 
@@ -177,7 +177,7 @@ export async function getDocumentsWhereArray(
 
     // Map the results to an array of documents
     const documents = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      listingID: doc.id,
       ...doc.data(),
     }));
 
@@ -226,7 +226,7 @@ export async function getWishlist(userID: string) {
 
     // 4. Map over the snapshot to extract document data
     const matchedListings = listingsSnapshot.docs.map((doc: DocumentData) => ({
-      id: doc.id,
+      listingID: doc.id,
       ...doc.data(),
     }));
 

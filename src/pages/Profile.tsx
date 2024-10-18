@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
-import defaultImage from "../assets/default-image-path.jpg";
+import defaultProfilePicture from "../assets/default-profile-path.jpg";
 import { listingData as ListingType, ProfileData as ProfileType, listings_field, commentsData, fb_location, ProfileData } from "../config/config";
 import { getProfileData, getListings, checkProfileOwner } from "../backend/readData"; 
 import { appendMapToArray } from "../backend/writeData";
@@ -94,13 +94,13 @@ const Profile: React.FC = () => {
     <main className={styles.gridContainer}>
       {isImageModalOpen && (
         <ImageModal
-          imageUrl={profileData?.imageUrl || defaultImage}
+          imageUrl={profileData?.imageUrl || defaultProfilePicture}
           onClose={() => setIsImageModalOpen(false)}
         />
       )}
       <div className={styles.aside}>
         <img
-          src={profileData?.imageUrl || defaultImage}
+          src={profileData?.imageUrl || defaultProfilePicture}
           className={styles.profilePic}
           alt="Profile"
         />
@@ -150,7 +150,10 @@ const Profile: React.FC = () => {
         {profileData && <h1>{profileData.username}'s Active Listings</h1>}
         <div className={styles.cardContainer}>
           {activeListings.length > 0 ? (
-            <PinsCardContainer listings={activeListings} />
+            <PinsCardContainer
+              listings={activeListings}
+              collectionName="active-listings"
+            />
           ) : (
             <p>No active listings to show.</p>
           )}
@@ -163,7 +166,7 @@ const Profile: React.FC = () => {
         {!checkProfileOwner(userId) && (
           <>
             <div className={styles.commentInputContainer}>
-              <img src={currentUserData?.imageUrl || defaultImage} className={styles.avatar} alt="Avatar" />
+              <img src={currentUserData?.imageUrl || defaultProfilePicture} className={styles.avatar} alt="Avatar" />
               <textarea
                 placeholder="Write a comment..."
                 className={styles.commentInput}

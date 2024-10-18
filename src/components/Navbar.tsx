@@ -8,10 +8,11 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getProfileData } from "../backend/readData";
 import { auth } from '../config/firebase';
 
+import defaultProfilePicture from "../assets/default-profile-path.jpg";
+
 // used for signing out - may be moved later
 import { doSignOut } from '../config/auth'
 import { useAuth } from '../contexts/auth_context'
-import defaultImage from "../assets/default-image-path.jpg";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
@@ -81,14 +82,21 @@ const Navbar = () => {
             <Link to="/saved" className={styles.navButton}>⭐ Saved listings</Link>
             <Link to="/create" className={styles.navButton}>📙 Create a listing</Link>
             <div className={styles.profileDropdown}>
-              <img src={profilePictureSource || defaultImage} alt="Profile" className={styles.profilePic} onClick={() => setDropdownOpen(!dropdownOpen)}></img>
+              <img
+                src={profilePictureSource || defaultProfilePicture}
+                alt="Profile"
+                className={styles.profilePic}
+                draggable={false}
+                onClick={() => setDropdownOpen(!dropdownOpen)}></img>
             </div>
             {dropdownOpen && (
               <div className={styles.dropdownMenu}>
                 <Link to={`/profile/${userId}`} className={styles.dropdownButton}>Profile page</Link>
                 <Link to="/edit-account" className={styles.dropdownButton}>Edit account</Link>
                 <hr />
-                <button className={styles.dropdownButton} onClick={() => {
+                <button
+                  className={styles.dropdownButton}
+                  onClick={() => {
                   doSignOut().then(() => { navigate('/') })
                 }}>Logout</button>
               </div>

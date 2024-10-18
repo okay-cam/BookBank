@@ -1,3 +1,4 @@
+/* grid layout */
 .gridContainer {
     display: grid;
     grid-template-columns: 2fr 3fr;
@@ -20,6 +21,11 @@
     background-color: #efefefff;
     padding: 20px 40px;
     text-align: start;
+}
+
+/* general display */
+h3 {
+    display: inline-block;
 }
 
 /* card styles */
@@ -109,8 +115,46 @@
     color: #737373
 }
 
+/*  wishlist button */
 .wishlistButton,
 .wishlistButton:hover {
     margin-left: 10px;
     font-size: 12px;
+    display: inline-block;
+}
+
+.inputField {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+}
+
+.textArea {
+    height: 100px;
+}
+
+.editSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.editButton {
+    color: black;
+    border: solid 2px black;
+    background-color: #e69138ff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    font-weight: bold;
+    width: 50%;
+}
+
+.editButton:hover {
+    background-color: rgb(206, 133, 54);
 }

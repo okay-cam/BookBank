@@ -2,40 +2,72 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import { Listing as ListingType } from "../backend/types";
 import defaultImagePath from "../assets/default-image-path.jpg";
-import {
-  getListingById,
-  getListings,
-  getProfileData,
-} from "../backend/readData";
+import { getListingById, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
 import EnquiryPopup from "../components/EnquiryPopup";
 import DeleteListingPopup from "../components/DeleteListingPopup";
-import { togglePinListing, isPinned } from "../backend/pinning";
 import { checkArray } from "../backend/readData";
 import { auth } from "../config/firebase";
 import WishlistButton from "../components/WishlistButton";
-import { fb_location, collection_name, listings_field } from "../config/config";
+import { fb_location, listings_field } from "../config/config";
+import { showModal } from "../backend/modal";
 import ImageModal from "../components/ImageModal";
-import { toggleArray } from "../backend/writeData";
+import { listingData } from "../config/config";
+import GeneralPopup from "../components/GeneralPopup";
+import {
+  hasEnquired,
+  isPinned,
+  setEnquiredArray,
+  togglePinListing,
+} from "../backend/readableFunctions";
+import { toggleArray, writeToFirestore } from "../backend/writeData";
 
 const Listing: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Extract id from the route parameters.
-  const [listing, setListing] = useState<ListingType | null>(null); // State to hold the specific listing
+  const [listing, setListing] = useState<listingData | null>(null); // State to hold the specific listing
   const [listerEmail, setListerEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // State to manage loading status
   const [pinned, setPinned] = useState<boolean>(false);
   const [enquired, setEnquired] = useState<boolean>(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [originalListing, setOriginalListing] = useState<listingData | null>(
+    null
+  );
+  const [charCount, setCharCount] = useState({
+    title: 0,
+    authors: 0,
+    description: 0,
+    courseCode: 0,
+  });
+
+  const maxLengths = {
+    title: 100,
+    authors: 100,
+    description: 400,
+    courseCode: 30,
+  };
+
+  // modal IDs
+  const enquiryModalID = `${listing?.listingID}-enquiry-modal`;
+  const removeModalID = `${listing?.listingID}-remove-modal`;
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
   };
 
-  // instant update for when a user enquires a listing
-  function setEnquiredVariables() {
+  // update pinned and enquired to true for when a user enquires a listing
+  async function setEnquiredVariables() {
+    const listingID = listing!.listingID!;
+    const pinnedStatus = await isPinned(listingID);
+    if (!pinnedStatus) {
+      togglePinListing(listingID);
+    }
+    setEnquiredArray(listingID);
+
+    // set local useStates
     setEnquired(true); // disable the button so they can't enquire several times
     setPinned(true); // automatically pin the listing for quick reference
   }
@@ -46,21 +78,26 @@ const Listing: React.FC = () => {
       setListing(foundListing || null); // Set the found listing or null if not found
 
       // Fetch email if listing is found
-      try{
+      try {
         if (foundListing) {
           const listerProfile = await getProfileData(foundListing.userID); // fetch profile data
           setListerEmail(listerProfile!.email || null);
           console.log("lister profile: ", listerProfile);
           console.log("lister profile email: ", listerProfile?.email);
+
+          setCharCount({
+            title: foundListing.title?.length || 0,
+            authors: foundListing.authors?.length || 0,
+            description: foundListing.description?.length || 0,
+            courseCode: foundListing.courseCode?.length || 0,
+          });
         } else {
           console.log("listing not found");
         }
         console.log("lister email: ", listerEmail);
-      } catch (error){
+      } catch (error) {
         console.error("Unable to present donor information", error);
       }
-      
-
       setLoading(false); // Set loading to false after fetching
     };
 
@@ -76,30 +113,47 @@ const Listing: React.FC = () => {
   // check if user has pinned or enquired
   useEffect(() => {
     const fetchPinnedStatus = async () => {
-      if (listing?.id) {
-        const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
-        console.log("status: ", status);
+      if (listing?.listingID) {
+        const status = await isPinned(listing.listingID);
+        console.log("pinned status is: ", status);
         setPinned(status);
       }
     };
 
     const fetchEnquiredStatus = async () => {
-      if (listing?.id) {
-        const status = await checkArray(
-          fb_location.listings, // name of the collection
-          listing.id, // listing id
-          listings_field.enquired, // field
-          auth.currentUser!.uid // id of the user that enquired
-        );
+      if (listing?.listingID) {
+        const status = await hasEnquired(listing.listingID);
+        console.log("enquired status is: " + status);
         setEnquired(status);
       }
     };
-
     if (listing) {
       fetchPinnedStatus();
       fetchEnquiredStatus();
     }
   }, [listing]);
+
+  const handleEdit = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    // Update character count
+    setCharCount((prev) => ({ ...prev, [name]: value.length }));
+
+    if (value.length <= maxLengths[name as keyof typeof maxLengths]) {
+      setListing((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    } else {
+      console.error(
+        `The ${name} exceeds the maximum character limit of ${
+          maxLengths[name as keyof typeof maxLengths]
+        }.`
+      );
+    }
+  };
 
   if (!loading && !listing) {
     return <Navigate to="/404" />;
@@ -111,14 +165,38 @@ const Listing: React.FC = () => {
 
   // check if this is the current users listing
   const isListingOwner = listing ? checkListingOwner(listing) : false;
-  const removeID = `${listing!.modalId}-remove`;
   const handlePinToggle = async () => {
-    if (listing) {
-      await toggleArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
-      const status = await checkArray(fb_location.listings, listing.id, listings_field.pinned, auth.currentUser!.uid);
+    if (listing?.listingID) {
+      await togglePinListing(listing.listingID);
+      const status = await isPinned(listing.listingID);
       console.log("status: ", status);
       setPinned(status);
     }
+  };
+
+  const handleUpdateListing = async () => {
+    if (listing) {
+      try {
+        await writeToFirestore(
+          fb_location.listings,
+          listing,
+          listing.listingID || ""
+        );
+      } catch (error) {
+        console.error("Unable to update listing: ", error);
+      }
+      setIsEditMode(false);
+    }
+  };
+
+  const handleEditMode = () => {
+    setOriginalListing(listing);
+    setIsEditMode(true);
+  };
+
+  const handleCancelEdit = () => {
+    setListing(originalListing);
+    setIsEditMode(false);
   };
 
   return (
@@ -128,9 +206,24 @@ const Listing: React.FC = () => {
           listing={listing}
           email={listerEmail}
           setEnquiredVariables={setEnquiredVariables}
+          enquiryModalID={enquiryModalID}
         />
       )}
-      <DeleteListingPopup title={listing!.title} modalId={removeID} />
+      <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
+      <GeneralPopup
+        modalId="pin-success"
+        header="Listing pinned!"
+        message={`You can now view this listing for "${
+          listing!.title
+        }" in your saved listings page.`}
+      />
+      <GeneralPopup
+        modalId="unpin-success"
+        header="Listing unpinned"
+        message={`This listing for "${
+          listing!.title
+        }" has been removed from your saved listings page.`}
+      />
       {isImageModalOpen && (
         <ImageModal
           imageUrl={listing!.imageUrl || defaultImagePath}
@@ -146,7 +239,7 @@ const Listing: React.FC = () => {
             maxWidth: "100%",
             maxHeight: "300px",
             marginTop: "10px",
-            cursor: 'pointer',
+            cursor: "pointer",
           }}
           onClick={handleImageClick}
         />
@@ -156,30 +249,58 @@ const Listing: React.FC = () => {
         {
           // Edit your own listings
           isListingOwner ? (
-            <>
+            <div className={styles.editSection}>
+              {!isEditMode && (
+                <button
+                  type="button"
+                  onClick={handleEditMode}
+                  className={styles.editButton}
+                >
+                  Edit Listing
+                </button>
+              )}
+              {isEditMode && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleUpdateListing}
+                    className={styles.editButton}
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className={styles.editButton}
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
               <button
                 type="button"
-                className="danger"
+                className="danger w-50"
                 data-bs-toggle="modal"
-                data-bs-target={`#${removeID}`}
-                onClick={() => console.log("Delete listing popup ID: ", removeID)}
+                data-bs-target={`#${removeModalID}`}
+                onClick={() =>
+                  console.log("Delete listing popup ID: ", removeModalID)
+                }
               >
                 Remove listing
               </button>
-            </>
+            </div>
           ) : (
             <>
               {/* Check if user has enquired previously */}
               {enquired ? (
-                <button type="button" className="call-to-action" disabled={true}>
+                <button type="button" className="call-to-action w-50" disabled={true}>
                   Already enquired
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="call-to-action"
-                  data-bs-toggle="modal"
-                  data-bs-target={`#${listing!.modalId}`}
+                  className="call-to-action w-50"
+                  onClick={() => showModal(enquiryModalID)}
                 >
                   Request/Enquire
                 </button>
@@ -202,21 +323,92 @@ const Listing: React.FC = () => {
           {pinned ? "Unpin this listing" : "Pin this listing"}
         </button>
         <br />
-        <h1>{listing!.title}</h1>
-        <label>{listing!.authors}</label>
-        <h3>
-          {listing!.courseCode}
-          <WishlistButton
-            className={styles.wishlistButton}
-            courseCode={listing!.courseCode}
-          />
-        </h3>
-        <p>{listing!.description}</p>
-        <h1>Donor information</h1>
-        <DonorInfo donorId={listing!.userID} />
-        
-        <br />
+        {isEditMode ? (
+          <>
+            <h1>Edit listing</h1>
+            <br />
 
+            <label>Title:</label>
+            <br />
+
+            <input
+              type="text"
+              name="title"
+              value={listing!.title}
+              onChange={handleEdit}
+              maxLength={maxLengths.title}
+              placeholder="Title"
+              required
+            />
+            <small>
+              {charCount.title}/{maxLengths.title}
+            </small>
+            <br />
+            <br />
+
+            <label>Authors:</label>
+            <input
+              type="text"
+              name="authors"
+              value={listing!.authors}
+              onChange={handleEdit}
+              maxLength={maxLengths.authors}
+              placeholder="Authors"
+              required
+            />
+            <small>
+              {charCount.authors}/{maxLengths.authors}
+            </small>
+            <br />
+            <br />
+
+            <label>Course Code:</label>
+            <input
+              type="text"
+              name="courseCode"
+              value={listing!.courseCode}
+              onChange={handleEdit}
+              maxLength={maxLengths.courseCode}
+              placeholder="Course Code"
+              required
+            />
+            <small>
+              {charCount.courseCode}/{maxLengths.courseCode}
+            </small>
+            <br />
+            <br />
+
+            <label>Description:</label>
+            <textarea
+              name="description"
+              value={listing!.description}
+              onChange={handleEdit}
+              maxLength={maxLengths.description}
+              placeholder="Description"
+              className="w-100"
+              rows={3}
+              required
+            />
+            <small>
+              {charCount.description}/{maxLengths.description}
+            </small>
+          </>
+        ) : (
+          <>
+            <h1>{listing!.title}</h1>
+            <label>{listing!.authors}</label>
+            <br />
+            <h3>{listing!.courseCode}</h3>
+            <WishlistButton
+              className={styles.wishlistButton}
+              courseCode={listing!.courseCode}
+            />
+            <p>{listing!.description}</p>
+
+            <h1>Donor information</h1>
+            <DonorInfo donorId={listing!.userID} />
+          </>
+        )}
       </div>
     </main>
   );

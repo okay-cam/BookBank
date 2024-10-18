@@ -12,16 +12,16 @@ export const deleteImage = async (imageUrl: string) => {
     console.log('Image deleted successfully');
   })
   .catch((error) => {
-    console.error('Error deleting image:', error);
+    throw Error(`Error deleting image: ${error}`);
   });
 
 };
 
 // Function to delete a document by its ID
 export const deleteListing = async (modalId: string) => {
-  // CURRENT MODAL ID FORMAT: "modal-DOCUMENT_ID-remove"
+  // CURRENT MODAL ID FORMAT: "id-remove-modal"
   const separatedId = modalId.split("-"); // Split the string by hyphens
-  const listingId = separatedId[1]; // Extract the second part (middle text)
+  const listingId = separatedId[0]; // Extract the first part
 
   console.log("Document starting deletion", listingId);
 
@@ -37,7 +37,7 @@ export const deleteListing = async (modalId: string) => {
       await deleteDoc(docRef);
       console.log("Document successfully deleted!");
   } catch (error) {
-    console.error("Error deleting document: ", error);
+    throw Error(`Error deleting document: ${error}`);
   }
 };
 
