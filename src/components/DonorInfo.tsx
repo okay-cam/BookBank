@@ -46,19 +46,15 @@ const DonorInfo = ({ donorId }: DonorIDProps) => {
         />
         <div className={styles.donorContent}>
           <h1>{profile.username}</h1>
-          {profile.location ? (
+          {profile.location && (
             <p>
               <p>Located in {profile.location}</p>
             </p>
-          ) : (
-            ""
           )}
-          {profile.degree && profile.university ? (
+          {profile.degree && profile.university && (
             <p>
               {profile.degree} at {profile.university}
             </p>
-          ) : (
-            ""
           )}
         </div>
       </div>

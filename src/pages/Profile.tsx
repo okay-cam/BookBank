@@ -41,7 +41,7 @@ const Profile: React.FC = () => {
     };
 
     // Add the comment to the state
-    setComments([...comments, comment]);
+    setComments([comment, ...comments]);
 
     // Save the comment to Firestore (optional)
     await appendMapToArray(fb_location.users, comment, userId!);
@@ -61,7 +61,7 @@ const Profile: React.FC = () => {
       setProfileData(data);
 
       if (data?.comments) {
-        setComments(data.comments as commentsData[]);
+        setComments(data.comments.reverse() as commentsData[]);
       }
       
     };
@@ -132,17 +132,14 @@ const Profile: React.FC = () => {
                   ? new Date(profileData.lastLoggedIn).toDateString()
                   : "N/A"}
                 <br />
-                Total Ratings Received: {profileData.totalRatingsReceived}
-                <br />
                 Total Donations: {profileData.totalDonations}
+                <br />
+                <br />
+                <br />
+                <Link to={`/report/user/${userId}`} className="no-underline">
+                  <button>🚩 Report this user</button>
+                </Link>
               </p>
-            </div>
-            <div className={styles.ratingBox}>
-              Overall rating:
-              <br />
-              {profileData.overallRating
-                ? `${profileData.overallRating}%`
-                : "N/A"}
             </div>
           </div>
         ) : (
@@ -161,17 +158,8 @@ const Profile: React.FC = () => {
         <br />
 
         <h1>Comments</h1>
-        <div className={styles.commentSection}>
-          {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <CommentCard key={index} comment={comment} />
-            ))
-          ) : (
-            <p>No comments to display for this user.</p>
-          )}
-        </div>
 
-        {/* only report other people's profiles */}
+        {/* only write comments on other people's profiles */}
         {!checkProfileOwner(userId) && (
           <>
             <div className={styles.commentInputContainer}>
@@ -186,13 +174,18 @@ const Profile: React.FC = () => {
                 Post Comment
               </button>
             </div>
-            <br />
-
-            <Link to={`/report/user/${userId}`} className="no-underline">
-              <button>🚩 Report this user</button>
-            </Link>
           </>
         )}
+
+        <div className={styles.commentSection}>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <CommentCard key={index} comment={comment} />
+            ))
+          ) : (
+            <p>No comments to display for this user.</p>
+          )}
+        </div>
 
         <br />
       </div>

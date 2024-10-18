@@ -152,34 +152,50 @@ const Listing: React.FC = () => {
         />
         <br />
         <br />
+
         {
-          // check if user is the listing owner
+          // Edit your own listings
           isListingOwner ? (
-            <button
-              type="button"
-              className="danger"
-              data-bs-toggle="modal"
-              data-bs-target={`#${removeID}`}
-              onClick={() => console.log("Delete listing popup ID: ", removeID)}
-            >
-              Remove listing
-            </button>
-          ) : // check if user has enquired previously
-            enquired ? (
-              <button type="button" className="call-to-action" disabled={true}>
-                Already enquired
-              </button>
-            ) : (
+            <>
               <button
                 type="button"
-                className="call-to-action"
+                className="danger"
                 data-bs-toggle="modal"
-                data-bs-target={`#${listing!.modalId}`}
+                data-bs-target={`#${removeID}`}
+                onClick={() => console.log("Delete listing popup ID: ", removeID)}
               >
-                Request/Enquire
+                Remove listing
               </button>
-            )
+            </>
+          ) : (
+            <>
+              {/* Check if user has enquired previously */}
+              {enquired ? (
+                <button type="button" className="call-to-action" disabled={true}>
+                  Already enquired
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="call-to-action"
+                  data-bs-toggle="modal"
+                  data-bs-target={`#${listing!.modalId}`}
+                >
+                  Request/Enquire
+                </button>
+              )}
+
+              <br />
+              <br />
+              <br />
+
+              <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+                <button>🚩 Report this listing</button>
+              </Link>
+            </>
+          )
         }
+
       </div>
       <div className={styles.content}>
         <button type="button" className="corner-btn" onClick={handlePinToggle}>
@@ -200,13 +216,6 @@ const Listing: React.FC = () => {
         <DonorInfo donorId={listing!.userID} />
         
         <br />
-
-        {/* only report other people's listings */}
-        { !isListingOwner && (
-          <Link to={`/report/listing/${listing!.id}`} className="no-underline">
-          <button>🚩 Report this listing</button>
-        </Link>
-        )}
 
       </div>
     </main>

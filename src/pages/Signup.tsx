@@ -76,8 +76,6 @@ const Signup = () => {
           // university: null,
           // degree: null,
           totalDonations: 0,
-          totalRatingsReceived: 0,
-          overallRating: 0,
           // add data from auth
           email: currentUser.email!,
           joinDate: currentUser.metadata.creationTime!,

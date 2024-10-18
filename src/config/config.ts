@@ -76,9 +76,7 @@ export interface ProfileData{
     joinDate: string;
     lastLoggedIn: string;
     username: string;
-    overallRating: number;
     totalDonations: number;
-    totalRatingsReceived: number;
     
     // optional 
     comments?: commentsData[];

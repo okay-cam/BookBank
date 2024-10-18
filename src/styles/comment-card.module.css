@@ -13,6 +13,7 @@
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: cover;
   }
   
   .commentContent p {
@@ -24,3 +25,7 @@
     color: #757575;
   }
   
+  .profileLink {
+    text-decoration: none; /* Removes underline */
+    color: black; /* Sets text color to black */
+  }
