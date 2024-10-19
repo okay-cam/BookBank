@@ -157,10 +157,7 @@ const Listing: React.FC = () => {
     }
 
     // set if there are empty fields (any char count that equals 0)
-    setHasEmptyEditField(
-      Object.values(charCount).some(value => value === 0)
-    );
-
+    setHasEmptyEditField(Object.values(charCount).some((value) => value === 0));
   };
 
   if (!loading && !listing) {
@@ -207,7 +204,7 @@ const Listing: React.FC = () => {
     setIsEditMode(false);
   };
 
-  const hasEmptyFields = Object.values(charCount).some(count => count === 0);
+  const hasEmptyFields = Object.values(charCount).some((count) => count === 0);
 
   return (
     <main className={styles.gridContainer}>
@@ -304,7 +301,11 @@ const Listing: React.FC = () => {
             <>
               {/* Check if user has enquired previously */}
               {enquired ? (
-                <button type="button" className="call-to-action w-50" disabled={true}>
+                <button
+                  type="button"
+                  className="call-to-action w-50"
+                  disabled={true}
+                >
                   Already enquired
                 </button>
               ) : (
@@ -321,13 +322,15 @@ const Listing: React.FC = () => {
               <br />
               <br />
 
-              <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+              <Link
+                to={`/report/listing/${listing!.listingID}`}
+                className="no-underline"
+              >
                 <button>🚩 Report this listing</button>
               </Link>
             </>
           )
         }
-
       </div>
       <div className={styles.content}>
         <button type="button" className="corner-btn" onClick={handlePinToggle}>
@@ -403,11 +406,12 @@ const Listing: React.FC = () => {
             <small>
               {charCount.description}/{maxLengths.description}
             </small>
-            
-            <br />
-            <br />
-            {hasEmptyFields && <p className="error-msg">All fields must be filled in.</p>}
 
+            <br />
+            <br />
+            {hasEmptyFields && (
+              <p className="error-msg">All fields must be filled in.</p>
+            )}
           </>
         ) : (
           <>
