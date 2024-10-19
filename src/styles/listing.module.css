@@ -158,3 +158,9 @@ h3 {
 .editButton:hover {
     background-color: rgb(206, 133, 54);
 }
+
+.editButton:disabled {
+    background-color: rgb(231, 177, 119);
+    color: gray;
+    border: solid 2px gray;
+}

@@ -43,6 +43,8 @@ const Listing: React.FC = () => {
     courseCode: 0,
   });
 
+  const [hasEmptyEditField, setHasEmptyEditField] = useState(false);
+
   const maxLengths = {
     title: 100,
     authors: 100,
@@ -153,6 +155,12 @@ const Listing: React.FC = () => {
         }.`
       );
     }
+
+    // set if there are empty fields (any char count that equals 0)
+    setHasEmptyEditField(
+      Object.values(charCount).some(value => value === 0)
+    );
+
   };
 
   if (!loading && !listing) {
@@ -198,6 +206,8 @@ const Listing: React.FC = () => {
     setListing(originalListing);
     setIsEditMode(false);
   };
+
+  const hasEmptyFields = Object.values(charCount).some(count => count === 0);
 
   return (
     <main className={styles.gridContainer}>
@@ -264,6 +274,7 @@ const Listing: React.FC = () => {
                     type="button"
                     onClick={handleUpdateListing}
                     className={styles.editButton}
+                    disabled={hasEmptyFields}
                   >
                     Save Changes
                   </button>
@@ -378,6 +389,11 @@ const Listing: React.FC = () => {
             <small>
               {charCount.description}/{maxLengths.description}
             </small>
+            
+            <br />
+            <br />
+            {hasEmptyFields && <p className="error-msg">All fields must be filled in.</p>}
+
           </>
         ) : (
           <>
