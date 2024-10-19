@@ -2,44 +2,107 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/profile.module.css";
 import defaultProfilePicture from "../assets/default-profile-path.jpg";
 import {
+  listingData as ListingType,
+  ProfileData as ProfileType,
+  listings_field,
+  commentsData,
+  fb_location,
+  ProfileData,
+} from "../config/config";
+import {
   getProfileData,
   getListings,
   checkProfileOwner,
 } from "../backend/readData";
-import {
-  listingData as ListingType,
-  ProfileData as ProfileType,
-  listings_field,
-} from "../config/config";
+import { appendMapToArray } from "../backend/writeData";
 import PinsCardContainer from "../components/PinsCardContainer";
 import { Link, useParams } from "react-router-dom";
 import ImageModal from "../components/ImageModal";
+import CommentCard from "../components/CommentCard";
+import { Timestamp } from "firebase/firestore";
+import { auth } from "../config/firebase";
+import BackButton from "../components/BackButton";
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>(); // Extract id from the route parameters.
+
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
+  const [currentUserData, setCurrentUserData] = useState<ProfileData | null>(
+    null
+  ); // State for current user data
   const [activeListings, setActiveListings] = useState<ListingType[]>([]);
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+  const [comments, setComments] = useState<commentsData[]>([]); // Changed to an array of comments
+  const [newComment, setNewComment] = useState<string>(""); // State to store the new comment input
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
   };
 
+  // Function to handle comment submission
+  const handleCommentSubmit = async () => {
+    const charLimit = 300;
+
+    if (!newComment.trim()) {
+      alert("Comment cannot be empty!"); // Basic validation
+      return;
+    }
+    let commentMessage = newComment;
+
+    console.log("comment length is " + newComment.length);
+    if (newComment.length > charLimit) {
+      commentMessage = newComment.slice(0, charLimit) + "...";
+      // console.log("new comment should be " + newComment.length);
+    }
+    const comment: commentsData = {
+      senderUID: auth.currentUser!.uid,
+      senderName: currentUserData!.username,
+      profilePicUrl: currentUserData!.imageUrl || null,
+      message: commentMessage,
+      date: Timestamp.fromMillis(Date.now()),
+    };
+
+    // Add the comment to the state
+    setComments([comment, ...comments]);
+
+    // Save the comment to Firestore (optional)
+    await appendMapToArray(fb_location.users, comment, userId!);
+
+    // Clear the input field
+    setNewComment("");
+  };
+
+  // Fetch profile data for the displayed user
   useEffect(() => {
+    // Reset comments state when visiting a new profile
+    setComments([]);
+
     const fetchAndSetProfileData = async () => {
       const data = await getProfileData(userId!);
       setProfileData(data);
+
+      if (data?.comments) {
+        setComments(data.comments.reverse() as commentsData[]);
+      }
     };
 
     fetchAndSetProfileData();
-    // getPins();
   }, [userId]);
 
+  // Fetch current user data
+  useEffect(() => {
+    const fetchAndSetCurrentUserData = async () => {
+      const currentUserData = await getProfileData(auth.currentUser!.uid);
+      setCurrentUserData(currentUserData);
+    };
+
+    fetchAndSetCurrentUserData();
+  }, []);
+
+  // Fetch listings
   useEffect(() => {
     const fetchAndSetActiveListings = async () => {
       const data = await getListings(listings_field.userID, userId);
-      console.log("Fetched Listings:", data);
-      console.log("User ID is ", userId);
       setActiveListings(data);
     };
 
@@ -55,9 +118,11 @@ const Profile: React.FC = () => {
         />
       )}
       <div className={styles.aside}>
+        <BackButton />
         <img
           src={profileData?.imageUrl || defaultProfilePicture}
           className={styles.profilePic}
+          onClick={handleImageClick}
           alt="Profile"
         />
         <br />
@@ -88,17 +153,14 @@ const Profile: React.FC = () => {
                   ? new Date(profileData.lastLoggedIn).toDateString()
                   : "N/A"}
                 <br />
-                Total Ratings Received: {profileData.totalRatingsReceived}
-                <br />
                 Total Donations: {profileData.totalDonations}
+                <br />
+                <br />
+                <br />
+                <Link to={`/report/user/${userId}`} className="no-underline">
+                  <button>🚩 Report this user</button>
+                </Link>
               </p>
-            </div>
-            <div className={styles.ratingBox}>
-              Overall rating:
-              <br />
-              {profileData.overallRating
-                ? `${profileData.overallRating}%`
-                : "N/A"}
             </div>
           </div>
         ) : (
@@ -118,17 +180,45 @@ const Profile: React.FC = () => {
           )}
         </div>
         <br />
-        <h1>Reviews</h1>
-        <p>No reviews yet.</p>
+
+        <h1>Comments</h1>
+
+        {/* only write comments on other people's profiles */}
+        {!checkProfileOwner(userId) && (
+          <>
+            <div className={styles.commentInputContainer}>
+              <img
+                src={currentUserData?.imageUrl || defaultProfilePicture}
+                className={styles.avatar}
+                alt="Avatar"
+              />
+              <textarea
+                placeholder="Write a comment..."
+                className={styles.commentInput}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)} // Update the comment input state
+              />
+              <button
+                className={styles.submitButton}
+                onClick={handleCommentSubmit}
+              >
+                Post Comment
+              </button>
+            </div>
+          </>
+        )}
+
+        <div className={styles.commentSection}>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <CommentCard key={index} comment={comment} />
+            ))
+          ) : (
+            <p>No comments to display for this user.</p>
+          )}
+        </div>
 
         <br />
-
-        {/* only report other people's profiles */}
-        {!checkProfileOwner(userId) && (
-          <Link to={`/report/user/${userId}`} className="no-underline">
-            <button>🚩 Report this user</button>
-          </Link>
-        )}
       </div>
     </main>
   );
