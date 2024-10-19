@@ -9,6 +9,15 @@ html, body {
     margin-top: 30px;
 }
 
+.footer {
+    background-color: rgb(212, 212, 212);
+    height: 100px;
+    padding: 20px;
+    text-align: right;
+    font-style: italic;
+    color: #737373;
+}
+
 h1 {
     color: #134f5cff;
     font-size: 30px;
