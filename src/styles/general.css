@@ -11,11 +11,12 @@ html, body {
 
 .footer {
     background-color: rgb(212, 212, 212);
-    height: 100px;
+    height: auto;
     padding: 20px;
     text-align: right;
     font-style: italic;
     color: #737373;
+    margin-top: 20px;
 }
 
 h1 {

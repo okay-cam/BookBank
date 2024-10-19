@@ -122,7 +122,7 @@ export class comments_fields{
 export interface commentsData{
     senderUID: string;
     senderName: string;
-    profilePicUrl: string | null;
+    profilePicUrl: string;
     message: string;
     date: Timestamp;
 }

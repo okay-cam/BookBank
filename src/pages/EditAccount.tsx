@@ -11,6 +11,7 @@ import { writeToFirestore, uploadImage } from "../backend/writeData";
 import { deleteImage } from "../backend/deleteData";
 import GeneralPopup from "../components/GeneralPopup";
 import { showModal } from "../backend/modal";
+import { reloadProfilePic } from "../components/Navbar";
 
 const universities = [
   "Auckland University of Technology (AUT)",
@@ -82,7 +83,7 @@ const EditAccount = () => {
         console.log("New profile data is " + newProfileData);
 
         if (data) {
-          setProfilePhotoSource(data.imageUrl || defaultImage);
+          setProfilePhotoSource(data.imageUrl || defaultProfileImage);
         }
       }
     };
@@ -146,11 +147,9 @@ const EditAccount = () => {
       university: newProfileData?.university || "", // Default to empty string
       degree: newProfileData?.degree || "", // Default to empty string
       location: newProfileData?.location || "", // Default to empty string
-      overallRating: newProfileData?.overallRating || 0, // Default to 0
       joinDate: newProfileData?.joinDate || "", // Default to empty string
       lastLoggedIn: newProfileData?.lastLoggedIn || "", // Default to empty string
       totalDonations: newProfileData?.totalDonations || 0, // Default to 0
-      totalRatingsReceived: newProfileData?.totalRatingsReceived || 0, // Default to 0
     };
 
     // let profilePicUrl = profilePhotoSource;
@@ -175,7 +174,7 @@ const EditAccount = () => {
 
     // Set the old profile data to the new one after successful submission
     setOldProfileData(updatedProfileData);
-
+    reloadProfilePic();
     showModal(confirmModalID);
     // alert('Profile updated successfully!');
 
@@ -190,6 +189,7 @@ const EditAccount = () => {
 
     // Set the old profile data to the new one after successful submission
     setOldProfileData(updatedProfileData);
+    auth.currentUser?.photoURL;
     setIsSubmitting(false);
   };
 
