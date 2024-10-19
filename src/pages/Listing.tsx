@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import defaultImagePath from "../assets/default-image-path.jpg";
+import defaultImagePath from "../assets/default-listing-path.png";
 import { getListingById, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
