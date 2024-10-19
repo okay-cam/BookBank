@@ -55,6 +55,7 @@ const Listing: React.FC = () => {
   // modal IDs
   const enquiryModalID = `${listing?.listingID}-enquiry-modal`;
   const removeModalID = `${listing?.listingID}-remove-modal`;
+  const editModalID = "edits-saved-modal";
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
@@ -191,6 +192,7 @@ const Listing: React.FC = () => {
         console.error("Unable to update listing: ", error);
       }
       setIsEditMode(false);
+      showModal(editModalID);
     }
   };
 
@@ -217,6 +219,11 @@ const Listing: React.FC = () => {
         />
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
+      <GeneralPopup
+        modalId={editModalID}
+        header="Listing saved!"
+        message={`Your edits have been saved.`}
+      />
       <GeneralPopup
         modalId="pin-success"
         header="Listing pinned!"
