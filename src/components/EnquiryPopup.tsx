@@ -178,7 +178,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
               type="button"
               className="call-to-action"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || message.trim() === ""}
               {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               {isSubmitting ? "Sending..." : "Send"}
