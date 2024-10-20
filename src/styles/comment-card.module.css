@@ -1,0 +1,31 @@
+.commentCard {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+  }
+  
+  .commentContent p {
+    margin: 5px 0;
+  }
+  
+  .date {
+    font-size: 0.8em;
+    color: #757575;
+  }
+  
+  .profileLink {
+    text-decoration: none; /* Removes underline */
+    color: black; /* Sets text color to black */
+  }

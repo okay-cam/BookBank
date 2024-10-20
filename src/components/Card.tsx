@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/listing.module.css";
-import defaultImagePath from "../assets/default-image-path.jpg";
+import defaultListingImage from "../assets/default-listing-path.png";
 // import EnquiryPopup from "./EnquiryPopup";
 // import DeleteListingPopup from "./DeleteListingPopup";
 import { checkArray, checkListingOwner } from "../backend/readData";
@@ -55,7 +55,7 @@ const Card = ({ listing }: CardData) => {
       >
         <div className={styles.imageContainer}>
           <img
-            src={listing.imageUrl || defaultImagePath} // Use the image or fallback to defaultImagePath
+            src={listing.imageUrl || defaultListingImage} // Use the image or fallback to defaultImagePath
             className={`card-img-top ${styles.cardImage}`}
             alt="Listing image"
           />

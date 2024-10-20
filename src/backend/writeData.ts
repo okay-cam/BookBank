@@ -140,3 +140,19 @@ export async function writeToWishlist(id: string, value: string){
   // add to wishlist collection with value as document and id in array
   await appendArray(fb_location.wishlist, value, users_field.wishlist, id);
 }
+
+export async function appendMapToArray<T extends Record<string, any>>(
+  collectionName: string, // Firestore collection name
+  data: Partial<Record<keyof T, any>>, // Data to write, keyed by the class field names
+  docID: string
+){
+  const ref = doc(db, collectionName, docID);
+
+  try{
+    await updateDoc(ref, {
+      comments: arrayUnion(data)
+    });
+  } catch(error){
+    console.error("Error appending map: ", error);
+  }
+}

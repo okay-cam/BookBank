@@ -43,6 +43,8 @@ const Listing: React.FC = () => {
     courseCode: 0,
   });
 
+  const [hasEmptyEditField, setHasEmptyEditField] = useState(false);
+
   const maxLengths = {
     title: 100,
     authors: 100,
@@ -153,6 +155,12 @@ const Listing: React.FC = () => {
         }.`
       );
     }
+
+    // set if there are empty fields (any char count that equals 0)
+    setHasEmptyEditField(
+      Object.values(charCount).some(value => value === 0)
+    );
+
   };
 
   if (!loading && !listing) {
@@ -198,6 +206,8 @@ const Listing: React.FC = () => {
     setListing(originalListing);
     setIsEditMode(false);
   };
+
+  const hasEmptyFields = Object.values(charCount).some(count => count === 0);
 
   return (
     <main className={styles.gridContainer}>
@@ -245,8 +255,9 @@ const Listing: React.FC = () => {
         />
         <br />
         <br />
+
         {
-          // If user is listing owner, show edit and remove buttons
+          // Edit your own listings
           isListingOwner ? (
             <div className={styles.editSection}>
               {!isEditMode && (
@@ -264,6 +275,7 @@ const Listing: React.FC = () => {
                     type="button"
                     onClick={handleUpdateListing}
                     className={styles.editButton}
+                    disabled={hasEmptyFields}
                   >
                     Save Changes
                   </button>
@@ -288,21 +300,34 @@ const Listing: React.FC = () => {
                 Remove listing
               </button>
             </div>
-          ) : // check if user has enquired previously
-          enquired ? (
-            <button type="button" className="call-to-action w-50" disabled={true}>
-              Enquiry sent
-            </button>
           ) : (
-            <button
-              type="button"
-              className="call-to-action w-50"
-              onClick={() => showModal(enquiryModalID)}
-            >
-              Request/Enquire
-            </button>
+            <>
+              {/* Check if user has enquired previously */}
+              {enquired ? (
+                <button type="button" className="call-to-action w-50" disabled={true}>
+                  Already enquired
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="call-to-action w-50"
+                  onClick={() => showModal(enquiryModalID)}
+                >
+                  Request/Enquire
+                </button>
+              )}
+
+              <br />
+              <br />
+              <br />
+
+              <Link to={`/report/listing/${listing!.id}`} className="no-underline">
+                <button>🚩 Report this listing</button>
+              </Link>
+            </>
           )
         }
+
       </div>
       <div className={styles.content}>
         <button type="button" className="corner-btn" onClick={handlePinToggle}>
@@ -378,6 +403,11 @@ const Listing: React.FC = () => {
             <small>
               {charCount.description}/{maxLengths.description}
             </small>
+            
+            <br />
+            <br />
+            {hasEmptyFields && <p className="error-msg">All fields must be filled in.</p>}
+
           </>
         ) : (
           <>
@@ -393,18 +423,6 @@ const Listing: React.FC = () => {
 
             <h1>Donor information</h1>
             <DonorInfo donorId={listing!.userID} />
-
-            <br />
-
-            {/* only report other people's listings */}
-            {!isListingOwner && (
-              <Link
-                to={`/report/listing/${listing!.listingID}`}
-                className="no-underline"
-              >
-                <button>🚩 Report this listing</button>
-              </Link>
-            )}
           </>
         )}
       </div>
