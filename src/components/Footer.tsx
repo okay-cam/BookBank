@@ -4,9 +4,11 @@ const Footer = () => {
   return (
     <div className="footer">
       <p>
-        This website was made in Sem 2 2024 by AUT BCIS students.
+        BookBank is a student project.
         <br />
-        Contact us at: bookbankaut@gmail.com
+        For support, contact us at: bookbankaut@gmail.com
+        <br />
+        <br />
       </p>
     </div>
   );

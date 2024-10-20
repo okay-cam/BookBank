@@ -15,10 +15,16 @@ const Layout = () => {
       <Navbar />
 
       <main>
-        {/* outlet displays pages while navbar stays untouched */}
-        <Outlet />
+
+        <div className="page-container">
+          <div className="content-wrap">
+            {/* outlet displays pages while navbar stays untouched */}
+            <Outlet />
+          </div>
+          <Footer />
+        </div>
+        
       </main>
-      <Footer />
     </>
   );
 };
