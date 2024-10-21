@@ -136,13 +136,7 @@ const Profile: React.FC = () => {
               </center>
             </h1>
             <div className={styles.profileData}>
-              <p>
-                <em>
-                  <center>
-                    {checkProfileOwner(userId) ? profileData.email : ""}
-                  </center>
-                </em>
-              </p>
+              
               <p>
                 Location: {profileData.location || "N/A"}
                 <br />

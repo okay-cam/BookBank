@@ -230,6 +230,12 @@ const EditAccount = () => {
         </div>
         <div>
           <div className={styles.field}>
+            <label>Email:</label>
+            <p>
+              <em>
+                <center>{newProfileData.email}</center>
+              </em>
+            </p>
             <label>Display Name:</label>
             <input
               type="text"
