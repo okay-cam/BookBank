@@ -2,7 +2,7 @@ import { doc, deleteDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
 import { fb_location } from "../config/config";
 import { ref, deleteObject } from "firebase/storage";
-import { getImageUrl } from "../backend/readData";
+import { getImageUrl, emailPinnedUsers } from "../backend/readData";
 
 export const deleteImage = async (imageUrl: string) => {
   const imageRef = ref(storage, imageUrl);
@@ -19,11 +19,17 @@ export const deleteImage = async (imageUrl: string) => {
 
 // Function to delete a document by its ID
 export const deleteListing = async (modalId: string) => {
+
+  console.log("modal id in deleteListing: ", modalId)
+
   // CURRENT MODAL ID FORMAT: "id-remove-modal"
   const separatedId = modalId.split("-"); // Split the string by hyphens
   const listingId = separatedId[0]; // Extract the first part
 
   console.log("Document starting deletion", listingId);
+
+  // email pinned users FUNCTION NEEDS TO BE UPDATED
+  await emailPinnedUsers(listingId);
 
   try {
     const docRef = doc(db, fb_location.listings, listingId);
@@ -34,11 +40,14 @@ export const deleteListing = async (modalId: string) => {
       await deleteImage(imageUrl);
     }
 
-      await deleteDoc(docRef);
-      console.log("Document successfully deleted!");
+    await deleteDoc(docRef);
+    console.log("Document successfully deleted!");
   } catch (error) {
     throw Error(`Error deleting document: ${error}`);
   }
+
+  
+  
 };
 
 export async function removeFromArray(
@@ -58,3 +67,4 @@ export async function removeFromArray(
     console.error(`Error removing value from field: ${fieldName}`, error);
   }
 }
+

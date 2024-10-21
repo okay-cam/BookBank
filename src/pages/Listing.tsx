@@ -329,10 +329,7 @@ const Listing: React.FC = () => {
               <br />
               <br />
 
-              <Link
-                to={`/report/listing/${listing!.listingID}`}
-                className="no-underline"
-              >
+              <Link to={`/report/listing/${listing!.listingID}`} className="no-underline">
                 <button>🚩 Report this listing</button>
               </Link>
             </>

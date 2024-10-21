@@ -42,7 +42,7 @@ const DeleteListingPopup: React.FC<ModalDetails> = ({ title, modalId }) => {
       <GeneralPopup
         modalId={confirmID}
         header="Listing deleted!"
-        message={`Your listing for ${title} has been successfully deleted.`}
+        message={`Your listing for '${title}' has been successfully deleted.`}
       />
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">

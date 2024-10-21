@@ -66,7 +66,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
   const handleSendReceiptEmail = async () => {
     const requesterEmail = auth.currentUser!.email;
     if (!requesterEmail) {
-      console.log("Problem with email. Can't send receipt.");
+      console.error("Problem with email. Can't send receipt since requester email doesn't exist.");
       return false;
     }
 
@@ -179,7 +179,7 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
               type="button"
               className="call-to-action"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || message.trim() === ""}
               {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
             >
               {isSubmitting ? "Sending..." : "Send"}
