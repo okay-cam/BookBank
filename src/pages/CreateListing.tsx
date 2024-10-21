@@ -74,20 +74,18 @@ const CreateListing: React.FC = () => {
   const handleDrop = (file: File, preview: string) => {
     setFile(file);
     setPreview(preview);
-    console.log(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // TODO: input validation function
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Prevent listings that don't have an image
     if (!file) {
       setErrorMessage("Please upload a photo of your textbook.");
+      setIsSubmitting(false);
       return;
     }
-
-    setIsSubmitting(true);
 
     // Create document entry
     try {
@@ -103,7 +101,7 @@ const CreateListing: React.FC = () => {
       } else {
         console.log("Unable to upload image, no listingID");
       }
-    } catch (error){
+    } catch (error) {
       console.error("Unable to create listing: ", error);
     }
   };

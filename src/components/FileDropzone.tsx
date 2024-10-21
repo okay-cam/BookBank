@@ -4,7 +4,13 @@ import { useDropzone } from "react-dropzone";
 // this dropzone allows people to drag and drop or choose files
 // the file is already restricted to 5MB or less, and can only be a jpg or png
 
-function FileDropzone({ className, onDrop }: { className: string; onDrop: (file: File, preview: string) => void }) {
+function FileDropzone({
+  className,
+  onDrop,
+}: {
+  className: string;
+  onDrop: (file: File, preview: string) => void;
+}) {
   // extend the existing File type by adding preview property (allows you to store them in one object)
   type FileWithPreview = File & {
     preview: string;
@@ -13,39 +19,44 @@ function FileDropzone({ className, onDrop }: { className: string; onDrop: (file:
   // const [file, setFile] = useState<FileWithPreview | null>(null);
 
   // callback prevents unnecessary rerendering or functions for optimisation
-  const onDropCallback = useCallback((acceptedFiles: File[]) => {
-    const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
+  const onDropCallback = useCallback(
+    (acceptedFiles: File[]) => {
+      const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
 
-    if (!acceptedFiles?.length) {
-      alert("Invalid file. Must be JPG or PNG.");
-      return;
-    }
-    
-    const uploadedFile = acceptedFiles[0] as FileWithPreview;
-    
-    if (uploadedFile.size > maxSize) {
-      alert("File is too large. Maximum size allowed is 5 MB.");
-      return;
-    }
-
-    const image = new Image();
-    image.src = URL.createObjectURL(uploadedFile);
-
-    image.onload = () => {
-      if (image.width < 128 || image.height < 128) {
-        alert("Image resolution is too low. Minimum required is 128x128 pixels.");
+      if (!acceptedFiles?.length) {
+        alert("Invalid file. Must be JPG or PNG.");
         return;
       }
 
-      uploadedFile.preview = image.src; // Store the preview URL
-      // setFile(uploadedFile);
-      onDrop(uploadedFile, uploadedFile.preview); // Call the onDrop callback with the valid file & preview
-    };
+      const uploadedFile = acceptedFiles[0] as FileWithPreview;
 
-    // uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
-    // setFile(uploadedFile);
-    // onDrop(uploadedFile); // Call the onDrop callback
-  }, [onDrop]);
+      if (uploadedFile.size > maxSize) {
+        alert("File is too large. Maximum size allowed is 5 MB.");
+        return;
+      }
+
+      const image = new Image();
+      image.src = URL.createObjectURL(uploadedFile);
+
+      image.onload = () => {
+        if (image.width < 128 || image.height < 128) {
+          alert(
+            "Image resolution is too low. Minimum required is 128x128 pixels."
+          );
+          return;
+        }
+
+        uploadedFile.preview = image.src; // Store the preview URL
+        // setFile(uploadedFile);
+        onDrop(uploadedFile, uploadedFile.preview); // Call the onDrop callback with the valid file & preview
+      };
+
+      // uploadedFile.preview = URL.createObjectURL(uploadedFile); // creates URL to display image
+      // setFile(uploadedFile);
+      // onDrop(uploadedFile); // Call the onDrop callback
+    },
+    [onDrop]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onDropCallback,
@@ -78,7 +89,7 @@ function FileDropzone({ className, onDrop }: { className: string; onDrop: (file:
         </div>
       )} */}
       <br />
-      <input {...getInputProps()} />
+      <input {...getInputProps()} data-testid="file-input" type="file"/>
       {isDragActive ? (
         <p>Drop the file here...</p>
       ) : (

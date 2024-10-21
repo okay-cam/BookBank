@@ -158,6 +158,7 @@ const Signup = () => {
         <label htmlFor="email">Email</label>
         <br />
         <input
+          id="email"
           type="email"
           value={email}
           // name="email"
@@ -167,7 +168,7 @@ const Signup = () => {
         />
         <br />
         <br />
-        <label htmlFor="username">Display Name</label>
+        <label htmlFor="nameField">Display Name</label>
         <br />
         <input
           type="text"
@@ -191,17 +192,17 @@ const Signup = () => {
         />
         <br />
         <br />
-        <label htmlFor="password">Confirm Password</label>
-        <br />
-        <input
-          type="password"
-          value={confirmPassword}
-          name="confirmPassword"
-          id="confirmPassword"
-          autoComplete="off"
-          required
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <label htmlFor="confirmPassword">Confirm Password</label>
+          <br />
+          <input
+            autoComplete="off"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
         <br />
         <br />
         <input

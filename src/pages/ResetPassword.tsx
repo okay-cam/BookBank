@@ -20,12 +20,11 @@ const ResetPassword = () => {
       // Attempt sign-in here
       setIsLoading(true);
       try {
-        await doSendPasswordResetEmail(email)
-					.then(() => {
-						// Password reset email sent!
-            console.log("password email sent!");
-            navigate("/password-email-sent");
-					})
+        await doSendPasswordResetEmail(email).then(() => {
+          // Password reset email sent!
+          console.log("password email sent!");
+          navigate("/password-email-sent");
+        });
       } catch (error) {
         setIsLoading(false);
         // Type assertion to FirebaseError
@@ -35,7 +34,9 @@ const ResetPassword = () => {
         // show correct error message depending on the issue
         switch (firebaseError.code) {
           case "auth/invalid-email":
-            setErrorMessage("Invalid email. Please fix the email's formatting.");
+            setErrorMessage(
+              "Invalid email. Please fix the email's formatting."
+            );
             break;
           case "auth/too-many-requests":
             setErrorMessage("Too many requests. Please try again later.");
@@ -61,33 +62,26 @@ const ResetPassword = () => {
           name="email"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
-          autoComplete='email'
+          autoComplete="email"
           required
         />
-        
         <br />
         <br />
-
         <input
           type="submit"
           value="Send Reset Email"
           className="button call-to-action"
           disabled={isLoading}
         />
-
         <br />
         <br />
-        {errorMessage && (
-          <p className="error-msg">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="error-msg">{errorMessage}</p>}
       </form>
-      
       <br />
       <br />
       <div>
-        <Link to={'/'}>Back to Login</Link>
+        <Link to={"/"}>Back to Login</Link>
       </div>
-
     </>
   );
 };

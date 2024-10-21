@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc, DocumentData, orderBy } from "firebase/firestore";
-import {  } from "../config/firebase";
 import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
 import { EmailData, sendEmail } from "./emailService";
 
