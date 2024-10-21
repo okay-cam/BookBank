@@ -221,12 +221,12 @@ const Listing: React.FC = () => {
       <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
       <GeneralPopup
         modalId={editModalID}
-        header="Listing saved!"
+        header="Edits saved!"
         message={`Your edits have been saved.`}
       />
       <GeneralPopup
         modalId="pin-success"
-        header="Listing pinned!"
+        header="Listing saved!"
         message={`You can now view this listing for "${
           listing!.title
         }" in your saved listings page.`}

@@ -61,6 +61,12 @@ button, .button {
     background-color:#efefefff;
     color: black;
     border: solid 2px black;
+
+}
+
+.modal-button {
+    font-weight: bold;
+    padding: 5px 10px;
 }
 
 button:hover, .button:hover {
