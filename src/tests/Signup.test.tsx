@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
 import Signup from "../pages/Signup";
@@ -51,20 +51,24 @@ describe("Signup", () => {
   });
 
   it("should show an error message when passwords don't match", async () => {
+    const usernameInput = screen.getByRole("textbox", { name: /display name/i });
+    const emailInput = screen.getByLabelText("Email");
     const passwordInput = screen.getByLabelText("Password");
     const confirmPasswordInput = screen.getByLabelText("Confirm Password");
     const createAccountButton = screen.getByRole("button", { name: /create account/i });
 
     const user = userEvent.setup();
 
+    await user.type(usernameInput, "TestUser");
+    await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password");
     await user.type(confirmPasswordInput, "notpassword");
 
     await user.click(createAccountButton);
 
-    const errorMessage = await screen.findByText("Passwords do not match. Please retype your password.");
-    expect(errorMessage).toBeInTheDocument();
+    await waitFor(() => {
+      const errorMsg = screen.getByText(/Passwords do not match. Please retype your password./i);
+      expect(errorMsg).toBeInTheDocument();
+    });
   });
-
-
 });
