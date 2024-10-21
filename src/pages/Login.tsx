@@ -25,7 +25,7 @@ const Login = () => {
       setIsSigningIn(true);
       try {
         await doSignInWithEmailAndPassword(email, password);
-        window.location.reload(); // refresh page to update pfp in nav
+        // window.location.reload(); // refresh page to update pfp in nav
       } catch (error) {
         setIsSigningIn(false);
         // Type assertion to FirebaseError

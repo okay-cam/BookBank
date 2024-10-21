@@ -102,9 +102,10 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
     setSuccessMessage(""); // Clear any previous success
     setIsSubmitting(true);
 
-    if (await handleSendEnquiryEmail()) { // Send the email 
+    if (await handleSendEnquiryEmail()) {
+      // Send the email
       await handleSendReceiptEmail(); // Send receipt if email goes through successfully
-    } 
+    }
 
     // add user id to the enquired field
     await appendArray(
@@ -169,8 +170,8 @@ const EnquiryPopup: React.FC<ModalDetails> = ({
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
-              {...(!isSubmitting && { "data-bs-dismiss": "modal" })} // disable dismiss when submitting
+              className="modal-button"
+              {...(!isSubmitting && { "data-bs-dismiss": "modal" })}
             >
               Cancel
             </button>

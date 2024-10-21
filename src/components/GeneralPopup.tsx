@@ -45,7 +45,11 @@ const GeneralPopup: React.FC<ModalDetails> = ({ header, message, modalId }) => {
             </center>
           </div>
           <div className="modal-footer">
-            <button type="button" className="" data-bs-dismiss="modal">
+            <button
+              type="button"
+              className="modal-button"
+              data-bs-dismiss="modal"
+            >
               Close
             </button>
           </div>

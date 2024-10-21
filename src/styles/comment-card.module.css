@@ -6,6 +6,11 @@
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #f9f9f9;
+    box-sizing: border-box;
+    word-break: break-word;        /* Break long words */
+    white-space: normal;           /* Allow text to wrap normally */
+    overflow-wrap: anywhere;       /* Force-break long words if they exceed container width */
+    hyphens: auto;
   }
   
   .avatar {

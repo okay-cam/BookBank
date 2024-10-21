@@ -136,6 +136,7 @@ const Profile: React.FC = () => {
               </center>
             </h1>
             <div className={styles.profileData}>
+              
               <p>
                 Location: {profileData.location || "N/A"}
                 <br />

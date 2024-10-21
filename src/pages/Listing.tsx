@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/listing.module.css";
 import { Link, Navigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import defaultImagePath from "../assets/default-image-path.jpg";
+import defaultImagePath from "../assets/default-listing-path.png";
 import { getListingById, getProfileData } from "../backend/readData";
 import DonorInfo from "../components/DonorInfo";
 import { checkListingOwner } from "../backend/readData";
@@ -55,6 +55,7 @@ const Listing: React.FC = () => {
   // modal IDs
   const enquiryModalID = `${listing?.listingID}-enquiry-modal`;
   const removeModalID = `${listing?.listingID}-remove-modal`;
+  const editModalID = "edits-saved-modal";
 
   const handleImageClick = () => {
     setIsImageModalOpen(true);
@@ -157,10 +158,7 @@ const Listing: React.FC = () => {
     }
 
     // set if there are empty fields (any char count that equals 0)
-    setHasEmptyEditField(
-      Object.values(charCount).some(value => value === 0)
-    );
-
+    setHasEmptyEditField(Object.values(charCount).some((value) => value === 0));
   };
 
   if (!loading && !listing) {
@@ -194,6 +192,7 @@ const Listing: React.FC = () => {
         console.error("Unable to update listing: ", error);
       }
       setIsEditMode(false);
+      showModal(editModalID);
     }
   };
 
@@ -207,7 +206,7 @@ const Listing: React.FC = () => {
     setIsEditMode(false);
   };
 
-  const hasEmptyFields = Object.values(charCount).some(count => count === 0);
+  const hasEmptyFields = Object.values(charCount).some((count) => count === 0);
 
   return (
     <main className={styles.gridContainer}>
@@ -221,8 +220,13 @@ const Listing: React.FC = () => {
       )}
       <DeleteListingPopup title={listing!.title} modalId={removeModalID} />
       <GeneralPopup
+        modalId={editModalID}
+        header="Edits saved!"
+        message={`Your edits have been saved.`}
+      />
+      <GeneralPopup
         modalId="pin-success"
-        header="Listing pinned!"
+        header="Listing saved!"
         message={`You can now view this listing for "${
           listing!.title
         }" in your saved listings page.`}
@@ -304,7 +308,11 @@ const Listing: React.FC = () => {
             <>
               {/* Check if user has enquired previously */}
               {enquired ? (
-                <button type="button" className="call-to-action w-50" disabled={true}>
+                <button
+                  type="button"
+                  className="call-to-action w-50"
+                  disabled={true}
+                >
                   Already enquired
                 </button>
               ) : (
@@ -327,7 +335,6 @@ const Listing: React.FC = () => {
             </>
           )
         }
-
       </div>
       <div className={styles.content}>
         <button type="button" className="corner-btn" onClick={handlePinToggle}>
@@ -403,11 +410,12 @@ const Listing: React.FC = () => {
             <small>
               {charCount.description}/{maxLengths.description}
             </small>
-            
-            <br />
-            <br />
-            {hasEmptyFields && <p className="error-msg">All fields must be filled in.</p>}
 
+            <br />
+            <br />
+            {hasEmptyFields && (
+              <p className="error-msg">All fields must be filled in.</p>
+            )}
           </>
         ) : (
           <>

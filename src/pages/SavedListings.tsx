@@ -56,7 +56,7 @@ const SavedListings = () => {
         <h1 className={styles.pinsHeader}>Your wishlist</h1>
         {wishlist.length > 0 ? (
           <>
-            <p>These are listings with course codes that you have wishlisted</p>
+            <p>These are listings with course codes that you have wishlisted.</p>
             <PinsCardContainer listings={wishlist} collectionName="wishlist" />
           </>
         ) : (

@@ -16,6 +16,8 @@ import { sendEmail, EmailData } from "../backend/emailService";
 // this is just used for copying the image. it could be moved to backend
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
+import GeneralPopup from "../components/GeneralPopup";
+import { showModal } from "../backend/modal";
 const storage = getStorage();
 
 // !! change code later so it uses config.ts constants
@@ -25,6 +27,7 @@ const Report: React.FC = () => {
   // id may refer to the profile id or the listing id
   // type may refer to 'user' or 'listing'
   const { id, type } = useParams<{ id: string; type: string }>(); 
+  const reportModalID = "report-sent-modal";
   
   const [report, setReport] = useState<GeneralReport>({
     issue: '',
@@ -307,8 +310,8 @@ useEffect(() => {
       handleSendReportEmail(reportID);
     }
 
-
     setIsSubmitting(false);
+    showModal(reportModalID);
   }
 
   const formattedEnquiryMessage = `
@@ -375,6 +378,7 @@ useEffect(() => {
 
   return (
     <main className={styles.gridContainer}>
+      <GeneralPopup header="Report sent!" message="Thank you for your report. It has now been sent to the BookBank team." modalId={reportModalID}/>
       {/* content on left panel */}
       <div className={styles.aside}>
         <BackButton />
