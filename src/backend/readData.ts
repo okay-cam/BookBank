@@ -3,6 +3,7 @@ import { auth, db } from "../config/firebase";
 import { collection, query, where, getDocs, getDoc, doc, DocumentData, orderBy } from "firebase/firestore";
 import {  } from "../config/firebase";
 import { fb_location, listings_field, users_field, listingData as Listing, ProfileData } from "../config/config";
+import { EmailData, sendEmail } from "./emailService";
 
 export const useListings = (field?: string, value?: string) => {
   const [listings, setListings] = useState<Listing[]>([]); // State to hold the listings
@@ -255,4 +256,75 @@ export async function getImageUrl(collection: string, docId: string): Promise<st
     console.log("Document does not exist!"); 
     return null; 
   }
+}
+
+export async function emailPinnedUsers(listingId: string) {
+  try {
+    const docRef = doc(db, fb_location.listings, listingId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      console.log(`Document with ID ${listingId} does not exist.`);
+      return
+    }
+
+    // get pinned user ids
+    const listingData = docSnap.data();
+    const pinnedUsers = listingData[listings_field.pinned];
+    
+    
+    // get emails from pinned users
+    if (!Array.isArray(pinnedUsers)) {
+      console.log(`Document ${listingId} does not contain a valid array field "${listings_field.pinned}"`)
+      return
+    }
+    
+    const emailArray = await getEmailsFromUserIDs(pinnedUsers);
+    console.log("Sending emails to", emailArray);
+    const emailString = emailArray.join(', ');
+
+    const formattedMessage = `
+  <p><strong>Pinned Listing Notification</strong></p>
+  <p>The pinned listing <strong>'${listingData[listings_field.title]}'</strong> has been removed.</p>
+  <p>This means that the textbook has been successfully donated or the lister has chosen to take it down.</p>
+`;
+
+    const emailData: EmailData = {
+      email: `${import.meta.env.VITE_EMAIL_MAIN} <BookBank-Users>`, // this email must have at least one recipient
+      subject: `Pinned listing '${listingData[listings_field.title]}' has been removed`,
+      message: formattedMessage,
+      bcc: emailString || undefined
+    };
+
+    await sendEmail(emailData);
+
+
+  } catch (error) {
+    console.error("Error getting pinned users:", error);
+  }
+}
+
+async function getEmailsFromUserIDs(userIDs: string[]): Promise<(string | undefined)[]> {
+  const emailPromises = userIDs.map(async (userID) => {
+    const userDocRef = doc(db, fb_location.users, userID); 
+    try {
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data() as ProfileData; 
+        return userData.email; 
+      } else {
+        console.log(`No document found for userID: ${userID}`);
+        return undefined;
+      }
+    } catch (error) {
+      console.error(`Error fetching document for userID: ${userID}`, error);
+      return undefined;
+    }
+  });
+  const emails = await Promise.all(emailPromises);
+
+  // Filter out undefined values
+  const validEmails = emails.filter((email): email is string => email !== undefined);
+  return validEmails;
 }

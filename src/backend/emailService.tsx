@@ -3,6 +3,7 @@ export interface EmailData {
     email: string; // recipient email
     subject: string;
     message: string;
+    bcc?: string;
 }
 
 export const sendEmail = async (emailData: EmailData): Promise<string> => {

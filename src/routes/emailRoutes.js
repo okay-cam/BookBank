@@ -5,7 +5,7 @@ const router = Router();
 
 // Route to send email
 router.post('/send-email', async (req, res) => {
-    const { email, subject, message } = req.body; // Get dynamic email data from the request body
+    const { email, subject, message, bcc } = req.body; // Get dynamic email data from the request body
 
     if (!email || !subject || !message) {
         return res.status(400).json({ success: false, message: 'Email, subject, and message are required.' });
@@ -13,10 +13,10 @@ router.post('/send-email', async (req, res) => {
 
     const mailOptions = {
         from: 'BookBank <bookbank@zohomail.com.au>',
-        to: email,  // Recipient email
-        subject: subject,  // Email subject
-        text: message,  // Plain text version of the message
-        html: `<p>${message}</p>`  // HTML version of the message
+        to: email,
+        subject: subject,
+        html: message,
+        ...(bcc && { bcc }) // Conditionally include the bcc field if it exists
     };
 
     try {
