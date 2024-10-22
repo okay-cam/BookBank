@@ -14,6 +14,7 @@ import { showModal } from "../backend/modal";
 import { reloadProfilePic } from "../components/Navbar";
 
 const universities = [
+  "N/A",
   "Auckland University of Technology (AUT)",
   "The University of Auckland (UoA)",
   "Massey University",
@@ -25,6 +26,7 @@ const universities = [
 ];
 
 const degrees = [
+  "N/A",
   "Bachelor of Science",
   "Bachelor of Arts",
   "Bachelor of Commerce",
@@ -189,12 +191,8 @@ const EditAccount = () => {
 
     // Set the old profile data to the new one after successful submission
     setOldProfileData(updatedProfileData);
-    auth.currentUser?.photoURL;
     setIsSubmitting(false);
   };
-
-  // !! TODO
-  // handle resetting data to defaults by pulling the database data again?
 
   if (!newProfileData) {
     return <div className="spinner-border text-dark" role="status" />;
