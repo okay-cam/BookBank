@@ -158,9 +158,11 @@ const Profile: React.FC = () => {
                 <br />
                 <br />
                 <br />
-                <Link to={`/report/user/${userId}`} className="no-underline">
-                  <button>🚩 Report this user</button>
-                </Link>
+                {!checkProfileOwner(userId) && (
+                  <Link to={`/report/user/${userId}`} className="no-underline">
+                    <button>🚩 Report this user</button>
+                  </Link>
+                )}
               </p>
             </div>
           </div>
